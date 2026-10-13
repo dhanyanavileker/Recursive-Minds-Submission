@@ -1,0 +1,23 @@
+# Re:Source UX prototype
+
+Local React + TypeScript + shadcn/ui prototype based on ../RESOURCE_PLAN.md.
+
+## Run
+
+```sh
+npm install
+npm run dev
+```
+
+`npm run build` checks TypeScript and produces static files in `dist/`.
+
+## Walkthrough
+
+1. Try the mosaic tabletop example, filter by locality, open a material, and save it.
+2. Open My project and try a clearly labelled simulated pickup.
+3. List leftovers, use the illustrated sample or a local image, confirm fields, and publish a demo listing.
+4. Delete your listing or reset the demo to restore the 20 original fictional listings.
+
+## Boundaries
+
+No live Gemini, Firebase, owner contact, payments, or reservations. Search uses explicit local keyword matching. No suitability or coverage calculations are claimed. Seed inventory and material illustrations are fictional. Bengaluru is an illustrative pilot locality. Listings and saves persist in this browser; user images stay in the tab and are not uploaded or retained in published listings. Google Fonts is used for the brand typography. No paid services are enabled. Future deployment must follow the Google-only, no-billing constraints in RESOURCE_PLAN.md.
