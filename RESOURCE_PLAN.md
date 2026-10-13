@@ -5,7 +5,7 @@ Help people reuse surplus materials through “snap to list” and “chat to fi
 
 Mandatory: Google-operated hosted services only; zero paid usage; no billing-account attachment or Blaze upgrade. Ordinary local/open-source development libraries are not hosted services. Public GitHub submission is a competition deliverable noted in the transcript, not an application dependency.
 
-Target: an accessible public evaluation link with a complete two-minute walkthrough. October 18 is the transcript's submission deadline; confirm dashboard deadline/time zone and registration status immediately.
+Target: an accessible public evaluation link with a complete three-minute submission video and a concise two-minute interactive walkthrough. October 18 is the transcript's submission deadline; confirm dashboard deadline/time zone and registration status immediately.
 
 ## Scope for version one
 - Focus on non-structural renovation leftovers: tiles for decorative projects, timber offcuts, pavers, pots, and basic fittings.
@@ -91,6 +91,10 @@ Target: an accessible public evaluation link with a complete two-minute walkthro
 - Quota exhaustion and network failure show useful manual paths and honest status.
 - Judge can finish the guided scenario on mobile and desktop without a registration form.
 - Measure listing time, match relevance, unsupported-claim rate, and AI response latency. Do not invent performance results or environmental benefits.
+
+## Submission template
+
+The supplied `Submission Template  AI Builder Cup.pdf` asks for a 3-minute demo video, a prototype performance/benchmarking report, process/use-case and architecture diagrams, prototype screenshots, and public repository/product links. See `SUBMISSION_CHECKLIST.md` for the full section mapping. The two-minute walkthrough above is our interaction design target, not the required video duration.
 
 ## Submission package
 - Public Firebase Hosting evaluation URL.

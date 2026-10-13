@@ -7,6 +7,7 @@ User is participating in this hackathon. Use these notes as project context for 
 - Selected theme: sustainability and social impact.
 - Proposed competition scope: non-structural leftover materials; photo-assisted listing, conversational project requirements, and explained matches against actual inventory.
 - Detailed build plan, evaluation journey, Google-only architecture, and milestones: `RESOURCE_PLAN.md`.
+- Competition positioning, AI implementation priorities, signature demo and evidence to collect: `COMPETITION_STRATEGY.md`.
 
 ## User constraints — mandatory
 - Use only Google services for the solution. This is the user's requirement, stricter than the session's allowance for other providers.
@@ -44,6 +45,13 @@ Define a specific problem within the chosen theme; the themes themselves are bro
 - Deploy the final solution on Google Cloud; Cloud Run and Firebase are suggested options.
 - AI should do substantial work beyond a simple prompt-and-response wrapper.
 - Address practical usability, reliability, scalability, and production feasibility.
+
+## Supplied submission template
+- Reviewed `Submission Template  AI Builder Cup.pdf` on October 13, 2026.
+- Demo video length specified: 3 minutes (page 14).
+- Prototype performance report/benchmarking is a named section (page 12); do not fabricate measurements.
+- Wireframes/mock diagrams and implementation cost are explicitly optional.
+- Full section mapping and current gaps: `SUBMISSION_CHECKLIST.md`.
 
 ## Submission checklist
 - Documentation/presentation: problem, chosen theme, solution, impact, what was implemented, and future scalability/production feasibility. Include usage instructions where helpful; check accepted formats in the dashboard.

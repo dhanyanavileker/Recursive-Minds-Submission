@@ -30,8 +30,8 @@ Use it for layout, typography, spacing, color, UX reviews, accessibility, onboar
 
 ## Setup status and open decisions
 
-- shadcn/ui has been selected but **not installed or initialized** in this project.
-- No app has been scaffolded yet.
-- App purpose, screens, and target platform still need to be established.
+- shadcn/ui is installed and initialized in `resource-app/`.
+- A React + TypeScript + Vite UX prototype has been created in `resource-app/`, based on RESOURCE_PLAN.md.
+- Re:Source is a web prototype for finding and listing surplus materials; finding materials is the confirmed first screen.
 - shadcn/ui is intended for a web interface. If native Android/iOS becomes a requirement, revisit the component choice.
 - React with TypeScript and Vite is a proposed web-app setup, not a finalized stack decision.

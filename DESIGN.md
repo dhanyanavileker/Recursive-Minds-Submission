@@ -19,4 +19,4 @@ List → illustrated sample or local image → confirm → publish locally → M
 20 fictional seed listings. Illustrations are not photographs. Keyword search is not AI. Coverage and structural suitability are never asserted. No owner is contacted. No hosted service is configured.
 
 ## Verification
-TypeScript and production bundling pass. Browser inspection could not attach to the in-app preview during initial QA; desktop/mobile visual verification remains outstanding.
+TypeScript and production bundling pass. Browser preview opened successfully. Sample search returns four tile listings; saving updates the project count; the pickup dialog explicitly confirms simulation. Desktop/mobile screenshot matrix verification remains outstanding.
