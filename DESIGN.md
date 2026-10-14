@@ -1,7 +1,7 @@
 # Re:Source design system
 
 ## Direction
-Operate mode: finding useful surplus materials comes first. The opening viewport combines project intent with browsable inventory. Material illustrations carry visual specificity; actions and uncertainty remain legible.
+Operate mode: a single conversation is the primary entry point for both finding and offering surplus materials. Structured confirmation cards appear inside the thread when facts must be verified; inventory cards remain the evidence layer below the conversation. Material illustrations carry visual specificity; actions and uncertainty remain legible.
 
 ## Tokens
 - Background: #080D12; raised surface: #111E27; borders: #293640.
@@ -12,8 +12,8 @@ Operate mode: finding useful surplus materials comes first. The opening viewport
 - Visible keyboard focus, semantic buttons and labels, reduced-motion support, dialog focus management via shadcn/Radix.
 
 ## Flows
-Find → filter → inspect → save → My project → simulated pickup.
-List → illustrated sample or local image → confirm → publish locally → My listings → delete.
+Chat → describe a project → confirm requirements inline → inspect evidence → save → My project → simulated pickup.
+Chat/photo action → illustrated sample or local image → confirm facts → publish locally → My listings → delete.
 
 ## Honest states
 20 fictional seed listings. Illustrations are not photographs. Keyword search is not AI. Area coverage is calculated only from recorded uniform piece dimensions and a confirmed project size. It does not establish compatibility, cutting allowance or structural suitability. No owner is contacted. No hosted service is configured.
