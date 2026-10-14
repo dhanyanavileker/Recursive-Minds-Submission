@@ -35,3 +35,11 @@ Use it for layout, typography, spacing, color, UX reviews, accessibility, onboar
 - Re:Source is a web prototype for finding and listing surplus materials; finding materials is the confirmed first screen.
 - shadcn/ui is intended for a web interface. If native Android/iOS becomes a requirement, revisit the component choice.
 - React with TypeScript and Vite is a proposed web-app setup, not a finalized stack decision.
+
+## AI-ready UX changes
+- Guided material/size, budget and locality clarification with an editable, persisted brief.
+- Match cards show listing references and deterministic area coverage, including enough/short/unknown states.
+- Saved project summarizes full-lot quantities, total cost, known area and remaining needs.
+- Listing flow separates static demo suggestions from owner confirmation and accepts optional uniform piece dimensions/pickup timing.
+- Explicit AI-unavailable state keeps manual matching available. Live Gemini remains unconnected.
+- Six deterministic matching tests pass; browser checks covered requirement confirmation, evidence, project totals, owner publication, persistence and manual fallback. Full desktop/mobile visual review remains pending.
