@@ -1,7 +1,7 @@
 # Re:Source design system
 
 ## Direction
-Operate mode: a single conversation is the primary entry point for both finding and offering surplus materials. Structured confirmation cards appear inside the thread when facts must be verified; inventory cards remain the evidence layer below the conversation. Material illustrations carry visual specificity; actions and uncertainty remain legible.
+Operate mode: a single conversation contains the complete finding journey. Structured confirmation cards and the three strongest inventory matches appear inside the thread; the homepage has no separate marketplace grid. Material illustrations carry visual specificity; actions and uncertainty remain legible. Saved projects and the user's own listings remain focused secondary views.
 
 ## Tokens
 - Background: #080D12; raised surface: #111E27; borders: #293640.
