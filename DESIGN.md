@@ -3,6 +3,8 @@
 ## Direction
 Operate mode: a single conversation contains the complete finding journey. Structured confirmation cards and the three strongest inventory matches appear inside the thread; the homepage has no separate marketplace grid. Material illustrations carry visual specificity; actions and uncertainty remain legible. Saved projects and the user's own listings remain focused secondary views.
 
+The same app shell scales across devices: a centered 760 px conversation workspace on desktop and an edge-to-edge, full-height messaging surface on mobile. Mobile uses a compact sticky app bar, bottom navigation, a scrollable conversation, and a composer anchored above navigation. The marketing split layout is intentionally absent.
+
 ## Tokens
 - Background: #080D12; raised surface: #111E27; borders: #293640.
 - Primary text: #EDF3F5; secondary: #A6AFB9; action: #25D9F0 with #06292D text.
