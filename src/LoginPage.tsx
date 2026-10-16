@@ -5,7 +5,7 @@ import { useAuth } from './AuthContext'
 import './LoginPage.css'
 
 export function LoginPage() {
-  const { signInWithGoogle } = useAuth()
+  const { signInWithGoogle, signInAsGuest } = useAuth()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -95,10 +95,52 @@ export function LoginPage() {
             {loading ? 'Signing in…' : 'Continue with Google'}
           </Button>
 
+          {/* Quick Demo Mode bypass */}
+          <button
+            type="button"
+            className="login-demo-btn"
+            onClick={signInAsGuest}
+            style={{
+              marginTop: '10px',
+              width: '100%',
+              padding: '10px 16px',
+              borderRadius: '12px',
+              background: 'rgba(255, 255, 255, 0.05)',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              color: '#cbd5e1',
+              fontSize: '0.85rem',
+              fontWeight: 500,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              transition: 'all 0.2s ease'
+            }}
+          >
+            <Leaf size={15} style={{ color: '#34d399' }} />
+            <span>Explore App in Demo Mode</span>
+          </button>
+
           {/* Error message */}
           {error && (
             <div className="login-error" role="alert">
               <p>{error}</p>
+              <button
+                type="button"
+                onClick={signInAsGuest}
+                style={{
+                  marginTop: '6px',
+                  background: 'none',
+                  border: 'none',
+                  color: '#34d399',
+                  textDecoration: 'underline',
+                  cursor: 'pointer',
+                  fontSize: '0.8rem'
+                }}
+              >
+                Or continue with Demo Mode →
+              </button>
             </div>
           )}
 

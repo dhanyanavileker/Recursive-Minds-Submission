@@ -2,37 +2,100 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 import { onAuthStateChanged, signInWithPopup, signOut as firebaseSignOut, type User } from 'firebase/auth'
 import { auth, googleProvider } from './firebase'
 
+export type AuthUser = {
+  displayName: string | null
+  photoURL: string | null
+  email: string | null
+  uid: string
+  isGuest?: boolean
+}
+
 type AuthState = {
-  user: User | null
+  user: AuthUser | null
   loading: boolean
   signInWithGoogle: () => Promise<void>
+  signInAsGuest: () => void
   signOut: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthState | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<AuthUser | null>(() => {
+    try {
+      const stored = localStorage.getItem('resource-guest-user')
+      if (stored) return JSON.parse(stored)
+    } catch (e) {}
+    return null
+  })
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser)
+    try {
+      const unsubscribe = onAuthStateChanged(auth, (firebaseUser: User | null) => {
+        if (firebaseUser) {
+          setUser({
+            displayName: firebaseUser.displayName,
+            photoURL: firebaseUser.photoURL,
+            email: firebaseUser.email,
+            uid: firebaseUser.uid,
+            isGuest: false
+          })
+          localStorage.removeItem('resource-guest-user')
+        } else {
+          // If guest user exists in localStorage, keep it
+          const stored = localStorage.getItem('resource-guest-user')
+          if (stored) {
+            setUser(JSON.parse(stored))
+          } else {
+            setUser(null)
+          }
+        }
+        setLoading(false)
+      })
+      return unsubscribe
+    } catch (err) {
+      console.warn('Firebase auth listener failed or not configured:', err)
       setLoading(false)
-    })
-    return unsubscribe
+    }
   }, [])
 
   const signInWithGoogle = async () => {
-    await signInWithPopup(auth, googleProvider)
+    const res = await signInWithPopup(auth, googleProvider)
+    setUser({
+      displayName: res.user.displayName,
+      photoURL: res.user.photoURL,
+      email: res.user.email,
+      uid: res.user.uid,
+      isGuest: false
+    })
+    localStorage.removeItem('resource-guest-user')
+  }
+
+  const signInAsGuest = () => {
+    const guestUser: AuthUser = {
+      displayName: 'Maker Demo',
+      photoURL: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80',
+      email: 'demo@resource.local',
+      uid: 'guest-user',
+      isGuest: true
+    }
+    setUser(guestUser)
+    localStorage.setItem('resource-guest-user', JSON.stringify(guestUser))
   }
 
   const signOutFn = async () => {
-    await firebaseSignOut(auth)
+    localStorage.removeItem('resource-guest-user')
+    try {
+      await firebaseSignOut(auth)
+    } catch (e) {
+      // ignore
+    }
+    setUser(null)
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, signInWithGoogle, signOut: signOutFn }}>
+    <AuthContext.Provider value={{ user, loading, signInWithGoogle, signInAsGuest, signOut: signOutFn }}>
       {children}
     </AuthContext.Provider>
   )
