@@ -178,30 +178,30 @@
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:1rem 1.4rem;
+  padding:0.65rem 1.2rem;
   background:#F7F3E8;
   backdrop-filter:blur(12px);
   border-bottom:1px solid #B8CBBF;
-  gap:1rem;
+  gap:0.75rem;
   flex-wrap:wrap;
 }
 
 .agent-identity {
   display:flex;
   align-items:center;
-  gap:12px;
+  gap:10px;
 }
 
 .agent-avatar-glow {
-  width:38px;
-  height:38px;
-  border-radius:12px;
+  width:34px;
+  height:34px;
+  border-radius:10px;
   background:#DDEDE5;
   display:flex;
   align-items:center;
   justify-content:center;
   color:#202725;
-  box-shadow:0 0 16px rgba(24,51,47,0.12);
+  box-shadow:0 0 12px rgba(24,51,47,0.1);
 }
 
 .agent-text-meta {
@@ -216,7 +216,7 @@
 }
 
 .agent-title-row strong {
-  font-size:0.95rem;
+  font-size:0.92rem;
   color:#2F6B56;
 }
 
@@ -255,46 +255,46 @@
 }
 
 .agent-subtitle {
-  font-size:0.76rem;
+  font-size:0.74rem;
   color:#52665D;
-  margin-top:2px;
+  margin-top:1px;
 }
 
 /* Skill Pills Bar */
 .skill-pills-bar {
   display:flex;
   align-items:center;
-  gap:6px;
+  gap:5px;
   flex-wrap:wrap;
 }
 
 .skill-pill-btn {
   display:inline-flex;
   align-items:center;
-  gap:6px;
-  padding:6px 11px;
-  border-radius:20px;
-  font-size:0.78rem;
+  gap:4px;
+  padding:3px 9px;
+  border-radius:9999px;
+  font-size:0.73rem;
   font-weight:500;
   background:#DDEDE5;
   border:1px solid #B8CBBF;
   color:#202725;
   cursor:pointer;
-  transition:all 0.2s ease;
+  transition:all 0.18s ease;
 }
 
 .skill-pill-btn:hover {
-  background:#DDEDE5;
+  background:#cde2d7;
   color:#202725;
   border-color:#B8CBBF;
 }
 
 .skill-pill-btn.selected {
-  background:#DDEDE5;
-  border-color:#B8CBBF;
-  color:#2F6B56;
+  background:#2F6B56;
+  border-color:#2F6B56;
+  color:#F7F3E8;
   font-weight:600;
-  box-shadow:0 2px 10px rgba(24,51,47,0.12);
+  box-shadow:0 2px 8px rgba(47,107,86,0.25);
 }
 
 /* Chat Thread */
@@ -700,11 +700,56 @@
   color:#72551F;
 }
 
-/* Interactive Steps List */
+/* Interactive Steps List & Accordion */
+.interactive-steps-section {
+  margin-top:8px;
+}
+
+.steps-accordion-btn {
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background:#DDEDE5;
+  border:1px solid #B8CBBF;
+  border-radius:10px;
+  padding:9px 13px;
+  cursor:pointer;
+  transition:all 0.2s ease;
+  color:#2F6B56;
+}
+
+.steps-accordion-btn:hover {
+  background:#cde2d7;
+  border-color:#2F6B56;
+}
+
+.steps-accordion-title {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:0.83rem;
+  color:#2F6B56;
+}
+
+.steps-icon-check {
+  color:#2F6B56;
+}
+
+.steps-toggle-label {
+  display:flex;
+  align-items:center;
+  gap:4px;
+  font-size:0.75rem;
+  font-weight:600;
+  color:#2F6B56;
+}
+
 .interactive-steps-list {
   display:flex;
   flex-direction:column;
   gap:8px;
+  margin-top:10px;
 }
 
 .guide-step-item {
@@ -864,10 +909,51 @@
   background:#F7F3E8;
   border:1px solid #B8CBBF;
   border-radius:12px;
-  padding:12px;
+  padding:8px 10px;
   display:flex;
   flex-direction:column;
   gap:10px;
+}
+
+.matched-accordion-header {
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background:#DDEDE5;
+  border:1px solid #B8CBBF;
+  border-radius:8px;
+  padding:9px 12px;
+  cursor:pointer;
+  transition:all 0.2s ease;
+  color:#2F6B56;
+}
+
+.matched-accordion-header:hover {
+  background:#cde2d7;
+  border-color:#2F6B56;
+}
+
+.matched-header-left {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:0.83rem;
+  font-weight:600;
+  color:#2F6B56;
+}
+
+.matched-icon {
+  color:#2F6B56;
+}
+
+.toggle-badge {
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  font-size:0.75rem;
+  font-weight:600;
+  color:#2F6B56;
 }
 
 .matched-title-row {
@@ -1170,15 +1256,23 @@
 .agent-composer {
   display:flex;
   align-items:center;
-  gap:10px;
-  padding:10px 1.4rem;
+  gap:8px;
+  padding:10px 1.25rem;
   background:#F7F3E8;
   border-top:1px solid #B8CBBF;
 }
 
-.attach-photo-btn {
-  width:40px;
-  height:40px;
+.composer-actions-left {
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-shrink:0;
+}
+
+.attach-photo-btn,
+.toggle-samples-btn {
+  width:38px;
+  height:38px;
   border-radius:10px;
   background:#DDEDE5;
   border:1px solid #B8CBBF;
@@ -1191,16 +1285,30 @@
   flex-shrink:0;
 }
 
-.attach-photo-btn:hover {
-  background:#DDEDE5;
+.attach-photo-btn:hover,
+.toggle-samples-btn:hover {
+  background:#cde2d7;
   color:#202725;
-  border-color:#B8CBBF;
+  border-color:#2F6B56;
 }
 
-.attach-photo-btn.has-photo {
-  background:#DDEDE5;
-  border-color:#B8CBBF;
-  color:#2F6B56;
+.attach-photo-btn.has-photo,
+.toggle-samples-btn.active {
+  background:#2F6B56;
+  border-color:#2F6B56;
+  color:#F7F3E8;
+}
+
+.close-samples-btn {
+  padding:4px 6px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  color:#52665D;
+}
+
+.close-samples-btn:hover {
+  color:#9B392B;
 }
 
 .composer-textarea {
@@ -1211,23 +1319,24 @@
   color:#2F6B56;
   font-family:inherit;
   font-size:0.9rem;
-  padding:10px 14px;
+  padding:9px 13px;
   resize:none;
   outline:none;
   transition:border-color 0.2s ease, box-shadow 0.2s ease;
+  min-height:38px;
 }
 
 .composer-textarea:focus {
-  border-color:#B8CBBF;
-  box-shadow:0 0 0 2px rgba(24,51,47,0.12);
+  border-color:#2F6B56;
+  box-shadow:0 0 0 2px rgba(47,107,86,0.15);
 }
 
 .agent-send-btn {
-  width:40px;
-  height:40px;
+  width:38px;
+  height:38px;
   border-radius:10px;
-  background:#DDEDE5;
-  color:#202725;
+  background:#2F6B56;
+  color:#F7F3E8;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -1239,24 +1348,19 @@
 
 .agent-send-btn:hover:not(:disabled) {
   transform:translateY(-1px);
-  box-shadow:0 4px 12px rgba(24,51,47,0.12);
+  box-shadow:0 4px 12px rgba(47,107,86,0.3);
+  background:#255644;
 }
 
 .agent-send-btn:disabled {
-  opacity:0.4;
+  opacity:0.35;
   cursor:not-allowed;
+  background:#DDEDE5;
+  color:#52665D;
 }
 
 .agent-footer-info {
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:8px;
-  padding:6px 1rem;
-  font-size:0.68rem;
-  color:#52665D;
-  background:#F7F3E8;
-  border-top:1px solid #B8CBBF;
+  display:none;
 }
 
 .chat-requirements-card {

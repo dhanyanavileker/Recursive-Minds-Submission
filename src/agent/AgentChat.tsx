@@ -18,7 +18,6 @@ import {
   ChevronRight,
   Eye,
   SlidersHorizontal,
-  ImageIcon,
   Bot,
   BadgePercent,
   ChevronDown,
@@ -58,6 +57,8 @@ interface AgentChatProps {
   ready: boolean
   onConfirmRequirements: () => void
   onEditRequirements: () => void
+  initialPrompt?: string | null
+  onClearInitialPrompt?: () => void
 }
 const SAMPLE_PHOTO_TILE = 'https://images.unsplash.com/photo-1596162954151-cdcb4c0f70a8?w=500&auto=format&fit=crop&q=80'
 const SAMPLE_PHOTO_POT = 'https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=500&auto=format&fit=crop&q=80'
@@ -88,7 +89,9 @@ export function AgentChat({
   onRequirementsChange,
   ready,
   onConfirmRequirements,
-  onEditRequirements
+  onEditRequirements,
+  initialPrompt,
+  onClearInitialPrompt
 }: AgentChatProps) {
   // State for conversations
   const [conversations, setConversations] = useState<ConversationSession[]>(() => {
@@ -128,6 +131,23 @@ export function AgentChat({
   const [activeSkillFilter, setActiveSkillFilter] = useState<AgentSkill>('general')
   const [isTyping, setIsTyping] = useState(false)
   const [completedSteps, setCompletedSteps] = useState<Record<string, boolean>>({})
+  const [expandedSteps, setExpandedSteps] = useState<Record<string, boolean>>({})
+  const [expandedMatches, setExpandedMatches] = useState<Record<string, boolean>>({})
+  const [showSamplesMenu, setShowSamplesMenu] = useState(false)
+
+  const toggleStepsExpanded = (msgId: string) => {
+    setExpandedSteps(prev => ({
+      ...prev,
+      [msgId]: prev[msgId] === undefined ? false : !prev[msgId]
+    }))
+  }
+
+  const toggleMatchesExpanded = (msgId: string) => {
+    setExpandedMatches(prev => ({
+      ...prev,
+      [msgId]: prev[msgId] === undefined ? false : !prev[msgId]
+    }))
+  }
 
   // Procurement state
   const [expandedTranscripts, setExpandedTranscripts] = useState<Record<string, boolean>>({})
@@ -342,6 +362,14 @@ export function AgentChat({
     }
   }
 
+  // Handle incoming direct prompt from Dashboard "Build Something" or "Find Resource"
+  useEffect(() => {
+    if (initialPrompt && initialPrompt.trim()) {
+      handleSendMessage(initialPrompt)
+      if (onClearInitialPrompt) onClearInitialPrompt()
+    }
+  }, [initialPrompt])
+
   return (
     <div className="agent-chat-container">
       {/* Sidebar: Conversation History */}
@@ -412,25 +440,29 @@ export function AgentChat({
         <div className="agent-top-bar">
           <div className="agent-identity">
             <div className="agent-avatar-glow">
-              <Sparkles size={18} />
+              <Sparkles size={17} />
             </div>
             <div className="agent-text-meta">
               <div className="agent-title-row">
-                <strong>Re:Source Autonomous Assistant</strong>
+                <strong>Re:Source Copilot</strong>
                 <span className={`live-status-pill ${isLiveAIEnabled() ? 'live-active' : ''}`}>
                   <span className="live-dot" /> {isLiveAIEnabled() ? 'GEMINI 2.5 LIVE' : 'SKILLS READY'}
                 </span>
               </div>
-              <small className="agent-subtitle">
-                Autonomous agent with Vision, Step-by-Step DIY Guides, Inventory Search, and Project Architecture
-              </small>
             </div>
           </div>
 
-          {/* Quick Skill Selector Bar */}
+          {/* Sleek Minimalist Capability Selector Bar */}
           <div className="skill-pills-bar">
             {AVAILABLE_SKILLS.map(skill => {
               const isSelected = activeSkillFilter === skill.id
+              const shortLabels: Record<string, string> = {
+                analyze: 'Vision',
+                get_steps: 'DIY Steps',
+                search: 'Materials',
+                build_plan: 'Blueprint',
+                procure: 'Broker'
+              }
               return (
                 <button
                   key={skill.id}
@@ -438,12 +470,12 @@ export function AgentChat({
                   onClick={() => setActiveSkillFilter(isSelected ? 'general' : skill.id)}
                   title={skill.description}
                 >
-                  {skill.id === 'analyze' && <Camera size={13} />}
-                  {skill.id === 'get_steps' && <Wrench size={13} />}
-                  {skill.id === 'search' && <Search size={13} />}
-                  {skill.id === 'build_plan' && <Hammer size={13} />}
-                  {skill.id === 'procure' && <Bot size={13} />}
-                  <span>{skill.label}</span>
+                  {skill.id === 'analyze' && <Camera size={12} />}
+                  {skill.id === 'get_steps' && <Wrench size={12} />}
+                  {skill.id === 'search' && <Search size={12} />}
+                  {skill.id === 'build_plan' && <Hammer size={12} />}
+                  {skill.id === 'procure' && <Bot size={12} />}
+                  <span>{shortLabels[skill.id] || skill.label}</span>
                 </button>
               )
             })}
@@ -631,34 +663,58 @@ export function AgentChat({
                       </div>
                     )}
 
-                    {/* Steps List with interactive checkboxes */}
-                    <div className="interactive-steps-list">
-                      <h5>Guided Steps:</h5>
-                      {msg.stepsGuide.steps.map(s => {
-                        const stepKey = `${msg.id}-step-${s.stepNumber}`
-                        const isDone = !!completedSteps[stepKey]
-                        return (
-                          <div
-                            key={s.stepNumber}
-                            className={`guide-step-item ${isDone ? 'done' : ''}`}
-                            onClick={() => toggleStepDone(stepKey)}
+                    {/* Steps List with interactive accordion */}
+                    {(() => {
+                      const isStepsOpen = expandedSteps[msg.id] ?? false
+                      return (
+                        <div className="interactive-steps-section">
+                          <button
+                            type="button"
+                            className="steps-accordion-btn"
+                            onClick={() => toggleStepsExpanded(msg.id)}
+                            aria-expanded={isStepsOpen}
                           >
-                            <button
-                              type="button"
-                              className={`step-checkbox ${isDone ? 'checked' : ''}`}
-                              aria-label={`Mark step ${s.stepNumber} done`}
-                            >
-                              {isDone ? <Check size={13} /> : s.stepNumber}
-                            </button>
-                            <div className="step-content">
-                              <h6>{s.title}</h6>
-                              <p>{s.instruction}</p>
-                              {s.tip && <small className="pro-tip">💡 Pro Tip: {s.tip}</small>}
+                            <span className="steps-accordion-title">
+                              <Check size={14} className="steps-icon-check" />
+                              <strong>Guided Steps Checklist</strong> ({msg.stepsGuide.steps.length} steps)
+                            </span>
+                            <span className="steps-toggle-label">
+                              {isStepsOpen ? 'Hide Steps' : 'View Steps'}
+                              {isStepsOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                            </span>
+                          </button>
+
+                          {isStepsOpen && (
+                            <div className="interactive-steps-list">
+                              {msg.stepsGuide.steps.map(s => {
+                                const stepKey = `${msg.id}-step-${s.stepNumber}`
+                                const isDone = !!completedSteps[stepKey]
+                                return (
+                                  <div
+                                    key={s.stepNumber}
+                                    className={`guide-step-item ${isDone ? 'done' : ''}`}
+                                    onClick={() => toggleStepDone(stepKey)}
+                                  >
+                                    <button
+                                      type="button"
+                                      className={`step-checkbox ${isDone ? 'checked' : ''}`}
+                                      aria-label={`Mark step ${s.stepNumber} done`}
+                                    >
+                                      {isDone ? <Check size={13} /> : s.stepNumber}
+                                    </button>
+                                    <div className="step-content">
+                                      <h6>{s.title}</h6>
+                                      <p>{s.instruction}</p>
+                                      {s.tip && <small className="pro-tip">💡 Pro Tip: {s.tip}</small>}
+                                    </div>
+                                  </div>
+                                )
+                              })}
                             </div>
-                          </div>
-                        )
-                      })}
-                    </div>
+                          )}
+                        </div>
+                      )
+                    })()}
                   </div>
                 )}
 
@@ -915,67 +971,83 @@ export function AgentChat({
                 )}
 
                 {/* 5. MATCHED INVENTORY LISTINGS CAROUSEL / GRID */}
-                {msg.matchedListings && msg.matchedListings.length > 0 && (
-                  <div className="matched-materials-container">
-                    <div className="matched-title-row">
-                      <Search size={14} />
-                      <span>Available Marketplace Leftovers ({msg.matchedListings.length} matches):</span>
+                {msg.matchedListings && msg.matchedListings.length > 0 && (() => {
+                  const isMatchesOpen = expandedMatches[msg.id] ?? false
+                  return (
+                    <div className="matched-materials-container">
+                      <button
+                        type="button"
+                        className="matched-accordion-header"
+                        onClick={() => toggleMatchesExpanded(msg.id)}
+                        aria-expanded={isMatchesOpen}
+                      >
+                        <div className="matched-header-left">
+                          <Search size={14} className="matched-icon" />
+                          <span>Available Marketplace Leftovers ({msg.matchedListings.length} matches)</span>
+                        </div>
+                        <span className="toggle-badge">
+                          {isMatchesOpen ? 'Hide' : 'View Matches'}
+                          {isMatchesOpen ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
+                        </span>
+                      </button>
+
+                      {isMatchesOpen && (
+                        <div className="matched-listings-grid">
+                          {msg.matchedListings.map(listing => {
+                            const isSaved = saved.includes(listing.id)
+                            const area = listingArea(listing)
+                            return (
+                              <div key={listing.id} className="matched-item-card">
+                                <div className="item-card-top">
+                                  <span className="item-category-badge">{listing.category}</span>
+                                  <span className="item-price">
+                                    {listing.price === 0 ? 'Free' : `₹${listing.price}`}
+                                  </span>
+                                </div>
+
+                                <h5 className="item-title" onClick={() => onSelectItem(listing)}>
+                                  {listing.title}
+                                </h5>
+
+                                <div className="item-specs">
+                                  <span>{listing.qty} {listing.unit}</span>
+                                  <span>·</span>
+                                  <span>{listing.locality}</span>
+                                  {area && <span>· {areaText(area)}</span>}
+                                </div>
+
+                                <div className="item-actions">
+                                  <button
+                                    type="button"
+                                    className="item-view-btn"
+                                    onClick={() => onSelectItem(listing)}
+                                  >
+                                    <Eye size={12} /> View
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className={`item-save-btn ${isSaved ? 'saved' : ''}`}
+                                    onClick={() => onToggleSave(listing.id)}
+                                  >
+                                    {isSaved ? (
+                                      <>
+                                        <Check size={12} /> Saved
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Bookmark size={12} /> Save
+                                      </>
+                                    )}
+                                  </button>
+                                </div>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      )}
                     </div>
-
-                    <div className="matched-listings-grid">
-                      {msg.matchedListings.map(listing => {
-                        const isSaved = saved.includes(listing.id)
-                        const area = listingArea(listing)
-                        return (
-                          <div key={listing.id} className="matched-item-card">
-                            <div className="item-card-top">
-                              <span className="item-category-badge">{listing.category}</span>
-                              <span className="item-price">
-                                {listing.price === 0 ? 'Free' : `₹${listing.price}`}
-                              </span>
-                            </div>
-
-                            <h5 className="item-title" onClick={() => onSelectItem(listing)}>
-                              {listing.title}
-                            </h5>
-
-                            <div className="item-specs">
-                              <span>{listing.qty} {listing.unit}</span>
-                              <span>·</span>
-                              <span>{listing.locality}</span>
-                              {area && <span>· {areaText(area)}</span>}
-                            </div>
-
-                            <p className="item-detail-snip">{listing.detail}</p>
-
-                            <div className="item-actions">
-                              <button
-                                className="item-view-btn"
-                                onClick={() => onSelectItem(listing)}
-                              >
-                                <Eye size={13} /> View
-                              </button>
-                              <button
-                                className={`item-save-btn ${isSaved ? 'saved' : ''}`}
-                                onClick={() => onToggleSave(listing.id)}
-                              >
-                                {isSaved ? (
-                                  <>
-                                    <Check size={13} /> Saved
-                                  </>
-                                ) : (
-                                  <>
-                                    <Bookmark size={13} /> Save to Project
-                                  </>
-                                )}
-                              </button>
-                            </div>
-                          </div>
-                        )
-                      })}
-                    </div>
-                  </div>
-                )}
+                  )
+                })()}
 
                 {/* SUGGESTED FOLLOW-UP PROMPTS */}
                 {msg.suggestedPrompts && msg.suggestedPrompts.length > 0 && (
@@ -1036,48 +1108,60 @@ export function AgentChat({
           </div>
         )}
 
-        {/* Quick Sample Photos Bar when no photo is attached */}
-        {!selectedPhoto && (
+        {/* Quick Sample Photos Bar - shows initially or when toggled */}
+        {(currentSession.messages.length <= 1 || showSamplesMenu) && !selectedPhoto && (
           <div className="quick-samples-bar">
             <span className="samples-label">
-              <ImageIcon size={13} /> Try Sample Photo:
+              <Sparkles size={13} /> Try Sample Material:
             </span>
             <button
               className="sample-photo-btn"
-              onClick={() =>
+              onClick={() => {
                 handlePickSamplePhoto(
                   SAMPLE_PHOTO_TILE,
                   'mosaic_ceramic_tiles.jpg',
                   'Analyze these leftover mosaic tiles and tell me how to use them'
                 )
-              }
+                setShowSamplesMenu(false)
+              }}
             >
               🧩 Ceramic Tiles
             </button>
             <button
               className="sample-photo-btn"
-              onClick={() =>
+              onClick={() => {
                 handlePickSamplePhoto(
                   SAMPLE_PHOTO_POT,
                   'cracked_terracotta_pot.jpg',
                   'How to fix this cracked terracotta pot and what materials do I need?'
                 )
-              }
+                setShowSamplesMenu(false)
+              }}
             >
               🏺 Cracked Pot
             </button>
             <button
               className="sample-photo-btn"
-              onClick={() =>
+              onClick={() => {
                 handlePickSamplePhoto(
                   SAMPLE_PHOTO_WOOD,
                   'pine_timber_offcuts.jpg',
                   'I want to build a bench from these timber offcuts'
                 )
-              }
+                setShowSamplesMenu(false)
+              }}
             >
               🪵 Timber Offcuts
             </button>
+            {showSamplesMenu && (
+              <button
+                className="sample-photo-btn close-samples-btn"
+                onClick={() => setShowSamplesMenu(false)}
+                title="Hide sample photos"
+              >
+                <X size={12} />
+              </button>
+            )}
           </div>
         )}
 
@@ -1098,15 +1182,27 @@ export function AgentChat({
             onChange={handlePhotoSelect}
           />
 
-          <button
-            type="button"
-            className={`attach-photo-btn ${selectedPhoto ? 'has-photo' : ''}`}
-            onClick={() => fileInputRef.current?.click()}
-            title="Attach a photo of leftover or damaged material"
-            aria-label="Upload photo"
-          >
-            <Camera size={19} />
-          </button>
+          <div className="composer-actions-left">
+            <button
+              type="button"
+              className={`attach-photo-btn ${selectedPhoto ? 'has-photo' : ''}`}
+              onClick={() => fileInputRef.current?.click()}
+              title="Attach a photo of leftover or damaged material"
+              aria-label="Upload photo"
+            >
+              <Camera size={18} />
+            </button>
+
+            <button
+              type="button"
+              className={`toggle-samples-btn ${showSamplesMenu ? 'active' : ''}`}
+              onClick={() => setShowSamplesMenu(prev => !prev)}
+              title="Try sample material photo"
+              aria-label="Sample photos"
+            >
+              <Sparkles size={16} />
+            </button>
+          </div>
 
           <textarea
             className="composer-textarea"
@@ -1138,21 +1234,9 @@ export function AgentChat({
             disabled={(!inputText.trim() && !selectedPhoto) || isTyping}
             aria-label="Send prompt to agent"
           >
-            <Send size={17} />
+            <Send size={16} />
           </Button>
         </form>
-
-        <div className="agent-footer-info">
-          <span>Vision Analysis</span>
-          <span>·</span>
-          <span>Repair & How-to Steps</span>
-          <span>·</span>
-          <span>Material Matching</span>
-          <span>·</span>
-          <span>Project Architecture</span>
-          <span>·</span>
-          <span>Autonomous Procurement</span>
-        </div>
       </section>
 
       {/* Demolition Gate Pass / Voucher Dialog */}
