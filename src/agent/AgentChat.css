@@ -1007,6 +1007,17 @@
   color:#2F6B56;
 }
 
+.item-price.free-badge {
+  font-size:0.74rem;
+  font-weight:700;
+  color:#2F6B56;
+  background:#DDEDE5;
+  padding:2px 8px;
+  border-radius:12px;
+  border:1px solid #B8CBBF;
+  letter-spacing:0.02em;
+}
+
 .item-title {
   margin:0;
   font-size:0.88rem;
@@ -1558,13 +1569,23 @@
   font-weight:700;
 }
 
+.zero-cost-tag {
+  font-size:0.75rem;
+  font-weight:600;
+  color:#2F6B56;
+  background:#DDEDE5;
+  padding:2px 7px;
+  border-radius:6px;
+  border:1px solid #B8CBBF;
+}
+
 .savings-badge {
   display:flex;
   align-items:center;
   gap:4px;
-  background:#F8E7DF;
+  background:#DDEDE5;
   border:1px solid #B8CBBF;
-  color:#72551F;
+  color:#2F6B56;
   font-size:0.7rem;
   font-weight:600;
   padding:3px 8px;

@@ -92,6 +92,8 @@ export interface ProcurementOrder {
   discountPercent: number
   pickupWindow: string
   quantityDetails: string
+  landfillDiversionKg?: number
+  carbonSavedKg?: number
   status: 'scouting' | 'negotiating' | 'order_placed' | 'confirmed' | 'cancelled'
   progressStage: number // 1: Scouting, 2: Negotiating, 3: Order Placed
   negotiationTranscript: {

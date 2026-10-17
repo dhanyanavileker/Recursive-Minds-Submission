@@ -4,15 +4,176 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { targetArea, areaText } from './matching'
 import type { Requirements } from './matching'
-type Props={value:Requirements;onChange:(r:Requirements)=>void;ready:boolean;onConfirm:()=>void;onEdit:()=>void}
-export function RequirementsPanel({value:r,onChange,ready,onConfirm,onEdit}:Props){
- const [stage,setStage]=useState(0),[message,setMessage]=useState('')
- const update=(field:keyof Requirements,value:string)=>{onChange({...r,[field]:value});setMessage('')}
- const area=targetArea(r)
- function next(){
- if(stage===0&&(r.width||r.length)&&area===null){setMessage('Enter both dimensions as positive numbers, or leave both blank to keep the area unknown.');return}
- if(stage===1&&r.budget!==''&&(!Number.isFinite(Number(r.budget))||Number(r.budget)<0)){setMessage('Use a budget of zero or more, or leave it blank.');return}
- if(stage<2)setStage(stage+1);else onConfirm()
- }
- return <section className="requirements-panel" aria-label="Project requirements"><div className="requirements-top"><div><h3>{ready?'Your project brief':'Let’s make your idea specific'}</h3><p>{ready?'Confirmed by you · editable anytime':'Guided demo · one question at a time'}</p></div>{ready&&<Button variant="outline" size="sm" onClick={()=>{onEdit();setStage(0)}}><Pencil size={13}/> Edit requirements</Button>}</div>{ready?<><dl className="brief-facts"><div><dt>Material</dt><dd>{r.category}</dd></div><div><dt>Project area</dt><dd>{area===null?'Unknown':areaText(area)}</dd></div><div><dt>Budget</dt><dd>{r.budget===''?'Not set':`₹${r.budget}`}</dd></div><div><dt>Pickup locality</dt><dd>{r.locality}</dd></div></dl><p className="requirements-note">Area uses width × length. Allowance for cuts, waste, finish and material compatibility still needs checking.</p></>:<><div className="question-progress">{['Size & material','Budget','Pickup'].map((label,i)=><span key={label} className={stage===i?'current':''}>{i<stage?<Check size={13}/>:i+1} {label}</span>)}</div>{stage===0?<div><h4>What material and surface size do you need?</h4><div className="requirement-fields"><label>Material<select value={r.category} onChange={e=>update('category',e.target.value)}>{['Tiles','Timber','Pots','Pavers','Fittings'].map(x=><option key={x}>{x}</option>)}</select></label><label>Width (cm)<Input type="number" min="0.1" step="any" value={r.width} onChange={e=>update('width',e.target.value)} placeholder="e.g. 60"/></label><label>Length (cm)<Input type="number" min="0.1" step="any" value={r.length} onChange={e=>update('length',e.target.value)} placeholder="e.g. 60"/></label></div><p className="requirements-note">For a surface project only. Leave both dimensions blank if they are unknown or not relevant.</p></div>:stage===1?<div><h4>What can you spend on materials?</h4><label className="single-field">Total budget (₹)<Input type="number" min="0" step="any" value={r.budget} onChange={e=>update('budget',e.target.value)} placeholder="Leave blank if flexible"/></label><p className="requirements-note">Enter 0 for free materials only. Listings are priced for the whole lot.</p></div>:<div><h4>Where can you collect materials?</h4><label className="single-field">Pickup locality<select value={r.locality} onChange={e=>update('locality',e.target.value)}>{['All localities','Indiranagar','Koramangala','HSR Layout'].map(x=><option key={x}>{x}</option>)}</select></label><p className="requirements-note">Illustrative Bengaluru localities. We do not calculate travel distances.</p></div>}{message&&<p className="error" role="alert">{message}</p>}<div className="question-actions">{stage>0&&<Button variant="ghost" onClick={()=>setStage(stage-1)}>Back</Button>}<Button onClick={next}>{stage===2?'Confirm & find matches':'Continue'} <ArrowRight size={15}/></Button></div></>}</section>
+
+type Props = {
+  value: Requirements
+  onChange: (r: Requirements) => void
+  ready: boolean
+  onConfirm: () => void
+  onEdit: () => void
+}
+
+export function RequirementsPanel({ value: r, onChange, ready, onConfirm, onEdit }: Props) {
+  const [stage, setStage] = useState(0)
+  const [message, setMessage] = useState('')
+
+  const update = (field: keyof Requirements, value: string) => {
+    onChange({ ...r, [field]: value })
+    setMessage('')
+  }
+
+  const area = targetArea(r)
+
+  function next() {
+    if (stage === 0 && (r.width || r.length) && area === null) {
+      setMessage('Enter both dimensions as positive numbers, or leave both blank to keep the area unknown.')
+      return
+    }
+    if (stage === 1) {
+      update('budget', '0')
+    }
+    if (stage < 2) setStage(stage + 1)
+    else onConfirm()
+  }
+
+  return (
+    <section className="requirements-panel" aria-label="Project requirements">
+      <div className="requirements-top">
+        <div>
+          <h3>{ready ? 'Your project brief' : 'Let’s make your idea specific'}</h3>
+          <p>{ready ? 'Confirmed by you · editable anytime' : 'Guided demo · one question at a time'}</p>
+        </div>
+        {ready && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              onEdit()
+              setStage(0)
+            }}
+          >
+            <Pencil size={13} /> Edit requirements
+          </Button>
+        )}
+      </div>
+
+      {ready ? (
+        <>
+          <dl className="brief-facts">
+            <div>
+              <dt>Material</dt>
+              <dd>{r.category}</dd>
+            </div>
+            <div>
+              <dt>Project area</dt>
+              <dd>{area === null ? 'Unknown' : areaText(area)}</dd>
+            </div>
+            <div>
+              <dt>Material Cost</dt>
+              <dd style={{ color: '#2F6B56', fontWeight: 600 }}>0 ₹ (100% Free Giveaway)</dd>
+            </div>
+            <div>
+              <dt>Pickup locality</dt>
+              <dd>{r.locality}</dd>
+            </div>
+          </dl>
+          <p className="requirements-note">
+            Area uses width × length. Allowance for cuts, waste, finish and material compatibility still needs checking.
+          </p>
+        </>
+      ) : (
+        <>
+          <div className="question-progress">
+            {['Size & material', 'Cost', 'Pickup'].map((label, i) => (
+              <span key={label} className={stage === i ? 'current' : ''}>
+                {i < stage ? <Check size={13} /> : i + 1} {label}
+              </span>
+            ))}
+          </div>
+
+          {stage === 0 ? (
+            <div>
+              <h4>What material and surface size do you need?</h4>
+              <div className="requirement-fields">
+                <label>
+                  Material
+                  <select value={r.category} onChange={e => update('category', e.target.value)}>
+                    {['Tiles', 'Timber', 'Pots', 'Pavers', 'Fittings'].map(x => (
+                      <option key={x}>{x}</option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  Width (cm)
+                  <Input
+                    type="number"
+                    min="0.1"
+                    step="any"
+                    value={r.width}
+                    onChange={e => update('width', e.target.value)}
+                    placeholder="e.g. 60"
+                  />
+                </label>
+                <label>
+                  Length (cm)
+                  <Input
+                    type="number"
+                    min="0.1"
+                    step="any"
+                    value={r.length}
+                    onChange={e => update('length', e.target.value)}
+                    placeholder="e.g. 60"
+                  />
+                </label>
+              </div>
+              <p className="requirements-note">
+                For a surface project only. Leave both dimensions blank if they are unknown or not relevant.
+              </p>
+            </div>
+          ) : stage === 1 ? (
+            <div>
+              <h4>What is your cost expectation?</h4>
+              <label className="single-field">
+                Material Cost
+                <Input value="100% Free Community Giveaway (0 ₹)" disabled />
+              </label>
+              <p className="requirements-note">
+                All surplus and leftover materials on Re:Source are community gifts offered for 0 ₹.
+              </p>
+            </div>
+          ) : (
+            <div>
+              <h4>Where can you collect materials?</h4>
+              <label className="single-field">
+                Pickup locality
+                <select value={r.locality} onChange={e => update('locality', e.target.value)}>
+                  {['All localities', 'Indiranagar', 'Koramangala', 'HSR Layout'].map(x => (
+                    <option key={x}>{x}</option>
+                  ))}
+                </select>
+              </label>
+              <p className="requirements-note">Illustrative Bengaluru localities. We do not calculate travel distances.</p>
+            </div>
+          )}
+
+          {message && (
+            <p className="error" role="alert">
+              {message}
+            </p>
+          )}
+
+          <div className="question-actions">
+            {stage > 0 && (
+              <Button variant="ghost" onClick={() => setStage(stage - 1)}>
+                Back
+              </Button>
+            )}
+            <Button onClick={next}>
+              {stage === 2 ? 'Confirm & find matches' : 'Continue'} <ArrowRight size={15} />
+            </Button>
+          </div>
+        </>
+      )}
+    </section>
+  )
 }

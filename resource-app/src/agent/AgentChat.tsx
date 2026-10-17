@@ -19,7 +19,6 @@ import {
   Eye,
   SlidersHorizontal,
   Bot,
-  BadgePercent,
   ChevronDown,
   ChevronUp,
   Building2,
@@ -171,10 +170,10 @@ export function AgentChat({
       category: order.category,
       qty: 1,
       unit: 'lot',
-      price: order.negotiatedPrice,
+      price: 0,
       locality: order.locality === 'All localities' ? 'Indiranagar' : order.locality,
       condition: 'Surplus Salvage Deal',
-      detail: `Procured by Autonomous Agent from ${order.supplierName} (${order.supplierLocation}). Agreed deal: ₹${order.negotiatedPrice} (saved ₹${order.savedAmount} / ${order.discountPercent}% off asking). Pickup window: ${order.pickupWindow}. ${order.quantityDetails}`,
+      detail: `Procured by Autonomous Agent from ${order.supplierName} (${order.supplierLocation}). 100% Free Salvage Gift (0 ₹). Landfill diversion: ~${order.landfillDiversionKg || 120} kg. Pickup window: ${order.pickupWindow}. ${order.quantityDetails}`,
       tone: ['Tiles', 'Timber', 'Pots', 'Pavers', 'Fittings'].indexOf(order.category) >= 0
         ? ['Tiles', 'Timber', 'Pots', 'Pavers', 'Fittings'].indexOf(order.category)
         : 1,
@@ -808,8 +807,8 @@ export function AgentChat({
                       <div className="progress-step complete">
                         <span className="step-circle"><Check size={11} /></span>
                         <div className="step-text">
-                          <strong>2. Price Negotiation</strong>
-                          <small>{msg.procurementOrder.discountPercent}% Saved off asking</small>
+                          <strong>2. Landfill Diversion Clearance</strong>
+                          <small>100% Free Circular Release</small>
                         </div>
                       </div>
                       <div className="progress-line active" />
@@ -845,16 +844,18 @@ export function AgentChat({
 
                       <div className="deal-pricing-block">
                         <div className="original-price-row">
-                          <span>Contractor Asking:</span>
-                          <del>₹{msg.procurementOrder.originalPrice}</del>
+                          <span>Material Transfer Cost:</span>
+                          <strong className="agreed-price" style={{ color: '#2F6B56' }}>
+                            0 ₹ · Free Salvage
+                          </strong>
                         </div>
                         <div className="negotiated-price-row">
-                          <span>Agreed Circular Deal:</span>
-                          <strong className="agreed-price">₹{msg.procurementOrder.negotiatedPrice}</strong>
+                          <span>Landfill Diversion:</span>
+                          <span className="zero-cost-tag">100% Diverted from Waste</span>
                         </div>
                         <div className="savings-badge">
-                          <BadgePercent size={13} />
-                          <span>Save ₹{msg.procurementOrder.savedAmount} ({msg.procurementOrder.discountPercent}% off)</span>
+                          <Check size={13} />
+                          <span>Diverted ~{msg.procurementOrder.landfillDiversionKg || 120} kg from landfill dumping</span>
                         </div>
                       </div>
                     </div>
@@ -1000,8 +1001,8 @@ export function AgentChat({
                               <div key={listing.id} className="matched-item-card">
                                 <div className="item-card-top">
                                   <span className="item-category-badge">{listing.category}</span>
-                                  <span className="item-price">
-                                    {listing.price === 0 ? 'Free' : `₹${listing.price}`}
+                                  <span className="item-price free-badge">
+                                    0 ₹ · Free Surplus
                                   </span>
                                 </div>
 
@@ -1257,9 +1258,9 @@ export function AgentChat({
                   <span className="gatepass-id">REF: {viewingGatePass.id.toUpperCase()}</span>
                 </div>
                 <div className="gatepass-price-badge">
-                  <span>Agreed Price</span>
-                  <strong>₹{viewingGatePass.negotiatedPrice}</strong>
-                  <small>Saved ₹{viewingGatePass.savedAmount} ({viewingGatePass.discountPercent}% OFF)</small>
+                  <span>Transfer Cost</span>
+                  <strong>0 ₹ (Free Community Salvage)</strong>
+                  <small>100% Landfill Diversion · Zero Waste</small>
                 </div>
               </div>
 
@@ -1290,7 +1291,7 @@ export function AgentChat({
 
               <div className="gatepass-instructions">
                 <p>
-                  <strong>Yard Collection Protocol:</strong> Show this pass upon gate arrival. Lot has been set aside under the Re:Source Circular Exchange agreement. Settlement of ₹{viewingGatePass.negotiatedPrice} due at transfer.
+                  <strong>Yard Collection Protocol:</strong> Show this pass upon gate arrival. Lot has been set aside under the Re:Source Circular Exchange agreement. 100% Free Community Transfer (0 ₹).
                 </p>
               </div>
 
