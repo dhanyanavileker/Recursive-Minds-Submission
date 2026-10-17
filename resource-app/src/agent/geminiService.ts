@@ -38,12 +38,36 @@ function cleanJsonOutput(text: string): string {
 }
 
 /**
+ * Helper to call secure backend proxy if running on Cloud Run / Node server
+ */
+async function callServerProxy<T>(endpoint: string, body: Record<string, unknown>): Promise<T | null> {
+  try {
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    })
+    if (res.ok) {
+      return (await res.json()) as T
+    }
+  } catch {
+    // Server proxy not reachable, fall back to direct or offline
+  }
+  return null
+}
+
+/**
  * Multimodal Photo Diagnosis with Gemini
  */
 export async function liveGeminiAnalyzePhoto(
   prompt: string,
   photoUrl: string
 ): Promise<AnalysisResult | null> {
+  // 1. Try secure Cloud Run backend proxy
+  const serverResult = await callServerProxy<AnalysisResult>('/api/gemini/analyze', { prompt, photoUrl })
+  if (serverResult) return serverResult
+
+  // 2. Fall back to direct client-side if configured
   if (!isLiveAIEnabled()) return null
   const ai = getAIClient()
   if (!ai) return null
@@ -103,6 +127,11 @@ export async function liveGeminiGenerateSteps(
   prompt: string,
   photoUrl?: string
 ): Promise<StepsGuideResult | null> {
+  // 1. Try secure Cloud Run backend proxy
+  const serverResult = await callServerProxy<StepsGuideResult>('/api/gemini/steps', { prompt, photoUrl })
+  if (serverResult) return serverResult
+
+  // 2. Fall back to direct client-side if configured
   if (!isLiveAIEnabled()) return null
   const ai = getAIClient()
   if (!ai) return null
@@ -166,6 +195,11 @@ Only output the raw JSON string.`
 export async function liveGeminiGenerateBuildPlan(
   prompt: string
 ): Promise<BuildPlanResult | null> {
+  // 1. Try secure Cloud Run backend proxy
+  const serverResult = await callServerProxy<BuildPlanResult>('/api/gemini/build_plan', { prompt })
+  if (serverResult) return serverResult
+
+  // 2. Fall back to direct client-side if configured
   if (!isLiveAIEnabled()) return null
   const ai = getAIClient()
   if (!ai) return null
