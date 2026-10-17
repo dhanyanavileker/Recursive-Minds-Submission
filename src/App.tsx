@@ -48,10 +48,19 @@ type Listing = {
   condition: string
   detail: string
   tone: number
+  image?: string
   own?: boolean
   widthCm?: number
   lengthCm?: number
 }
+
+const MATERIAL_IMAGES = [
+  '/images/materials/tiles.jpg',
+  '/images/materials/timber.jpg',
+  '/images/materials/pots.jpg',
+  '/images/materials/pavers.jpg',
+  '/images/materials/fittings.jpg',
+]
 
 const originals: Listing[] = Array.from({ length: 20 }, (_, i) => {
   const types = [
@@ -73,7 +82,8 @@ const originals: Listing[] = Array.from({ length: 20 }, (_, i) => {
     price: 0, // All mindful giveaways are 100% free community gifts!
     locality: i % 3 === 0 ? 'Indiranagar' : i % 3 === 1 ? 'Koramangala' : 'HSR Layout',
     condition: i % 4 === 0 ? 'Unused surplus' : 'Previously used',
-    tone: i % 5
+    tone: i % 5,
+    image: MATERIAL_IMAGES[i % 5]
   }
 })
 
@@ -260,6 +270,7 @@ function AuthenticatedApp() {
       lengthCm: newLength ? Number(newLength) : undefined,
       detail: `Mindfully gifted by community donor. Pickup window: ${pickupWindow.trim() || 'Flexible community pickup'}. Verified zero-waste circular giveaway.`,
       tone: ['Tiles', 'Timber', 'Pots', 'Pavers', 'Fittings'].indexOf(newCategory),
+      image: photo || MATERIAL_IMAGES[Math.max(0, ['Tiles', 'Timber', 'Pots', 'Pavers', 'Fittings'].indexOf(newCategory))],
       own: true
     }
     persist([item, ...items])
@@ -956,7 +967,7 @@ function AuthenticatedApp() {
                   <article key={x.id} className="material-card">
                     <div className="art-wrap">
                       <button className="art-button" onClick={() => setSelected(x)} aria-label={`View ${x.title}`}>
-                        <Material tone={x.tone} />
+                        <Material tone={x.tone} image={x.image} />
                       </button>
                       <span className="demo-tag">MINDFUL GIVEAWAY</span>
                       <button
@@ -1079,7 +1090,7 @@ function AuthenticatedApp() {
           </DialogHeader>
           {selected && (
             <>
-              <Material tone={selected.tone} />
+              <Material tone={selected.tone} image={selected.image} />
               <div className="detail-stats">
                 <span>{selected.qty} {selected.unit}</span>
                 <strong style={{ color: '#2F6B56' }}>Free to a good home (+120 Karma to Donor)</strong>
@@ -1169,26 +1180,40 @@ function AuthenticatedApp() {
   )
 }
 
-function Material({ tone }: { tone: number }) {
+const MATERIAL_LABELS = [
+  'Sea-glass ceramic mosaic tiles',
+  'Solid pine timber offcuts',
+  'Terracotta garden pots',
+  'Warm sandstone patio pavers',
+  'Brushed brass cabinet handles'
+]
+
+const MATERIAL_TAGS = ['CERAMIC', 'PINE', 'TERRACOTTA', 'SANDSTONE', 'BRASS']
+
+function Material({ tone, image }: { tone: number; image?: string }) {
+  const safeTone = ((tone % 5) + 5) % 5
+  const imgSrc = image || MATERIAL_IMAGES[safeTone]
+  const label = MATERIAL_LABELS[safeTone]
+  const tag = MATERIAL_TAGS[safeTone]
+
   return (
     <div
       className={`material-art tone-${tone}`}
-      aria-label={[
-        'Illustration of blue ceramic tiles',
-        'Illustration of timber offcuts',
-        'Illustration of terracotta pots',
-        'Illustration of sandstone pavers',
-        'Illustration of brass cabinet handles'
-      ][tone]}
+      aria-label={label}
       role="img"
     >
-      <div className="objects">
-        {Array.from({ length: tone === 2 ? 3 : tone === 4 ? 4 : 9 }, (_, i) => (
-          <i key={i} />
-        ))}
-      </div>
+      <img
+        src={imgSrc}
+        alt={label}
+        className="material-real-img"
+        loading="lazy"
+        onError={(e) => {
+          (e.currentTarget as HTMLElement).style.display = 'none'
+        }}
+      />
+      <div className="material-overlay-gradient" />
       <span className="art-caption">
-        MINDFUL GIVEAWAY / {['CERAMIC', 'PINE', 'TERRACOTTA', 'SANDSTONE', 'BRASS'][tone]}
+        MINDFUL GIVEAWAY / {tag}
       </span>
     </div>
   )

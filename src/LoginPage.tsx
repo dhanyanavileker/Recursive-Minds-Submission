@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Leaf, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useAuth } from './AuthContext'
@@ -8,13 +8,6 @@ export function LoginPage() {
   const { signInWithGoogle, signInAsGuest } = useAuth()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [motionPaused, setMotionPaused] = useState(() => document.hidden)
-  useEffect(() => {
-    const updateVisibility = () => setMotionPaused(document.hidden)
-    document.addEventListener('visibilitychange', updateVisibility)
-    return () => document.removeEventListener('visibilitychange', updateVisibility)
-  }, [])
-
 
   const handleGoogleSignIn = async () => {
     setLoading(true)
@@ -36,23 +29,41 @@ export function LoginPage() {
 
   return (
     <div className="login-page">
-      {/* Decorative garden breeze; motion pauses when the page is hidden. */}
-      <div className="login-bg" aria-hidden="true" data-paused={motionPaused}>
-        <span className="login-floating-leaf" />
-        <span className="login-floating-leaf leaf-two" />
-        <span className="login-floating-leaf leaf-three" />
-        <div className="login-gradient login-gradient-1" />
-        <div className="login-gradient login-gradient-2" />
-        <div className="login-gradient login-gradient-3" />
-        <div className="login-orbs">
-          {Array.from({ length: 6 }, (_, i) => (
-            <div key={i} className={`login-orb orb-${i}`} />
-          ))}
-        </div>
-      </div>
+      {/* Quiet material-to-object sketches frame the sign-in area. */}
+      <div className="material-story-background" aria-hidden="true" />
 
-      {/* Sign-in card */}
+      {/* Main Dual-Pane Login Card */}
       <div className="login-card">
+        {/* Left Editorial Visual Pane with Realistic Makerspace Image */}
+        <div className="login-visual-pane">
+          <img
+            src="/images/login-hero.jpg"
+            alt="Artisan architectural salvage and circular maker workshop"
+            className="login-visual-img"
+          />
+
+          <div className="login-visual-overlay" />
+
+          <div className="login-visual-content">
+            <div className="login-visual-badge">
+              <Leaf size={14} />
+              <span>Mindful Circular Network</span>
+            </div>
+            <div className="login-visual-quote">
+              <h3>Every leftover has another beginning.</h3>
+              <p>
+                Connecting neighbours with surplus tiles, timber offcuts, and stone to local makers across Bengaluru.
+              </p>
+            </div>
+            <div className="login-visual-pills">
+              <span className="visual-pill">100% Free Giveaways</span>
+              <span className="visual-pill">Doorstep Porter Logistics</span>
+              <span className="visual-pill">AI Project Copilot</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Authentication Pane */}
         <div className="login-card-inner">
           {/* Brand */}
           <div className="login-brand">
@@ -67,10 +78,9 @@ export function LoginPage() {
 
           {/* Welcome text */}
           <div className="login-welcome">
-            <h2>Welcome back</h2>
+            <h2>Welcome to Re:Source</h2>
             <p>
-              Sign in to discover reusable materials, plan your next build, and
-              connect with your local maker community.
+              Discover reusable materials, plan your next build with AI, and connect with your local circular community.
             </p>
           </div>
 
@@ -113,13 +123,13 @@ export function LoginPage() {
             style={{
               marginTop: '10px',
               width: '100%',
-              padding: '10px 16px',
+              padding: '11px 16px',
               borderRadius: '12px',
               background: '#DDEDE5',
               border: '1px solid #B8CBBF',
-              color: '#202725',
+              color: '#18332F',
               fontSize: '0.85rem',
-              fontWeight: 500,
+              fontWeight: 600,
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -162,24 +172,24 @@ export function LoginPage() {
           {/* Feature highlights */}
           <div className="login-features">
             <div className="login-feature">
-              <div className="login-feature-dot" style={{ background: 'var(--login-accent-green)' }} />
-              <span>Find leftover materials near you</span>
+              <div className="login-feature-dot" style={{ background: '#2F6B56' }} />
+              <span>Find leftover materials near you (Bengaluru)</span>
             </div>
             <div className="login-feature">
-              <div className="login-feature-dot" style={{ background: 'var(--login-accent-blue)' }} />
-              <span>AI-powered project planning</span>
+              <div className="login-feature-dot" style={{ background: '#2F6B56' }} />
+              <span>AI copilot auto-blueprints your build</span>
             </div>
             <div className="login-feature">
-              <div className="login-feature-dot" style={{ background: 'var(--login-accent-amber)' }} />
-              <span>List your leftovers in minutes</span>
+              <div className="login-feature-dot" style={{ background: '#D8A84E' }} />
+              <span>Earn Circular Karma with every giveaway</span>
             </div>
           </div>
-        </div>
 
-        {/* Footer */}
-        <div className="login-footer">
-          <Leaf size={13} />
-          <span>Made for another beginning · By Recursive Minds</span>
+          {/* Footer */}
+          <div className="login-footer">
+            <Leaf size={13} />
+            <span>Made for another beginning · <strong style={{ color: '#7041D9', fontWeight: 600 }}>By Recursive Minds</strong></span>
+          </div>
         </div>
       </div>
     </div>
