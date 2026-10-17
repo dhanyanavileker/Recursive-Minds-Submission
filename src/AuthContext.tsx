@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
-import { onAuthStateChanged, signInWithPopup, signOut as firebaseSignOut, type User } from 'firebase/auth'
-import { auth, googleProvider } from './firebase'
+import { onAuthStateChanged, signInWithPopup, signOut as firebaseSignOut, type User, type Auth } from 'firebase/auth'
+import { auth, googleProvider, initFirebaseWithConfig } from './firebase'
 
 export type AuthUser = {
   displayName: string | null
@@ -31,60 +31,95 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!auth) {
-      const stored = localStorage.getItem('resource-guest-user')
-      if (stored) {
-        try {
-          setUser(JSON.parse(stored))
-        } catch (e) {
-          console.error(e)
-        }
-      } else {
-        setUser(null)
-      }
-      setLoading(false)
-      return
-    }
+    let unsubscribe: (() => void) | undefined
 
-    try {
-      const unsubscribe = onAuthStateChanged(auth, (firebaseUser: User | null) => {
-        if (firebaseUser) {
-          setUser({
-            displayName: firebaseUser.displayName,
-            photoURL: firebaseUser.photoURL,
-            email: firebaseUser.email,
-            uid: firebaseUser.uid,
-            isGuest: false
-          })
-          localStorage.removeItem('resource-guest-user')
-        } else {
-          // If guest user exists in localStorage, keep it
-          const stored = localStorage.getItem('resource-guest-user')
-          if (stored) {
-            try {
-              setUser(JSON.parse(stored))
-            } catch (e) {
-              console.error(e)
-            }
-          } else {
-            setUser(null)
+    const setupAuth = (activeAuth: Auth | null) => {
+      if (!activeAuth) {
+        const stored = localStorage.getItem('resource-guest-user')
+        if (stored) {
+          try {
+            setUser(JSON.parse(stored))
+          } catch (e) {
+            console.error(e)
           }
+        } else {
+          setUser(null)
         }
         setLoading(false)
-      })
-      return unsubscribe
-    } catch (err) {
-      console.warn('Firebase auth listener failed or not configured:', err)
-      setLoading(false)
+        return
+      }
+
+      try {
+        unsubscribe = onAuthStateChanged(activeAuth, (firebaseUser: User | null) => {
+          if (firebaseUser) {
+            setUser({
+              displayName: firebaseUser.displayName,
+              photoURL: firebaseUser.photoURL,
+              email: firebaseUser.email,
+              uid: firebaseUser.uid,
+              isGuest: false
+            })
+            localStorage.removeItem('resource-guest-user')
+          } else {
+            const stored = localStorage.getItem('resource-guest-user')
+            if (stored) {
+              try {
+                setUser(JSON.parse(stored))
+              } catch (e) {
+                console.error(e)
+              }
+            } else {
+              setUser(null)
+            }
+          }
+          setLoading(false)
+        })
+      } catch (err) {
+        console.warn('Firebase auth listener failed:', err)
+        setLoading(false)
+      }
     }
+
+    // 1. If auth is already ready (build-time VITE env vars)
+    if (auth) {
+      setupAuth(auth)
+      return () => unsubscribe?.()
+    }
+
+    // 2. Fetch runtime config from Cloud Run /api/config
+    fetch('/api/config')
+      .then(res => res.json())
+      .then(data => {
+        const runtimeAuth = data?.firebase?.apiKey ? initFirebaseWithConfig(data.firebase) : null
+        setupAuth(runtimeAuth || auth)
+      })
+      .catch(() => {
+        setupAuth(auth)
+      })
+
+    return () => unsubscribe?.()
   }, [])
 
   const signInWithGoogle = async () => {
-    if (!auth) {
+    let activeAuth = auth
+    if (!activeAuth) {
+      try {
+        const res = await fetch('/api/config')
+        const data = await res.json()
+        if (data?.firebase?.apiKey) {
+          activeAuth = initFirebaseWithConfig(data.firebase)
+        }
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
+    if (!activeAuth) {
       alert('Google Firebase Auth is not configured on this deployment. Please click "Continue as Demo Guest" to test the app!')
       return
     }
-    const res = await signInWithPopup(auth, googleProvider)
+
+    const res = await signInWithPopup(activeAuth, googleProvider)
     setUser({
       displayName: res.user.displayName,
       photoURL: res.user.photoURL,
