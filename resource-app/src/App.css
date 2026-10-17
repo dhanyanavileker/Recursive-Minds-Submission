@@ -212,17 +212,367 @@
   .header-pills{display:none}
 }
 
-/* Re:Source product identity; AI accents remain small and explicit. */
-:root{color-scheme:light;--forest:#18332F;--leaf:#2F6B56;--cream:#F7F3E8;--mint:#DDEDE5;--charcoal:#202725;--amber:#D8A84E;--ai-cyan:#25D9F0;--ai-violet:#7041D9}
-h1,h2,h3,.brand,.footer-brand{color:var(--forest)}
-.categories .chosen,.skip,.message-row.user .message-bubble{background:var(--leaf);color:var(--cream)}
-.condition{background:var(--forest);color:var(--cream)}
-.match-status.enough{background:var(--mint);color:var(--forest);border-color:var(--leaf)}
-.match-status.short{background:#F1E4C8;color:#72551F;border-color:var(--amber)}
-.notice,.pickup-check{background:var(--mint);color:var(--forest)}
-.assistant-mark,.message-avatar{background:var(--forest);color:var(--ai-cyan);border-color:var(--forest)}
-.build-advice-head>svg{color:var(--ai-violet)}
-.footer-credit{color:var(--ai-violet)}
+/* ══════════════════════════════════════════════════════════════════════
+   REFINED DEEP FOREST PALETTE
+   Warm cream editorial canvas with Deep Forest (#18332F) statement cards & accents
+   ══════════════════════════════════════════════════════════════════════ */
+:root {
+  color-scheme: light;
+  --forest: #18332F;
+  --forest-dark: #132A26;
+  --leaf: #2F6B56;
+  --leaf-bright: #3FA585;
+  --cream: #F7F3E8;
+  --charcoal: #202725;
+  --sage-muted: #52665D;
+  --mint: #DDEDE5;
+  --border-light: #B8CBBF;
+  --amber: #D8A84E;
+  --amber-soft: #E2C598;
+  --ai-cyan: #25D9F0;
+  --ai-violet: #7041D9;
+}
+
+/* Global Canvas: Warm, airy, readable cream background */
+body, html, #root, .app {
+  background-color: #F7F3E8 !important;
+  color: #202725 !important;
+}
+
+main {
+  background: transparent !important;
+}
+
+/* Typography */
+h1, h2, h3, h4, .brand, .footer-brand {
+  color: #18332F !important;
+}
+.dashboard-hero h1 span {
+  color: #2F6B56 !important;
+}
+.hero-tagline, .intro p, .listing-flow > p, .section-title p, .inventory-count, .brief-facts dt {
+  color: #52665D !important;
+}
+
+/* Header & Navigation: Clean cream with deep forest accents */
+header, .app > header {
+  background-color: #F7F3E8 !important;
+  border-bottom: 1px solid #B8CBBF !important;
+}
+header nav button {
+  color: #52665D !important;
+}
+header nav button:hover {
+  color: #18332F !important;
+}
+header nav .active {
+  color: #2F6B56 !important;
+}
+header nav .active:after {
+  background: #2F6B56 !important;
+}
+.brand {
+  color: #18332F !important;
+}
+.brand-mark {
+  background: transparent !important;
+  border: 1px solid #B8CBBF !important;
+  color: #2F6B56 !important;
+}
+.colon, .brand-dot {
+  color: #2F6B56 !important;
+}
+.count {
+  background: #DDEDE5 !important;
+  color: #18332F !important;
+}
+
+/* Demo Status Bar */
+.demo-bar {
+  background: #F7F3E8 !important;
+  border-bottom: 1px solid #B8CBBF !important;
+  color: #52665D !important;
+}
+.status-dot {
+  background: #2F6B56 !important;
+}
+
+/* Mode Switcher */
+.mode-toggle {
+  background: #F7F3E8 !important;
+  border-color: #B8CBBF !important;
+}
+.mode-toggle button {
+  color: #52665D !important;
+}
+.mode-toggle button:hover {
+  color: #202725 !important;
+}
+.mode-toggle button.active {
+  background: #2F6B56 !important;
+  color: #F7F3E8 !important;
+  box-shadow: 0 2px 8px rgba(24, 51, 47, 0.15) !important;
+}
+
+/* Header Pills */
+.karma-header-pill {
+  background: #DDEDE5 !important;
+  border-color: #B8CBBF !important;
+  color: #2F6B56 !important;
+}
+.porter-header-pill {
+  background: #DDEDE5 !important;
+  border-color: #B8CBBF !important;
+  color: #2F6B56 !important;
+}
+.pulsing-dot, .live-dot {
+  background: #2F6B56 !important;
+}
+
+/* Action Buttons */
+.list-button, .advance-sim-btn {
+  background: #2F6B56 !important;
+  color: #F7F3E8 !important;
+  border-color: #2F6B56 !important;
+}
+.list-button:hover, .advance-sim-btn:hover {
+  background: #245443 !important;
+}
+
+/* Dashboard Pitch Badge */
+.pitch-badge {
+  background: #F7F3E8 !important;
+  border-color: #B8CBBF !important;
+  color: #2F6B56 !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   STATEMENT PIECES: THE 3 INTERACTIVE ENTRY CARDS IN DEEP FOREST (#18332F)
+   Inspired by the login card that anchors the brand
+   ══════════════════════════════════════════════════════════════════════ */
+.entry-card {
+  background: #18332F !important;
+  border: 1px solid #2F6B56 !important;
+  border-radius: 14px !important;
+  box-shadow: 0 16px 36px rgba(24, 51, 47, 0.16) !important;
+  color: #F7F3E8 !important;
+}
+.entry-card:hover {
+  border-color: #3FA585 !important;
+  transform: translateY(-3px);
+  box-shadow: 0 22px 46px rgba(24, 51, 47, 0.24) !important;
+}
+.entry-icon-wrap {
+  background: rgba(221, 237, 229, 0.12) !important;
+  border: 1px solid rgba(221, 237, 229, 0.25) !important;
+  color: #86EFAC !important;
+}
+.entry-pill {
+  background: rgba(221, 237, 229, 0.14) !important;
+  border: 1px solid rgba(221, 237, 229, 0.28) !important;
+  color: #E2C598 !important;
+}
+.entry-card h3 {
+  color: #F7F3E8 !important;
+}
+.entry-card p {
+  color: #CFDCD1 !important;
+}
+.build-chip-btn {
+  background: rgba(221, 237, 229, 0.12) !important;
+  border: 1px solid rgba(221, 237, 229, 0.22) !important;
+  color: #F7F3E8 !important;
+}
+.build-chip-btn:hover {
+  background: #2F6B56 !important;
+  border-color: #86EFAC !important;
+  color: #F7F3E8 !important;
+}
+.entry-action-btn {
+  background: #F2E6CF !important;
+  color: #18332F !important;
+  border: 1px solid #F2E6CF !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+}
+.entry-action-btn:hover {
+  background: #FFF3DC !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   STATEMENT PIECE: CIRCULAR IMPACT TICKER BAR IN DEEP FOREST (#18332F)
+   ══════════════════════════════════════════════════════════════════════ */
+.impact-ticker-bar {
+  background: #18332F !important;
+  border: 1px solid #2F6B56 !important;
+  color: #F7F3E8 !important;
+  box-shadow: 0 10px 24px rgba(24, 51, 47, 0.12) !important;
+}
+.impact-stat-item strong {
+  color: #86EFAC !important;
+}
+.impact-stat-item span {
+  color: #CFDCD1 !important;
+}
+.active-porter-strip {
+  background: rgba(221, 237, 229, 0.15) !important;
+  border: 1px solid rgba(221, 237, 229, 0.3) !important;
+  color: #F7F3E8 !important;
+}
+.active-porter-strip:hover {
+  border-color: #86EFAC !important;
+}
+
+/* Surplus Material Cards & Realistic Grid */
+.material-card, .art-wrap {
+  background: #F7F3E8 !important;
+  border: 1px solid #B8CBBF !important;
+  border-radius: 9px !important;
+}
+.card-title {
+  color: #202725 !important;
+}
+.card-title svg {
+  color: #52665D !important;
+}
+.material-meta {
+  color: #52665D !important;
+}
+.material-meta strong {
+  color: #2F6B56 !important;
+}
+.material-meta small {
+  color: #52665D !important;
+}
+.card-bottom {
+  color: #52665D !important;
+}
+.save {
+  background: #DDEDE5 !important;
+  color: #18332F !important;
+  border: 1px solid #B8CBBF !important;
+}
+.save.saved {
+  background: #2F6B56 !important;
+  color: #F7F3E8 !important;
+}
+.condition {
+  background: #18332F !important;
+  color: #F7F3E8 !important;
+}
+.demo-tag {
+  background: rgba(247, 243, 232, 0.95) !important;
+  color: #202725 !important;
+}
+
+/* Category Filters */
+.categories button {
+  background: #F7F3E8 !important;
+  border-color: #B8CBBF !important;
+  color: #52665D !important;
+}
+.categories button:hover {
+  border-color: #2F6B56 !important;
+  color: #202725 !important;
+}
+.categories .chosen {
+  background: #2F6B56 !important;
+  color: #F7F3E8 !important;
+  border-color: #2F6B56 !important;
+}
+.filter-options {
+  color: #52665D !important;
+}
+.filter-options select {
+  background: #F7F3E8 !important;
+  border: 1px solid #B8CBBF !important;
+  color: #202725 !important;
+}
+
+/* Request Box */
+.request-box {
+  background: #F7F3E8 !important;
+  border: 1px solid #B8CBBF !important;
+  box-shadow: 0 15px 36px rgba(24, 51, 47, 0.1) !important;
+}
+.request-heading svg {
+  color: #2F6B56 !important;
+}
+.request-heading h2 {
+  color: #202725 !important;
+}
+.request-heading > span {
+  color: #52665D !important;
+  border-color: #B8CBBF !important;
+}
+.request-box textarea {
+  color: #202725 !important;
+}
+.request-box textarea::placeholder {
+  color: #52665D !important;
+}
+
+/* Modals & Dialogs */
+.delivery-modal, .rewards-modal, .detail-dialog, [role="dialog"] {
+  background: #F7F3E8 !important;
+  color: #202725 !important;
+  border: 1px solid #B8CBBF !important;
+}
+.delivery-title, .rewards-title, .detail-dialog h3 {
+  color: #18332F !important;
+}
+.delivery-desc, .rewards-desc, .detail-dialog p {
+  color: #52665D !important;
+}
+.delivery-route-card, .driver-card, .otp-container, .milestones-timeline, .simulated-map-container, .tier-card, .metric-box, .badge-card, .perk-row, .how-to-earn-card {
+  background: #DDEDE5 !important;
+  border-color: #B8CBBF !important;
+  color: #202725 !important;
+}
+.driver-name-row strong, .item-name, .tier-name, .metric-num, .badge-card strong, .perk-info strong {
+  color: #18332F !important;
+}
+
+/* AI Copilot & Chat Window */
+.chat-window, .agent-chat-container {
+  background: #F7F3E8 !important;
+  border-color: #B8CBBF !important;
+}
+.chat-window-head, .agent-top-bar {
+  background: #18332F !important;
+  border-bottom: 1px solid #2F6B56 !important;
+  color: #F7F3E8 !important;
+}
+.chat-window-head strong, .agent-title-row strong {
+  color: #F7F3E8 !important;
+}
+.chat-sidebar, .agent-sidebar {
+  background: #F7F3E8 !important;
+  border-color: #B8CBBF !important;
+}
+.conversation-item:hover, .conversation-item.active, .agent-conversation-item:hover, .agent-conversation-item.active {
+  background: #DDEDE5 !important;
+  color: #2F6B56 !important;
+}
+.message-bubble, .agent-message-row.assistant .message-text-bubble {
+  background: #DDEDE5 !important;
+  color: #202725 !important;
+  border: 1px solid #B8CBBF !important;
+}
+.message-row.user .message-bubble, .agent-message-row.user .message-text-bubble {
+  background: #2F6B56 !important;
+  color: #F7F3E8 !important;
+}
+
+/* Footer */
+footer {
+  background: #F7F3E8 !important;
+  border-top: 1px solid #B8CBBF !important;
+  color: #52665D !important;
+}
+.footer-brand {
+  color: #18332F !important;
+}
 
 /* Realistic Surplus Material Photography */
 .material-art{height:210px;position:relative;overflow:hidden;background:#DDEDE5;border-radius:10px;display:block}
@@ -231,3 +581,5 @@ h1,h2,h3,.brand,.footer-brand{color:var(--forest)}
 .material-overlay-gradient{position:absolute;inset:0;background:linear-gradient(180deg,rgba(24,51,47,.04) 0%,rgba(24,51,47,.2) 60%,rgba(24,51,47,.72) 100%);pointer-events:none}
 .art-caption{position:absolute;bottom:8px;right:8px;font-size:7.5px;font-weight:700;letter-spacing:.8px;color:#F7F3E8;background:rgba(24,51,47,.85);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);padding:3px 8px;border-radius:4px;border:1px solid rgba(255,255,255,.15);z-index:2}
 .art-wrap .condition,.art-wrap .demo-tag,.art-wrap .save{z-index:2}
+
+

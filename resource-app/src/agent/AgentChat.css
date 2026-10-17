@@ -1876,16 +1876,107 @@
 .live-status-pill.live-active .live-dot{background:#7041D9;box-shadow:none}
 .live-dot{background:#2F6B56;box-shadow:none}
 .agent-message-row.user .message-text-bubble{background:#2F6B56;color:#F7F3E8}
-.active-skill-tag.analyze,.active-skill-tag.build_plan{color:#7041D9;background:#F7F3E8;border-color:#7041D9}
-.agent-chat-container{box-shadow:0 12px 32px rgba(24,51,47,.1)}
-.agent-top-bar{background:#F7F3E8;backdrop-filter:none}
+/* ══════════════════════════════════════════════════════════════════════
+   AGENT CHAT: REFINED PALETTE
+   Warm cream workspace with Deep Forest (#18332F) header & accents
+   ══════════════════════════════════════════════════════════════════════ */
+.agent-chat-container {
+  background: #F7F3E8 !important;
+  border-color: #B8CBBF !important;
+  box-shadow: 0 16px 36px rgba(24, 51, 47, 0.1) !important;
+}
+.agent-sidebar {
+  background: #F7F3E8 !important;
+  border-color: #B8CBBF !important;
+}
+.agent-top-bar {
+  background: #18332F !important;
+  border-bottom: 1px solid #2F6B56 !important;
+  color: #F7F3E8 !important;
+}
+.agent-title-row strong {
+  color: #F7F3E8 !important;
+}
+.agent-chat-main {
+  background: #F7F3E8 !important;
+}
+.agent-conversation-item {
+  background: #F7F3E8 !important;
+  color: #52665D !important;
+}
+.agent-conversation-item:hover, .agent-conversation-item.active {
+  background: #DDEDE5 !important;
+  border-color: #B8CBBF !important;
+  color: #2F6B56 !important;
+}
+.agent-conversation-item.active .conv-title {
+  color: #2F6B56 !important;
+}
+.conv-skill-badge {
+  color: #52665D !important;
+}
+.conv-icon-col {
+  background: #DDEDE5 !important;
+  color: #2F6B56 !important;
+}
+.agent-message-row.assistant .message-text-bubble {
+  background: #DDEDE5 !important;
+  border: 1px solid #B8CBBF !important;
+  color: #202725 !important;
+}
+.agent-message-row.user .message-text-bubble {
+  background: #2F6B56 !important;
+  color: #F7F3E8 !important;
+}
+.agent-composer, .composer-box {
+  background: #F7F3E8 !important;
+  border-color: #B8CBBF !important;
+}
+.composer-textarea {
+  color: #202725 !important;
+  background: transparent !important;
+}
+.composer-textarea::placeholder {
+  color: #52665D !important;
+}
+.composer-textarea:focus {
+  border-color: #2F6B56 !important;
+  outline: 2px solid #2F6B56 !important;
+}
+.agent-send-btn, .procure-confirm-btn, .deploy-procure-btn, .search-mat-btn, .sub-action-btn {
+  background: #2F6B56 !important;
+  color: #F7F3E8 !important;
+}
+.agent-send-btn:hover:not(:disabled), .procure-confirm-btn:hover, .deploy-procure-btn:hover {
+  background: #245443 !important;
+}
+.conv-title, .skill-card p, .skill-card li {
+  color: #202725 !important;
+}
+.skill-card, .procure-deal-card, .deal-summary-card, .matched-listing-card {
+  background: #DDEDE5 !important;
+  border-color: #B8CBBF !important;
+  color: #202725 !important;
+}
+.skill-pill-btn {
+  background: #F7F3E8 !important;
+  border-color: #B8CBBF !important;
+  color: #52665D !important;
+}
+.skill-pill-btn:hover, .skill-pill-btn.selected {
+  background: #DDEDE5 !important;
+  border-color: #2F6B56 !important;
+  color: #2F6B56 !important;
+}
+.agent-chat-thread {
+  scrollbar-color: #B8CBBF #F7F3E8 !important;
+}
+.sidebar-footer-stats {
+  border-top-color: #B8CBBF !important;
+}
+.saved-counter-pill {
+  background: #DDEDE5 !important;
+  border-color: #B8CBBF !important;
+  color: #2F6B56 !important;
+}
 
-.agent-send-btn,.procure-confirm-btn,.deploy-procure-btn,.search-mat-btn,.sub-action-btn{background:#2F6B56;color:#F7F3E8}
-.agent-send-btn:hover:not(:disabled),.procure-confirm-btn:hover,.deploy-procure-btn:hover{background:#18332F}
-.barcode-stripes{background:repeating-linear-gradient(90deg,#18332F 0 2px,transparent 2px 4px,#18332F 4px 7px);opacity:1}
-.composer-textarea{color:#202725}
-.composer-textarea:focus{border-color:#2F6B56;outline:2px solid #2F6B56;outline-offset:2px;box-shadow:none}
-
-.agent-message-row.assistant .message-text-bubble,.agent-title-row strong,.conv-title,.composer-textarea,.skill-card p,.skill-card li{color:#202725}
-.agent-chat-thread{scrollbar-color:#B8CBBF #F7F3E8}
-.composer-textarea::placeholder{color:#52665D;opacity:1}
