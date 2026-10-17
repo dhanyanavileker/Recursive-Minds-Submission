@@ -244,8 +244,8 @@ main {
 }
 
 /* Typography */
-h1, h2, h3, h4, .brand, .footer-brand {
-  color: #18332F !important;
+h1:not(.login-page *), h2:not(.login-page *), h3:not(.login-page *), h4:not(.login-page *), .brand, .footer-brand {
+  color: #18332F;
 }
 .dashboard-hero h1 span {
   color: #2F6B56 !important;
