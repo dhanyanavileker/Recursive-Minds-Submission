@@ -39,6 +39,21 @@ app.get('/api/health', (req, res) => {
   })
 })
 
+// Runtime client configuration endpoint (supplies Cloud Run env vars to browser)
+app.get('/api/config', (req, res) => {
+  res.json({
+    firebase: {
+      apiKey: process.env.VITE_FIREBASE_API_KEY || process.env.FIREBASE_API_KEY || '',
+      authDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN || process.env.FIREBASE_AUTH_DOMAIN || '',
+      projectId: process.env.VITE_FIREBASE_PROJECT_ID || process.env.FIREBASE_PROJECT_ID || '',
+      appId: process.env.VITE_FIREBASE_APP_ID || process.env.FIREBASE_APP_ID || '',
+      storageBucket: process.env.VITE_FIREBASE_STORAGE_BUCKET || process.env.FIREBASE_STORAGE_BUCKET || '',
+      messagingSenderId: process.env.VITE_FIREBASE_MESSAGING_SENDER_ID || process.env.FIREBASE_MESSAGING_SENDER_ID || ''
+    },
+    liveAI: Boolean(genAI)
+  })
+})
+
 // Secure AI Photo Analysis proxy
 app.post('/api/gemini/analyze', async (req, res) => {
   if (!genAI) {
