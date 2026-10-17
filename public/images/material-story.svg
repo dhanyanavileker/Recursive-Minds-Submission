@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 1000" fill="none">
+<defs><pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" stroke="#52665D" stroke-opacity=".045"/></pattern><pattern id="grain" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="2" cy="4" r=".5" fill="#52665D" opacity=".13"/></pattern></defs>
+<path fill="#F7F3E8" d="M0 0h1440v1000H0z"/><path fill="url(#grid)" d="M0 0h1440v1000H0z"/><path fill="url(#grain)" d="M0 0h1440v1000H0z"/>
+<g stroke="#789084" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round">
+<!-- Salvaged boards, with end grain and construction guides. -->
+<g transform="translate(28 90) rotate(-14 100 80)"><path d="m0 30 170-20 24 17L24 48Z" fill="#E8DDC3"/><path d="M24 48v38l170-21V27M0 30v37l24 19" fill="#EEE7D7"/><path d="m40 57 140-17M43 70l125-15M8 39l8 6v28M54 23l84-10" opacity=".6"/><path d="m16 101 155-18 24 17-155 19Z" fill="#E0E7DA"/><path d="M40 119v27l155-18v-28M16 101v26l24 19"/><path d="m55 129 127-16"/></g>
+<g transform="translate(20 420) rotate(12 90 70)"><path d="m10 0 79 5 14 53-49 25L0 48Z" fill="#DDE7DC"/><path d="m108 14 60 9 13 73-46-9-25-33Z" fill="#E7DDCB"/><path d="m26 100 49-12 40 34-16 49-73-10Z" fill="#DBE3D7"/><path d="m19 13 53 4M33 144l52 8M123 29l33 4" opacity=".45"/></g>
+<!-- Pencil paths suggest the journey without crossing the form. -->
+<path d="M146 276C220 231 225 123 388 104S858 43 1080 104" stroke-dasharray="5 9" opacity=".65"/><path d="m1066 94 16 11-18 7"/>
+<path d="M125 655C126 824 340 903 582 899s449 39 625-68" stroke-dasharray="5 9" opacity=".65"/><path d="m1189 831 20-3-7 18"/>
+<!-- Finished timber planter, measured like an architectural sketch. -->
+<g transform="translate(1220 150)"><path d="m0 70 91-18 83 28-93 22Z" fill="#E7DDC8"/><path d="M0 70v81l81 33v-82M81 184l93-26V80" fill="#E1E7DA"/><path d="m0 96 81 32 93-23M0 124l81 31 93-25M13 157v30m56-8v31m91-48v28"/><path d="M77 78c-8-28 8-57 18-84m-16 64c-28-3-35-17-36-30 23 1 33 11 36 30Zm8-27c26 2 35-8 42-26-22-1-35 6-42 26Z" fill="#CEDCCB"/><path d="M-14 205h199m-184-5v10m173-10v10" stroke-width=".8" opacity=".5"/></g>
+<!-- Stool assembled from offcuts. -->
+<g transform="translate(1250 622)"><path d="m0 27 68-27 89 32-70 30Z" fill="#E7DDC8"/><path d="M0 27v15l87 34 70-31V32M87 62v14M14 48 3 163l16 6L36 56m94-1 22 108 14-5-18-111M78 73l-8 118 18 5 11-124" fill="#E4E8DC"/><path d="m24 38 70-27M52 49l70-28M23 122l49 20 73-30"/><path d="M-17 211h196m-174-5v10m161-10v10" opacity=".5" stroke-width=".8"/></g>
+<g transform="translate(98 844) rotate(-8)"><path d="M0 0h146v89H0z" fill="#EEE7D7"/><path d="m8 8 45 2-8 33H8Zm52 2 33-2 7 34-48 1Zm41-2h37v35l-31-2ZM8 50l38 1 12 30H8Zm45 0 44-1-9 32H65Zm53 0 32 1v30H96Z" fill="#D8E2D3"/></g>
+</g></svg>
