@@ -173,7 +173,23 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(distPath, 'index.html'))
 })
 
+const PORT = Number(process.env.PORT) || 8080
+
+// Primary listener on Cloud Run's requested PORT
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Re:Source Cloud Run server listening on port ${PORT}`)
   console.log(`Live Gemini AI: ${genAI ? 'ENABLED (Server Key)' : 'OFFLINE (Demo Mode)'}`)
 })
+
+// Fail-safe dual listener on port 80 if PORT was not 80 (handles Cloud Run port 80 health checks)
+if (PORT !== 80) {
+  try {
+    app.listen(80, '0.0.0.0', () => {
+      console.log('Re:Source Cloud Run server also listening on port 80')
+    }).on('error', (err) => {
+      console.log('Dual port 80 listener note:', err.message)
+    })
+  } catch (e) {
+    // Ignore if unprivileged
+  }
+}
