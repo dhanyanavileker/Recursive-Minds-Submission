@@ -168,12 +168,10 @@ Return a STRICT JSON object with these EXACT keys:
 const distPath = path.join(__dirname, 'dist')
 app.use(express.static(distPath))
 
-// SPA Fallback: Any other route serves index.html
-app.get('*', (req, res) => {
+// SPA Fallback: Any other unmatched route serves index.html (Express 5 compatible)
+app.use((req, res) => {
   res.sendFile(path.join(distPath, 'index.html'))
 })
-
-const PORT = Number(process.env.PORT) || 8080
 
 // Primary listener on Cloud Run's requested PORT
 app.listen(PORT, '0.0.0.0', () => {
