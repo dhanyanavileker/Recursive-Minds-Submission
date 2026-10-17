@@ -234,6 +234,18 @@
   border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
+.live-status-pill.live-active {
+  background: rgba(139, 92, 246, 0.2);
+  border-color: rgba(139, 92, 246, 0.5);
+  color: #c4b5fd;
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.25);
+}
+
+.live-status-pill.live-active .live-dot {
+  background: #a855f7;
+  box-shadow: 0 0 8px #a855f7;
+}
+
 .live-dot {
   width: 6px;
   height: 6px;
@@ -1251,6 +1263,597 @@
   margin-top: 6px;
 }
 
+/* ========================================================
+   AUTONOMOUS PROCUREMENT & DEMOLITION BROKER STYLES
+   ======================================================== */
+
+.active-skill-tag.procure {
+  background: rgba(236, 72, 153, 0.12);
+  color: #f472b6;
+  border: 1px solid rgba(236, 72, 153, 0.3);
+}
+
+.skill-pill-btn.selected[title*="Autonomous"],
+.skill-pill-btn.selected:hover {
+  background: rgba(236, 72, 153, 0.2);
+  border-color: #ec4899;
+  color: #f472b6;
+}
+
+/* Procurement Card */
+.skill-card.procurement-card {
+  border-color: rgba(236, 72, 153, 0.35);
+  background: linear-gradient(160deg, rgba(236, 72, 153, 0.07) 0%, rgba(15, 23, 42, 0.85) 60%);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45), 0 0 20px rgba(236, 72, 153, 0.08);
+}
+
+.procure-bot-badge {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(236, 72, 153, 0.4);
+}
+
+.procure-status-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  border-radius: 100px;
+  padding: 4px 10px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #34d399;
+}
+
+/* Progress Track */
+.procure-progress-track {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.progress-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.progress-step .step-circle {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(16, 185, 129, 0.2);
+  border: 1.5px solid #10b981;
+  color: #10b981;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  flex-shrink: 0;
+}
+
+.progress-step.highlight .step-circle {
+  background: #10b981;
+  color: #041f14;
+}
+
+.progress-step .step-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.progress-step .step-text strong {
+  font-size: 0.75rem;
+  color: #f1f5f9;
+  line-height: 1.2;
+}
+
+.progress-step .step-text small {
+  font-size: 0.68rem;
+  color: #94a3b8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
+}
+
+.progress-line {
+  height: 2px;
+  flex: 0 0 20px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.progress-line.active {
+  background: #10b981;
+}
+
+/* Deal Summary Box */
+.procure-deal-summary {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+}
+
+.deal-info-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.deal-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+}
+
+.deal-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #94a3b8;
+  font-size: 0.74rem;
+  min-width: 130px;
+}
+
+.deal-info-block strong {
+  color: #f8fafc;
+}
+
+.deal-pricing-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.35);
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(236, 72, 153, 0.2);
+}
+
+.original-price-row {
+  font-size: 0.72rem;
+  color: #94a3b8;
+}
+
+.original-price-row del {
+  color: #ef4444;
+  margin-left: 4px;
+}
+
+.negotiated-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: #e2e8f0;
+}
+
+.agreed-price {
+  font-size: 1.25rem;
+  color: #34d399;
+  font-weight: 700;
+}
+
+.savings-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(236, 72, 153, 0.15);
+  border: 1px solid rgba(236, 72, 153, 0.35);
+  color: #f472b6;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+/* Negotiation Transcript Drawer */
+.negotiation-drawer {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.toggle-transcript-btn {
+  width: 100%;
+  padding: 9px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: none;
+  border: none;
+  color: #cbd5e1;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.toggle-transcript-btn:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: #f8fafc;
+}
+
+.toggle-transcript-btn span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.transcript-chat-box {
+  padding: 10px 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 260px;
+  overflow-y: auto;
+  background: rgba(10, 14, 23, 0.6);
+}
+
+.transcript-msg-item {
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 0.76rem;
+  line-height: 1.4;
+  border: 1px solid transparent;
+}
+
+.transcript-msg-item.agent {
+  background: rgba(59, 130, 246, 0.08);
+  border-color: rgba(59, 130, 246, 0.2);
+  align-self: flex-start;
+  max-width: 90%;
+}
+
+.transcript-msg-item.supplier {
+  background: rgba(245, 158, 11, 0.08);
+  border-color: rgba(245, 158, 11, 0.2);
+  align-self: flex-end;
+  max-width: 90%;
+}
+
+.transcript-msg-item.deal-highlight {
+  border-color: rgba(16, 185, 129, 0.5);
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.transcript-msg-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  font-size: 0.68rem;
+}
+
+.sender-tag {
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+.time-tag {
+  color: #64748b;
+}
+
+.transcript-msg-text {
+  margin: 0;
+  color: #cbd5e1;
+}
+
+/* Procurement Actions Row */
+.procure-actions-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.procure-confirm-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 16px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+}
+
+.procure-confirm-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.45);
+}
+
+.procure-confirm-btn.confirmed {
+  background: rgba(16, 185, 129, 0.18);
+  border: 1px solid rgba(16, 185, 129, 0.5);
+  color: #34d399;
+  box-shadow: none;
+}
+
+.procure-voucher-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #cbd5e1;
+  border-radius: 8px;
+  padding: 9px 14px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.procure-voucher-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f8fafc;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Procurement Trigger Banner */
+.procurement-trigger-box {
+  background: linear-gradient(145deg, rgba(236, 72, 153, 0.1) 0%, rgba(15, 23, 42, 0.9) 100%);
+  border: 1px dashed rgba(236, 72, 153, 0.4);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.trigger-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(236, 72, 153, 0.2);
+  border: 1px solid rgba(236, 72, 153, 0.4);
+  color: #f472b6;
+  border-radius: 100px;
+  padding: 3px 10px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.procurement-trigger-box h4 {
+  margin: 0;
+  font-size: 0.92rem;
+  color: #f8fafc;
+}
+
+.procurement-trigger-box p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #94a3b8;
+  line-height: 1.4;
+}
+
+.procurement-trigger-box strong {
+  color: #e2e8f0;
+}
+
+.deploy-procure-btn {
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 16px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(236, 72, 153, 0.35);
+  margin-top: 4px;
+}
+
+.deploy-procure-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(236, 72, 153, 0.5);
+}
+
+/* Gatepass Voucher Modal */
+.gatepass-dialog {
+  max-width: 520px;
+  background: #0b111e;
+  border: 1px solid rgba(236, 72, 153, 0.3);
+  color: #f8fafc;
+}
+
+.gatepass-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+.gatepass-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.gatepass-auth {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.auth-stamp {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  padding: 2px 8px;
+  border-radius: 4px;
+  width: fit-content;
+}
+
+.gatepass-id {
+  font-size: 0.74rem;
+  font-family: monospace;
+  color: #94a3b8;
+}
+
+.gatepass-price-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.gatepass-price-badge span {
+  font-size: 0.68rem;
+  color: #94a3b8;
+}
+
+.gatepass-price-badge strong {
+  font-size: 1.3rem;
+  color: #34d399;
+}
+
+.gatepass-price-badge small {
+  font-size: 0.68rem;
+  color: #f472b6;
+}
+
+.gatepass-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.gatepass-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.gatepass-field .lbl {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.7rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.gatepass-field strong {
+  font-size: 0.88rem;
+  color: #f8fafc;
+}
+
+.gatepass-field span {
+  font-size: 0.82rem;
+  color: #cbd5e1;
+}
+
+.gatepass-field small {
+  font-size: 0.74rem;
+  color: #94a3b8;
+}
+
+.highlight-window {
+  color: #f59e0b !important;
+  font-weight: 600;
+}
+
+.barcode-simulation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 0;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 6px;
+}
+
+.barcode-stripes {
+  width: 80%;
+  height: 28px;
+  background: repeating-linear-gradient(
+    90deg,
+    #94a3b8 0px,
+    #94a3b8 2px,
+    transparent 2px,
+    transparent 4px,
+    #94a3b8 4px,
+    #94a3b8 7px,
+    transparent 7px,
+    transparent 9px
+  );
+  opacity: 0.7;
+}
+
+.barcode-number {
+  font-family: monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  color: #64748b;
+}
+
+.gatepass-instructions {
+  background: rgba(59, 130, 246, 0.08);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.74rem;
+  color: #93c5fd;
+  line-height: 1.4;
+}
+
+.gatepass-instructions p {
+  margin: 0;
+}
+
+.gatepass-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 6px;
+}
+
 /* Responsive adjustments */
 @media (max-width: 860px) {
   .agent-sidebar {
@@ -1261,5 +1864,15 @@
   }
   .matched-listings-grid {
     grid-template-columns: 1fr;
+  }
+  .procure-deal-summary {
+    grid-template-columns: 1fr;
+  }
+  .procure-progress-track {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .progress-line {
+    display: none;
   }
 }

@@ -18,9 +18,19 @@ import {
   ChevronRight,
   Eye,
   SlidersHorizontal,
-  ImageIcon
+  ImageIcon,
+  Bot,
+  BadgePercent,
+  ChevronDown,
+  ChevronUp,
+  Building2,
+  ReceiptText,
+  MapPin,
+  Package,
+  FileText
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { RequirementsPanel } from '../RequirementsPanel'
 import type { Requirements } from '../matching'
 import { areaText, listingArea } from '../matching'
@@ -28,15 +38,18 @@ import type {
   Listing,
   AgentSkill,
   ChatMessage,
-  ConversationSession
+  ConversationSession,
+  ProcurementOrder
 } from './types'
 import { AVAILABLE_SKILLS, executeAgentSkill } from './skillEngine'
+import { isLiveAIEnabled } from './geminiService'
 import './AgentChat.css'
 
 interface AgentChatProps {
   items: Listing[]
   saved: number[]
   onToggleSave: (id: number) => void
+  onAddItem?: (item: Listing) => void
   onSelectItem: (item: Listing) => void
   onViewProject: () => void
   onBeginList: () => void
@@ -46,7 +59,6 @@ interface AgentChatProps {
   onConfirmRequirements: () => void
   onEditRequirements: () => void
 }
-
 const SAMPLE_PHOTO_TILE = 'https://images.unsplash.com/photo-1596162954151-cdcb4c0f70a8?w=500&auto=format&fit=crop&q=80'
 const SAMPLE_PHOTO_POT = 'https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=500&auto=format&fit=crop&q=80'
 const SAMPLE_PHOTO_WOOD = 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?w=500&auto=format&fit=crop&q=80'
@@ -69,6 +81,7 @@ export function AgentChat({
   items,
   saved,
   onToggleSave,
+  onAddItem,
   onSelectItem,
   onViewProject,
   requirements,
@@ -115,6 +128,45 @@ export function AgentChat({
   const [activeSkillFilter, setActiveSkillFilter] = useState<AgentSkill>('general')
   const [isTyping, setIsTyping] = useState(false)
   const [completedSteps, setCompletedSteps] = useState<Record<string, boolean>>({})
+
+  // Procurement state
+  const [expandedTranscripts, setExpandedTranscripts] = useState<Record<string, boolean>>({})
+  const [confirmedOrders, setConfirmedOrders] = useState<Record<string, boolean>>(() => {
+    try {
+      const raw = localStorage.getItem('resource-confirmed-procured')
+      if (raw) return JSON.parse(raw)
+    } catch {}
+    return {}
+  })
+  const [viewingGatePass, setViewingGatePass] = useState<ProcurementOrder | null>(null)
+
+  const handleConfirmProcurementOrder = (order: ProcurementOrder) => {
+    const nextConfirmed = { ...confirmedOrders, [order.id]: true }
+    setConfirmedOrders(nextConfirmed)
+    localStorage.setItem('resource-confirmed-procured', JSON.stringify(nextConfirmed))
+
+    const newItem: Listing = {
+      id: Date.now(),
+      title: `${order.materialQuery} · Demolition Lot`,
+      category: order.category,
+      qty: 1,
+      unit: 'lot',
+      price: order.negotiatedPrice,
+      locality: order.locality === 'All localities' ? 'Indiranagar' : order.locality,
+      condition: 'Surplus Salvage Deal',
+      detail: `Procured by Autonomous Agent from ${order.supplierName} (${order.supplierLocation}). Agreed deal: ₹${order.negotiatedPrice} (saved ₹${order.savedAmount} / ${order.discountPercent}% off asking). Pickup window: ${order.pickupWindow}. ${order.quantityDetails}`,
+      tone: ['Tiles', 'Timber', 'Pots', 'Pavers', 'Fittings'].indexOf(order.category) >= 0
+        ? ['Tiles', 'Timber', 'Pots', 'Pavers', 'Fittings'].indexOf(order.category)
+        : 1,
+      own: false
+    }
+
+    if (onAddItem) {
+      onAddItem(newItem)
+    } else {
+      onToggleSave(newItem.id)
+    }
+  }
 
   const fileInputRef = useRef<HTMLInputElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -212,7 +264,7 @@ export function AgentChat({
   }
 
   // Send message handler
-  const handleSendMessage = (overrideText?: string) => {
+  const handleSendMessage = async (overrideText?: string) => {
     const textToSend = (overrideText || inputText).trim()
     if (!textToSend && !selectedPhoto) return
 
@@ -254,9 +306,8 @@ export function AgentChat({
     setSelectedPhotoName('')
     setIsTyping(true)
 
-    // Simulate Agent Thinking & Processing
-    setTimeout(() => {
-      const { responseMessage, suggestedRequirements, activeSkill } = executeAgentSkill({
+    try {
+      const { responseMessage, suggestedRequirements, activeSkill } = await executeAgentSkill({
         prompt: textToSend,
         photoUrl: photoToProcess || undefined,
         photoName: photoNameToProcess || undefined,
@@ -284,8 +335,11 @@ export function AgentChat({
         c.id === currentSession.id ? completedSession : c
       )
       persistSessions(finalList)
+    } catch (err) {
+      console.error('Failed to process message:', err)
+    } finally {
       setIsTyping(false)
-    }, 600)
+    }
   }
 
   return (
@@ -363,8 +417,8 @@ export function AgentChat({
             <div className="agent-text-meta">
               <div className="agent-title-row">
                 <strong>Re:Source Autonomous Assistant</strong>
-                <span className="live-status-pill">
-                  <span className="live-dot" /> SKILLS READY
+                <span className={`live-status-pill ${isLiveAIEnabled() ? 'live-active' : ''}`}>
+                  <span className="live-dot" /> {isLiveAIEnabled() ? 'GEMINI 2.5 LIVE' : 'SKILLS READY'}
                 </span>
               </div>
               <small className="agent-subtitle">
@@ -388,6 +442,7 @@ export function AgentChat({
                   {skill.id === 'get_steps' && <Wrench size={13} />}
                   {skill.id === 'search' && <Search size={13} />}
                   {skill.id === 'build_plan' && <Hammer size={13} />}
+                  {skill.id === 'procure' && <Bot size={13} />}
                   <span>{skill.label}</span>
                 </button>
               )
@@ -407,6 +462,8 @@ export function AgentChat({
                     <Wrench size={15} />
                   ) : msg.skill === 'build_plan' ? (
                     <Hammer size={15} />
+                  ) : msg.skill === 'procure' ? (
+                    <Bot size={15} />
                   ) : (
                     <Sparkles size={15} />
                   )}
@@ -421,6 +478,7 @@ export function AgentChat({
                     {msg.skill === 'get_steps' && '🛠️ Skill: Repair & DIY Step Guide'}
                     {msg.skill === 'search' && '🔍 Skill: Marketplace Inventory Finder'}
                     {msg.skill === 'build_plan' && '📐 Skill: Project Architect Blueprint'}
+                    {msg.skill === 'procure' && '🤖 Skill: Autonomous Demolition Scout & Negotiator'}
                   </div>
                 )}
 
@@ -662,7 +720,188 @@ export function AgentChat({
                   </div>
                 )}
 
-                {/* 4. EMBEDDED REQUIREMENTS PANEL (when relevant) */}
+                {/* 4. AUTONOMOUS PROCUREMENT & NEGOTIATION CARD */}
+                {msg.procurementOrder && (
+                  <div className="skill-card procurement-card">
+                    <div className="card-header">
+                      <div className="header-left">
+                        <div className="procure-bot-badge">
+                          <Bot size={18} />
+                        </div>
+                        <div>
+                          <h4>Autonomous Procurement Deal Secured</h4>
+                          <p className="card-sub">Demolition salvage broker · Off-market lot reserved</p>
+                        </div>
+                      </div>
+                      <div className="procure-status-pill">
+                        <span className="live-dot" style={{ background: '#10b981' }} />
+                        <span>Hold Order Placed</span>
+                      </div>
+                    </div>
+
+                    {/* Multi-step progress timeline */}
+                    <div className="procure-progress-track">
+                      <div className="progress-step complete">
+                        <span className="step-circle"><Check size={11} /></span>
+                        <div className="step-text">
+                          <strong>1. Demolition Scouting</strong>
+                          <small>{msg.procurementOrder.supplierName}</small>
+                        </div>
+                      </div>
+                      <div className="progress-line active" />
+                      <div className="progress-step complete">
+                        <span className="step-circle"><Check size={11} /></span>
+                        <div className="step-text">
+                          <strong>2. Price Negotiation</strong>
+                          <small>{msg.procurementOrder.discountPercent}% Saved off asking</small>
+                        </div>
+                      </div>
+                      <div className="progress-line active" />
+                      <div className="progress-step complete highlight">
+                        <span className="step-circle"><Check size={11} /></span>
+                        <div className="step-text">
+                          <strong>3. Lot Hold Reserved</strong>
+                          <small>{msg.procurementOrder.pickupWindow}</small>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Financial & Deal Summary Grid */}
+                    <div className="procure-deal-summary">
+                      <div className="deal-info-block">
+                        <div className="deal-row">
+                          <span className="deal-label"><Building2 size={13} /> Supplier Yard:</span>
+                          <strong>{msg.procurementOrder.supplierName}</strong>
+                        </div>
+                        <div className="deal-row">
+                          <span className="deal-label"><MapPin size={13} /> Location:</span>
+                          <span>{msg.procurementOrder.supplierLocation}</span>
+                        </div>
+                        <div className="deal-row">
+                          <span className="deal-label"><Package size={13} /> Reserved Quantity:</span>
+                          <span>{msg.procurementOrder.quantityDetails}</span>
+                        </div>
+                        <div className="deal-row">
+                          <span className="deal-label"><Clock size={13} /> Pickup Window:</span>
+                          <span>{msg.procurementOrder.pickupWindow}</span>
+                        </div>
+                      </div>
+
+                      <div className="deal-pricing-block">
+                        <div className="original-price-row">
+                          <span>Contractor Asking:</span>
+                          <del>₹{msg.procurementOrder.originalPrice}</del>
+                        </div>
+                        <div className="negotiated-price-row">
+                          <span>Agreed Circular Deal:</span>
+                          <strong className="agreed-price">₹{msg.procurementOrder.negotiatedPrice}</strong>
+                        </div>
+                        <div className="savings-badge">
+                          <BadgePercent size={13} />
+                          <span>Save ₹{msg.procurementOrder.savedAmount} ({msg.procurementOrder.discountPercent}% off)</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Interactive Negotiation Transcript Drawer */}
+                    <div className="negotiation-drawer">
+                      <button
+                        type="button"
+                        className="toggle-transcript-btn"
+                        onClick={() =>
+                          setExpandedTranscripts(prev => ({
+                            ...prev,
+                            [msg.procurementOrder!.id]: !prev[msg.procurementOrder!.id]
+                          }))
+                        }
+                      >
+                        <span>
+                          <FileText size={14} /> View Autonomous Negotiation Transcript ({msg.procurementOrder.negotiationTranscript.length} rounds)
+                        </span>
+                        {expandedTranscripts[msg.procurementOrder.id] ? (
+                          <ChevronUp size={15} />
+                        ) : (
+                          <ChevronDown size={15} />
+                        )}
+                      </button>
+
+                      {expandedTranscripts[msg.procurementOrder.id] && (
+                        <div className="transcript-chat-box">
+                          {msg.procurementOrder.negotiationTranscript.map((t, idx) => (
+                            <div
+                              key={idx}
+                              className={`transcript-msg-item ${t.sender} ${t.highlight ? 'deal-highlight' : ''}`}
+                            >
+                              <div className="transcript-msg-header">
+                                <span className="sender-tag">
+                                  {t.sender === 'agent' ? '🤖 Re:Source Broker Agent' : `🏗️ ${msg.procurementOrder!.supplierName}`}
+                                </span>
+                                <span className="time-tag">{t.timestamp}</span>
+                              </div>
+                              <p className="transcript-msg-text">{t.text}</p>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Procurement Card Actions */}
+                    <div className="procure-actions-row">
+                      {confirmedOrders[msg.procurementOrder.id] ? (
+                        <button
+                          type="button"
+                          className="procure-confirm-btn confirmed"
+                          onClick={onViewProject}
+                        >
+                          <Check size={14} /> Deal Added to My Project · View Now <ArrowUpRight size={13} />
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          className="procure-confirm-btn"
+                          onClick={() => handleConfirmProcurementOrder(msg.procurementOrder!)}
+                        >
+                          <Check size={14} /> Confirm Deal & Add to My Project
+                        </button>
+                      )}
+
+                      <button
+                        type="button"
+                        className="procure-voucher-btn"
+                        onClick={() => setViewingGatePass(msg.procurementOrder!)}
+                      >
+                        <ReceiptText size={14} /> Demolition Gate Pass
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* 5. PROCUREMENT TRIGGER (When not found or requested) */}
+                {msg.showProcurementTrigger && (
+                  <div className="procurement-trigger-box">
+                    <div className="trigger-badge">
+                      <Bot size={15} />
+                      <span>Demolition Broker Agent Available</span>
+                    </div>
+                    <h4>Can’t find exact matches for "{msg.showProcurementTrigger.materialName}"?</h4>
+                    <p>
+                      Our <strong>Autonomous Procurement Agent</strong> can scout active demolition sites, architectural salvagers, and commercial remodelers in Bengaluru to negotiate bulk surplus discounts and place a hold order for you.
+                    </p>
+                    <button
+                      type="button"
+                      className="deploy-procure-btn"
+                      onClick={() =>
+                        handleSendMessage(
+                          `Scout and negotiate ${msg.showProcurementTrigger!.materialName} for me`
+                        )
+                      }
+                    >
+                      <Bot size={15} /> Deploy Agent to Scout & Negotiate This Material
+                    </button>
+                  </div>
+                )}
+
+                {/* 6. EMBEDDED REQUIREMENTS PANEL (when relevant) */}
                 {msg.showRequirements && (
                   <div className="chat-requirements-card">
                     <RequirementsPanel
@@ -911,8 +1150,95 @@ export function AgentChat({
           <span>Material Matching</span>
           <span>·</span>
           <span>Project Architecture</span>
+          <span>·</span>
+          <span>Autonomous Procurement</span>
         </div>
       </section>
+
+      {/* Demolition Gate Pass / Voucher Dialog */}
+      <Dialog open={!!viewingGatePass} onOpenChange={open => !open && setViewingGatePass(null)}>
+        <DialogContent className="gatepass-dialog">
+          <DialogHeader>
+            <DialogTitle>Circular Demolition Gate Pass & Hold Receipt</DialogTitle>
+            <DialogDescription>
+              Autonomous Agent Broker Authorization · Official Yard Hold Voucher
+            </DialogDescription>
+          </DialogHeader>
+
+          {viewingGatePass && (
+            <div className="gatepass-body">
+              <div className="gatepass-banner">
+                <div className="gatepass-auth">
+                  <span className="auth-stamp">VERIFIED HOLD</span>
+                  <span className="gatepass-id">REF: {viewingGatePass.id.toUpperCase()}</span>
+                </div>
+                <div className="gatepass-price-badge">
+                  <span>Agreed Price</span>
+                  <strong>₹{viewingGatePass.negotiatedPrice}</strong>
+                  <small>Saved ₹{viewingGatePass.savedAmount} ({viewingGatePass.discountPercent}% OFF)</small>
+                </div>
+              </div>
+
+              <div className="gatepass-grid">
+                <div className="gatepass-field">
+                  <span className="lbl"><Building2 size={13} /> Salvage Yard:</span>
+                  <strong>{viewingGatePass.supplierName}</strong>
+                </div>
+                <div className="gatepass-field">
+                  <span className="lbl"><MapPin size={13} /> Dispatch Depot:</span>
+                  <span>{viewingGatePass.supplierLocation}</span>
+                </div>
+                <div className="gatepass-field">
+                  <span className="lbl"><Package size={13} /> Reserved Material:</span>
+                  <strong>{viewingGatePass.materialQuery}</strong>
+                  <small>{viewingGatePass.quantityDetails}</small>
+                </div>
+                <div className="gatepass-field">
+                  <span className="lbl"><Clock size={13} /> Permitted Pickup Window:</span>
+                  <span className="highlight-window">{viewingGatePass.pickupWindow}</span>
+                </div>
+              </div>
+
+              <div className="barcode-simulation">
+                <div className="barcode-stripes" />
+                <span className="barcode-number">||| |||| | ||||| |||| || |||||| | ||| 890124-789-0</span>
+              </div>
+
+              <div className="gatepass-instructions">
+                <p>
+                  <strong>Yard Collection Protocol:</strong> Show this pass upon gate arrival. Lot has been set aside under the Re:Source Circular Exchange agreement. Settlement of ₹{viewingGatePass.negotiatedPrice} due at transfer.
+                </p>
+              </div>
+
+              <div className="gatepass-actions">
+                {!confirmedOrders[viewingGatePass.id] ? (
+                  <Button
+                    onClick={() => {
+                      handleConfirmProcurementOrder(viewingGatePass)
+                      setViewingGatePass(null)
+                    }}
+                  >
+                    <Check size={14} /> Confirm to My Project & Save Pass
+                  </Button>
+                ) : (
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setViewingGatePass(null)
+                      onViewProject()
+                    }}
+                  >
+                    View in My Project <ArrowUpRight size={14} />
+                  </Button>
+                )}
+                <Button variant="ghost" onClick={() => setViewingGatePass(null)}>
+                  Close
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

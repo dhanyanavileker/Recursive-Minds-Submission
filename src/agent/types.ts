@@ -16,7 +16,7 @@ export type Listing = {
   lengthCm?: number
 }
 
-export type AgentSkill = 'analyze' | 'search' | 'get_steps' | 'build_plan' | 'general'
+export type AgentSkill = 'analyze' | 'search' | 'get_steps' | 'build_plan' | 'procure' | 'general'
 
 export interface SkillMeta {
   id: AgentSkill
@@ -78,6 +78,32 @@ export interface BuildPlanResult {
   }[]
 }
 
+export interface ProcurementOrder {
+  id: string
+  materialQuery: string
+  category: string
+  locality: string
+  targetBudget: number
+  supplierName: string
+  supplierLocation: string
+  originalPrice: number
+  negotiatedPrice: number
+  savedAmount: number
+  discountPercent: number
+  pickupWindow: string
+  quantityDetails: string
+  status: 'scouting' | 'negotiating' | 'order_placed' | 'confirmed' | 'cancelled'
+  progressStage: number // 1: Scouting, 2: Negotiating, 3: Order Placed
+  negotiationTranscript: {
+    sender: 'agent' | 'supplier'
+    text: string
+    timestamp: string
+    highlight?: boolean
+  }[]
+  createdAt: number
+  completedAt?: number
+}
+
 export interface ChatMessage {
   id: string
   role: 'user' | 'assistant'
@@ -89,6 +115,12 @@ export interface ChatMessage {
   analysis?: AnalysisResult
   stepsGuide?: StepsGuideResult
   buildPlan?: BuildPlanResult
+  procurementOrder?: ProcurementOrder
+  showProcurementTrigger?: {
+    materialName: string
+    category?: string
+    suggestedBudget?: number
+  }
   matchedListings?: Listing[]
   showRequirements?: boolean
   suggestedPrompts?: string[]
