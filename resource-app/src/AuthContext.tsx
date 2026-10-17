@@ -31,6 +31,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    if (!auth) {
+      const stored = localStorage.getItem('resource-guest-user')
+      if (stored) {
+        try {
+          setUser(JSON.parse(stored))
+        } catch (e) {
+          console.error(e)
+        }
+      } else {
+        setUser(null)
+      }
+      setLoading(false)
+      return
+    }
+
     try {
       const unsubscribe = onAuthStateChanged(auth, (firebaseUser: User | null) => {
         if (firebaseUser) {
@@ -46,7 +61,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           // If guest user exists in localStorage, keep it
           const stored = localStorage.getItem('resource-guest-user')
           if (stored) {
-            setUser(JSON.parse(stored))
+            try {
+              setUser(JSON.parse(stored))
+            } catch (e) {
+              console.error(e)
+            }
           } else {
             setUser(null)
           }
@@ -61,6 +80,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const signInWithGoogle = async () => {
+    if (!auth) {
+      alert('Google Firebase Auth is not configured on this deployment. Please click "Continue as Demo Guest" to test the app!')
+      return
+    }
     const res = await signInWithPopup(auth, googleProvider)
     setUser({
       displayName: res.user.displayName,
@@ -86,10 +109,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOutFn = async () => {
     localStorage.removeItem('resource-guest-user')
-    try {
-      await firebaseSignOut(auth)
-    } catch (e) {
-      // ignore
+    if (auth) {
+      try {
+        await firebaseSignOut(auth)
+      } catch (e) {
+        // ignore
+      }
     }
     setUser(null)
   }
