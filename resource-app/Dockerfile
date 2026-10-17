@@ -25,7 +25,6 @@ FROM node:20-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-ENV PORT=8080
 
 # Install only production dependencies
 COPY package.json package-lock.json ./
@@ -35,8 +34,8 @@ RUN npm ci --omit=dev
 COPY --from=builder /app/dist ./dist
 COPY server.js ./
 
-# Expose standard Cloud Run port
-EXPOSE 8080
+# Expose both 8080 and 80 for Cloud Run
+EXPOSE 8080 80
 
 # Start server
 CMD ["node", "server.js"]

@@ -14,7 +14,6 @@ FROM node:20-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-ENV PORT=8080
 
 COPY resource-app/package.json resource-app/package-lock.json ./
 RUN npm ci --omit=dev
@@ -22,6 +21,6 @@ RUN npm ci --omit=dev
 COPY --from=builder /app/dist ./dist
 COPY resource-app/server.js ./
 
-EXPOSE 8080
+EXPOSE 8080 80
 
 CMD ["node", "server.js"]
