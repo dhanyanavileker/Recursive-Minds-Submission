@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Leaf, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useAuth } from './AuthContext'
@@ -8,6 +8,13 @@ export function LoginPage() {
   const { signInWithGoogle, signInAsGuest } = useAuth()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [motionPaused, setMotionPaused] = useState(() => document.hidden)
+  useEffect(() => {
+    const updateVisibility = () => setMotionPaused(document.hidden)
+    document.addEventListener('visibilitychange', updateVisibility)
+    return () => document.removeEventListener('visibilitychange', updateVisibility)
+  }, [])
+
 
   const handleGoogleSignIn = async () => {
     setLoading(true)
@@ -29,8 +36,11 @@ export function LoginPage() {
 
   return (
     <div className="login-page">
-      {/* Animated background */}
-      <div className="login-bg">
+      {/* Decorative garden breeze; motion pauses when the page is hidden. */}
+      <div className="login-bg" aria-hidden="true" data-paused={motionPaused}>
+        <span className="login-floating-leaf" />
+        <span className="login-floating-leaf leaf-two" />
+        <span className="login-floating-leaf leaf-three" />
         <div className="login-gradient login-gradient-1" />
         <div className="login-gradient login-gradient-2" />
         <div className="login-gradient login-gradient-3" />
@@ -41,7 +51,7 @@ export function LoginPage() {
         </div>
       </div>
 
-      {/* Glass card */}
+      {/* Sign-in card */}
       <div className="login-card">
         <div className="login-card-inner">
           {/* Brand */}
@@ -105,9 +115,9 @@ export function LoginPage() {
               width: '100%',
               padding: '10px 16px',
               borderRadius: '12px',
-              background: 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
-              color: '#cbd5e1',
+              background: '#DDEDE5',
+              border: '1px solid #B8CBBF',
+              color: '#202725',
               fontSize: '0.85rem',
               fontWeight: 500,
               cursor: 'pointer',
@@ -118,7 +128,7 @@ export function LoginPage() {
               transition: 'all 0.2s ease'
             }}
           >
-            <Leaf size={15} style={{ color: '#34d399' }} />
+            <Leaf size={15} style={{ color: '#2F6B56' }} />
             <span>Explore App in Demo Mode</span>
           </button>
 
@@ -133,7 +143,7 @@ export function LoginPage() {
                   marginTop: '6px',
                   background: 'none',
                   border: 'none',
-                  color: '#34d399',
+                  color: '#2F6B56',
                   textDecoration: 'underline',
                   cursor: 'pointer',
                   fontSize: '0.8rem'
@@ -169,7 +179,7 @@ export function LoginPage() {
         {/* Footer */}
         <div className="login-footer">
           <Leaf size={13} />
-          <span>Made for another beginning · By Recursive Mind</span>
+          <span>Made for another beginning · By Recursive Minds</span>
         </div>
       </div>
     </div>

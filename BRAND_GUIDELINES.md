@@ -1,89 +1,61 @@
-# RECURSIVE MIND
-### Brand guidelines · Version 1.0
+# Re:Source and Recursive Minds
+### Brand guidelines · Version 2.0
 
-*Based on the supplied T-shirt designs. Colour values and typography below are proposed standards inspired by the artwork.*
+## Brand positioning
 
-## 1. Brand idea
+**Re:Source = warm, practical, community-focused.** Help neighbours give useful leftover materials another beginning. Lead with materials, local usefulness, clear next steps, and readable information.
 
-**Deeper thinking. Better iterations. Meaningful impact.**
+**Recursive Minds = technical, bold, experimental.** The team signature expresses curiosity, iteration, and the technology behind the product. It remains secondary in the Re:Source experience.
 
-Recursive Mind represents a team that revisits ideas, learns from each iteration, and builds beyond the obvious. The nested profiles express multiple perspectives and layers of thought.
+Use **Re:Source** in written product references; preserve the existing product wordmark. Use **Recursive Minds** for team credits. Existing supplied logo artwork reads “Recursive Mind”; preserve that artwork rather than editing or retyping it.
 
-**Personality:** Curious, precise, collaborative, quietly bold.
+## Re:Source colour palette
 
-**Core pillars:** People · Ideas · Impact
-
-## 2. Name and messaging
-
-Always write the name as **Recursive Mind**, singular. Use **RECURSIVE MIND** in visual branding.
-
-| Role | Copy |
-|---|---|
-| Primary tagline | Think › Iterate › Go Beyond |
-| Statement for apparel and campaigns | Same Thinking. Different Depths. |
-| Purpose line | AI for a Brighter Tomorrow |
-
-Use one lead message per surface. Keep supporting lines smaller and secondary.
-
-## 3. Logo system
-
-**Primary logo:** Nested head symbol above the two-line wordmark. Use for T-shirts, covers, posters, and team introductions.
-
-**Compact mark:** Head symbol alone, where the team name is already visible.
-
-**Secondary symbol:** Infinity mark for sleeves, badges, and small accents. Keep it secondary to the head symbol.
-
-- Keep clear space around the logo equal to at least the height of the “M” in “MIND.”
-- Prefer a plain black or deep charcoal background.
-- Preserve the proportions, profile details, and cyan-to-violet colour treatment.
-- Use a solid white version when gradients cannot reproduce reliably.
-- Never stretch, rotate, add extra effects, or place the logo over busy patterns.
-- At small sizes, remove the tagline first. Check that the nested lines remain distinct.
-
-## 4. Colour palette
-
-| Colour | Suggested HEX | Use |
+| Colour | HEX | Role |
 |---|---|---|
-| Midnight Black | `#080D12` | Main backgrounds and apparel |
-| Electric Cyan | `#25D9F0` | Highlights and gradient start |
-| Signal Blue | `#3788E8` | Supporting accents |
-| Recursive Violet | `#7041D9` | Gradient end and emphasis |
-| Soft White | `#F4F6F8` | Headlines and primary text |
-| Cool Grey | `#A6AFB9` | Secondary text |
+| Deep forest | `#18332F` | Headings, strong anchors, primary hover states |
+| Leaf green | `#2F6B56` | Primary actions, links, selected navigation, focus rings |
+| Warm cream | `#F7F3E8` | Page background, text on forest and leaf green |
+| Soft mint | `#DDEDE5` | Secondary surfaces, selected rows, supportive feedback |
+| Charcoal | `#202725` | Body copy and practical information |
+| Amber accent | `#D8A84E` | Small attention cues, quantity shortfalls, pending steps |
 
-Keep layouts predominantly dark, with white text and restrained colour accents. Use **cyan → blue → violet** for signature graphics; keep longer text solid white.
+Supporting functional tokens: muted text `#52665D`, borders `#B8CBBF`, error text `#9B392B`, error surface `#F8E7DF`, amber text `#72551F`. These support readability; they are not additional brand accents.
 
-Confirm printed colours with a physical sample before production.
+Cream dominates the product; mint groups related information. Use leaf green for clear actions and forest for anchors. Keep body text charcoal. Amber fills require forest or charcoal text; amber alone is not body text on cream. Cream text on leaf green and forest is suitable for primary buttons. Use muted text on cream or mint, with visible borders and keyboard focus.
 
-## 5. Typography
+## Neon and AI boundaries
 
-**Suggested pairing:** Space Grotesk for headings; Inter for body text.
+Reserve the cyan-to-violet signature (`#25D9F0` → `#3788E8` → `#7041D9`) for the **Recursive Minds logo/signature** and **small AI moments**: assistant icons, active AI skill states, and a small accent on generated recommendations. Place light neon on a forest backing; use violet `#7041D9` for readable AI labels on cream or mint.
 
-Use uppercase headings with generous letter spacing to echo the T-shirt wordmark. Use sentence case and normal spacing for longer text.
+Do not spread neon across product backgrounds, navigation, generic buttons, headings, login decoration, or entire recommendation cards. AI responses use the same calm readable surfaces as the rest of the product. Status always has a text label or icon as well as colour.
 
-Preserve the existing wordmark as artwork rather than recreating it with a substitute font.
+## Typography and layout
 
-## 6. Graphic language
+Preserve the current Space Grotesk headings and Inter body copy, with the existing Geist login and component fallback. Product headings use sentence case and natural spacing. Preserve the existing layout, responsive behaviour, content hierarchy, controls, and interactions. Use clear outlines, restrained shadows, and generous space; remove decorative neon glow and floating colour effects.
 
-Use nested contours, flowing paths, subtle circuit details, and thin line icons. These should suggest depth, iteration, and connected thinking.
+## Voice
 
-Keep patterns near edges or in the lower part of a layout. Leave generous empty space around the logo and main message. Avoid competing neon colours or dense decorative backgrounds.
+Re:Source is direct, helpful, and neighbourly. Name materials and actions clearly: “Find materials”, “List leftovers”, “Save to my project”. Explain missing dimensions, quantity shortfalls, and pickup details without jargon. Preserve factual disclosures and existing product functionality. Do not imply verification, availability, live AI, or contact with an owner unless the product supports it.
 
-## 7. Apparel
+Recursive Minds can be more exploratory in team communications. Existing team messages may remain: “Think › Iterate › Go Beyond”, “Same Thinking. Different Depths.”, and “AI for a Brighter Tomorrow”. Keep these secondary to product tasks.
 
-- **Front:** Head symbol and wordmark centred; tagline underneath.
-- **Back:** “Same Thinking. Different Depths.” across the upper back; team name beneath.
-- **Number:** Use the shown **91** as a configurable team or player identifier, separate from the core logo.
-- **Sleeve:** Small infinity symbol.
-- **Lower back:** Subtle cyan and violet contour pattern.
+## Logo and team signature
 
-## 8. Voice
+Preserve the nested head symbol, proportions, profile details, and cyan-to-violet treatment. Keep clear space at least the height of the “M” in the supplied “MIND” wordmark. Use a plain forest or charcoal backing and a solid cream/white version when gradients cannot reproduce. Never stretch, rotate, add glow, or place the mark over busy patterns. Remove the tagline first at small sizes.
 
-Write with clarity, curiosity, and confidence. Emphasise what the team explores, builds, and improves. Avoid inflated claims and unnecessary AI jargon.
+Team apparel references may retain their original artwork. They document the team identity and do not define Re:Source interface colours. Do not extend their neon contours into product UI.
 
-**Example:** “We turn shared curiosity into useful AI—one thoughtful iteration at a time.”
+## Application rules
+
+- Login: cream background, mint support surfaces, forest headings, leaf green actions; no animated neon orbs.
+- App shell and navigation: cream with forest text, leaf green selected states, mint grouping surfaces.
+- Forms and chat: cream inputs, charcoal copy, visible green focus and legible placeholders.
+- Listings and saved plans: factual content and material illustrations retain their meaning; use mint for positive states and amber with dark text for shortfalls.
+- Assistant and recommendations: calm surfaces with small, clearly scoped AI accents.
+- Team credit: “By Recursive Minds”, visually secondary; the logo/signature may retain the neon gradient.
 
 ## Design references
 
-- [Brand and apparel concept](WhatsApp%20Image%202026-09-27%20at%207.47.22%20PM.jpeg)
-- [Numbered T-shirt concept](WhatsApp%20Image%202026-09-27%20at%208.01.09%20PM.jpeg)
+- [Original team brand and apparel concept](WhatsApp%20Image%202026-09-27%20at%207.47.22%20PM.jpeg)
+- [Original numbered T-shirt concept](WhatsApp%20Image%202026-09-27%20at%208.01.09%20PM.jpeg)

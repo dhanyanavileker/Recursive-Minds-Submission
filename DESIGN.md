@@ -6,8 +6,9 @@ Operate mode: a single conversation contains the complete finding journey. Struc
 The same app shell scales across devices: a centered 760 px conversation workspace on desktop and an edge-to-edge, full-height messaging surface on mobile. Mobile uses a compact sticky app bar, bottom navigation, a scrollable conversation, and a composer anchored above navigation. The marketing split layout is intentionally absent.
 
 ## Tokens
-- Background: #080D12; raised surface: #111E27; borders: #293640.
-- Primary text: #EDF3F5; secondary: #A6AFB9; action: #25D9F0 with #06292D text.
+- Background: #F7F3E8; supporting surface: #DDEDE5; borders: #B8CBBF.
+- Headings: #18332F; body: #202725; secondary: #52665D; action: #2F6B56 with #F7F3E8 text; amber: #D8A84E with dark text.
+- Neon cyan-to-violet belongs only to the Recursive Minds logo/signature and small AI accents; ordinary navigation and controls use leaf green.
 - Space Grotesk headings; Inter body. Google Fonts, with sans-serif fallback.
 - 5% page gutters; 1600px max width; 23px desktop grid gap; 8–13px surface radii.
 - Four-column inventory on desktop, three on intermediate widths, two on mobile.
@@ -26,5 +27,5 @@ TypeScript and production bundling pass. Browser preview opened successfully. Sa
 ## AI-ready flows
 Request → editable guided requirements → factual match evidence → save → full-lot material plan.
 Photo or sample → immutable suggestion summary → owner-editable facts and optional dimensions/pickup → explicit confirmation → local publication.
-Requirement and saved-plan panels use the existing surface, type and color tokens. Status colors: enough area #9BECCE on #193B31; shortage #F1D49B on #3B3020. Unknown uses neutral text plus an explicit label.
+Requirement and saved-plan panels use the existing surface, type and color tokens. Status colors: enough area #18332F on #DDEDE5; shortage #72551F on #F1E4C8 with #D8A84E border. Unknown uses neutral text plus an explicit label.
 Live AI remains unconnected; the manual brief and local calculations remain available.

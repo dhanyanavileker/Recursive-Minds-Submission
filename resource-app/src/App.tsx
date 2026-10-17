@@ -91,8 +91,8 @@ function App() {
   // Auth loading state
   if (authLoading) {
     return (
-      <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a0e17' }}>
-        <Loader2 size={32} style={{ color: '#34d399', animation: 'spin 1s linear infinite' }} />
+      <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#F7F3E8' }}>
+        <Loader2 size={32} style={{ color: '#2F6B56', animation: 'spin 1s linear infinite' }} />
       </div>
     )
   }
@@ -773,7 +773,7 @@ function AuthenticatedApp() {
                         </div>
                       </div>
                       <div className="impact-stat-item">
-                        <Leaf size={20} style={{ color: '#34d399' }} />
+                        <Leaf size={20} style={{ color: '#2F6B56' }} />
                         <div>
                           <strong>64.5 kg Diverted</strong>
                           <span>Landfill Waste Prevented</span>
@@ -882,7 +882,7 @@ function AuthenticatedApp() {
                           {x.qty} {x.unit} · {x.locality} · Free Mindful Gift
                         </small>
                       </span>
-                      <strong style={{ color: '#34d399' }}>0 ₹ (Free)</strong>
+                      <strong style={{ color: '#2F6B56' }}>0 ₹ (Free)</strong>
                       <button onClick={() => toggle(x.id)} aria-label={`Remove ${x.title} from project`}>
                         <X size={15} />
                       </button>
@@ -972,7 +972,7 @@ function AuthenticatedApp() {
 
                     <div className="material-meta">
                       <span>{x.category}</span>
-                      <strong style={{ color: '#34d399' }}>
+                      <strong style={{ color: '#2F6B56' }}>
                         Free <small>to a good home</small>
                       </strong>
                     </div>
@@ -1025,7 +1025,7 @@ function AuthenticatedApp() {
               re:source <Leaf size={14} />
             </span>
             <span>
-              Mindful Circular Resource Network · Not an eBay reseller · <span className="footer-credit">By Recursive Mind</span>
+              Mindful Circular Resource Network · Not an eBay reseller · <span className="footer-credit">By Recursive Minds</span>
             </span>
             <span>Bengaluru Hyperlocal Pilot · Logistics by Porter</span>
           </footer>
@@ -1082,7 +1082,7 @@ function AuthenticatedApp() {
               <Material tone={selected.tone} />
               <div className="detail-stats">
                 <span>{selected.qty} {selected.unit}</span>
-                <strong style={{ color: '#34d399' }}>Free to a good home (+120 Karma to Donor)</strong>
+                <strong style={{ color: '#2F6B56' }}>Free to a good home (+120 Karma to Donor)</strong>
               </div>
               <h3>What we know</h3>
               <p>{selected.detail}</p>

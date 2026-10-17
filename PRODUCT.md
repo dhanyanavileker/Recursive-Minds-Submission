@@ -11,6 +11,6 @@ Find materials first (confirmed by user), list leftovers, save a project, simula
 ## Constraints
 Local interactive prototype with labelled fictional inventory, illustrative locality, no live AI or hosted services. No payments, real messaging, delivery, or structural certification. Future hosting must use Google services without billing.
 ## Brand
-Recursive Mind brand palette and typography per BRAND_GUIDELINES.md.
+Re:Source is warm, practical, and community-focused: cream and mint surfaces, forest and charcoal text, leaf green actions, and small amber cues. Recursive Minds is technical, bold, and experimental; neon is limited to its team logo/signature and small AI moments. See BRAND_GUIDELINES.md.
 ## Open decisions
 Actual pilot locality, Firebase project, Gemini quota and deployment remain unconfirmed.
