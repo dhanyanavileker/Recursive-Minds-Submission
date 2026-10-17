@@ -58,6 +58,8 @@ interface AgentChatProps {
   ready: boolean
   onConfirmRequirements: () => void
   onEditRequirements: () => void
+  initialPrompt?: string | null
+  onClearInitialPrompt?: () => void
 }
 const SAMPLE_PHOTO_TILE = 'https://images.unsplash.com/photo-1596162954151-cdcb4c0f70a8?w=500&auto=format&fit=crop&q=80'
 const SAMPLE_PHOTO_POT = 'https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=500&auto=format&fit=crop&q=80'
@@ -88,7 +90,9 @@ export function AgentChat({
   onRequirementsChange,
   ready,
   onConfirmRequirements,
-  onEditRequirements
+  onEditRequirements,
+  initialPrompt,
+  onClearInitialPrompt
 }: AgentChatProps) {
   // State for conversations
   const [conversations, setConversations] = useState<ConversationSession[]>(() => {
@@ -341,6 +345,14 @@ export function AgentChat({
       setIsTyping(false)
     }
   }
+
+  // Handle incoming direct prompt from Dashboard "Build Something" or "Find Resource"
+  useEffect(() => {
+    if (initialPrompt && initialPrompt.trim()) {
+      handleSendMessage(initialPrompt)
+      if (onClearInitialPrompt) onClearInitialPrompt()
+    }
+  }, [initialPrompt])
 
   return (
     <div className="agent-chat-container">
