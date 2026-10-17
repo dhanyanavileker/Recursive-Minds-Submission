@@ -802,7 +802,7 @@ export async function executeAgentSkill({
         role: 'assistant',
         timestamp: Date.now(),
         skill: 'procure',
-        content: `I’ve initiated an **autonomous background procurement workflow** for "${order.materialQuery}". I scouted local demolition networks and commercial salvage yards, negotiated directly with the supplier, and locked in a verified discount:`,
+        content: `I’ve initiated an **autonomous circular salvage workflow** for "${order.materialQuery}". I scouted local demolition networks and commercial remodel yards, cleared the lot for zero-waste community reuse, and secured a **100% Free Salvage & Landfill Diversion (0 ₹)** transfer:`,
         procurementOrder: order,
         suggestedPrompts: [
           `Confirm and add ${order.materialQuery} to My Project`,
@@ -832,20 +832,20 @@ export async function executeAgentSkill({
       timestamp: Date.now(),
       skill: 'search',
       content: notFound
-        ? `I searched the local inventory for "${prompt}", but no active listings match right now. You can deploy our **Autonomous Procurement Agent** in the background to scout demolition sites and negotiate a discounted lot for you:`
-        : `I searched the local inventory and found **${matched.length} leftover listing${matched.length > 1 ? 's' : ''}** that match your request. Here are the top recommendations:`,
+        ? `I searched the local inventory for "${prompt}", but no active surplus gifts match right now. You can deploy our **Autonomous Demolition Broker** in the background to scout remodel yards and secure a 100% Free salvage lot (0 ₹) for you:`
+        : `I searched the local inventory and found **${matched.length} leftover listing${matched.length > 1 ? 's' : ''}** that match your request. All materials are 100% Free Community Giveaways (0 ₹):`,
       matchedListings: (matched.length > 0 ? matched : items).slice(0, 4),
       showProcurementTrigger: notFound
         ? {
             materialName: prompt,
             category: categoryMatch !== 'All materials' ? categoryMatch : 'Timber',
-            suggestedBudget: Number(req.budget) || 350
+            suggestedBudget: 0
           }
         : undefined,
       showRequirements: true,
       suggestedPrompts: notFound
         ? [
-            `Scout and negotiate ${prompt} for me`,
+            `Scout and secure free ${prompt} from demolition yard`,
             'How to fix wobbly furniture with timber?',
             'Analyze a photo of my leftover materials'
           ]
