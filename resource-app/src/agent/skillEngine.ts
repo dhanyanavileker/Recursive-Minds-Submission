@@ -60,15 +60,38 @@ export const AVAILABLE_SKILLS: SkillMeta[] = [
   },
   {
     id: 'procure',
-    name: 'Autonomous Procurement',
-    label: 'Scout & Negotiate',
-    description: 'Dispatches background agent to scout demolition sites, negotiate discounts, and place hold orders',
-    tagline: 'When materials are unavailable, the agent scouts, bargains, and places the order',
+    name: 'Sourcing Scenario',
+    label: 'Explore Sourcing',
+    description: 'Shows a simulated sourcing scenario when matching inventory is unavailable',
+    tagline: 'Preview how a future sourcing workflow could work',
     icon: 'Bot',
     color: '#ec4899',
     accentColor: 'rgba(236, 72, 153, 0.15)'
   }
 ]
+
+export function resolveCategory(term?: string): string | undefined {
+  if (!term) return undefined
+  const t = term.toLowerCase()
+  if (/(tile|mosaic|slate|paver|stone|gravel|masonry)/i.test(t)) return 'Materials'
+  if (/(timber|wood|lumber|pine|plank|beam|rafter)/i.test(t)) return 'Materials'
+  if (/(furniture|table|chair|desk|shelf|bench|stool)/i.test(t)) return 'Furniture'
+  if (/(electronic|monitor|cable|cord|adapter|charger|plug|fitting|hardware|usb)/i.test(t)) return 'Electronics'
+  if (/(box|packag|corrugat|carton|shipping|bubble|mailer)/i.test(t)) return 'Packaging'
+  if (/(pot|planter|terracotta|clay|garden|plant|household)/i.test(t)) return 'Household Items'
+  if (/(food|pantry|grain|pulse|grocery)/i.test(t)) return 'Food'
+  if (/(office|whiteboard|partition|divider|screen)/i.test(t)) return 'Office Assets'
+  return undefined
+}
+
+export const marketplaceCategory = (category?: string) => {
+  if (!category) return undefined
+  const directMatch = ['Materials', 'Furniture', 'Electronics', 'Packaging', 'Household Items', 'Food', 'Office Assets'].find(
+    c => c.toLowerCase() === category.toLowerCase()
+  )
+  if (directMatch) return directMatch
+  return resolveCategory(category) || category
+}
 
 /**
  * Intelligent intent detector: determines the best skill based on text,
@@ -593,40 +616,88 @@ export function generateBuildPlan(text: string): BuildPlanResult {
   }
 }
 
+const STOPWORDS = new Set([
+  'a', 'about', 'an', 'and', 'any', 'are', 'as', 'at', 'be', 'by', 'can',
+  'do', 'for', 'from', 'get', 'give', 'have', 'how', 'i', 'in', 'is', 'it',
+  'me', 'my', 'need', 'of', 'on', 'or', 'our', 'please', 'project', 'search',
+  'show', 'some', 'the', 'their', 'there', 'this', 'to', 'us', 'want', 'what',
+  'when', 'where', 'which', 'who', 'will', 'with', 'you', 'your'
+])
+
 /**
  * Smart Search Engine: finds and ranks marketplace listings for a query or category.
  */
 export function searchMarketplace(
   query: string,
-  category: string,
-  locality: string,
-  items: Listing[]
+  category?: string,
+  locality?: string,
+  items: Listing[] = []
 ): Listing[] {
-  const q = query.toLowerCase().trim()
-  const qTerms = q.split(/\s+/).filter(Boolean)
+  const qClean = (query || '').toLowerCase().replace(/[^a-z0-9\s]/g, ' ').trim()
+  const rawTerms = qClean.split(/\s+/).filter(Boolean)
+  const meaningfulTerms = rawTerms.filter(t => !STOPWORDS.has(t) && t.length > 1)
+  const activeTerms = meaningfulTerms.length > 0 ? meaningfulTerms : rawTerms.filter(t => t.length > 1)
 
-  return items.filter(item => {
-    // Category filter:
-    if (category && category !== 'All materials' && item.category !== category) {
-      return false
-    }
+  const normalizedCategory = category && !['All items', 'All materials', 'All categories'].includes(category)
+    ? marketplaceCategory(category)
+    : undefined
 
-    // Locality filter:
+  const scored = items.map(item => {
+    // Locality filter
     if (locality && locality !== 'All localities' && item.locality !== locality) {
-      return false
+      return { item, score: -1 }
     }
 
-    if (!q) return true
+    // Strict category filter ONLY IF category was explicitly requested AND query is empty
+    if (normalizedCategory && activeTerms.length === 0 && item.category !== normalizedCategory) {
+      return { item, score: -1 }
+    }
 
-    // Text match:
-    const itemText = `${item.title} ${item.category} ${item.detail} ${item.condition} ${item.locality}`.toLowerCase()
+    if (activeTerms.length === 0) {
+      return { item, score: 1 }
+    }
 
-    // Direct phrase match:
-    if (itemText.includes(q)) return true
+    const titleLower = item.title.toLowerCase()
+    const catLower = item.category.toLowerCase()
+    const detailLower = item.detail.toLowerCase()
+    const kwLower = (item.keywords || []).join(' ').toLowerCase()
 
-    // Multi-term match:
-    return qTerms.some(term => itemText.includes(term))
+    let score = 0
+
+    // Bonus if category aligns
+    if (normalizedCategory && item.category === normalizedCategory) {
+      score += 15
+    }
+
+    // Direct exact phrase match in title:
+    if (qClean && titleLower.includes(qClean)) {
+      score += 50
+    }
+
+    for (const term of activeTerms) {
+      if (titleLower.includes(term)) {
+        score += 25
+        if (new RegExp(`\\b${term}\\b`, 'i').test(titleLower)) score += 15
+      }
+      if (kwLower.includes(term)) {
+        score += 20
+        if (new RegExp(`\\b${term}\\b`, 'i').test(kwLower)) score += 10
+      }
+      if (catLower.includes(term)) {
+        score += 10
+      }
+      if (detailLower.includes(term)) {
+        score += 5
+      }
+    }
+
+    return { item, score }
   })
+
+  return scored
+    .filter(s => s.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .map(s => s.item)
 }
 
 /**
@@ -658,16 +729,22 @@ export async function executeAgentSkill({
   // Skill 1: Material Vision & Photo Diagnostic
   if (skill === 'analyze') {
     let analysis: AnalysisResult | null = null
-    if (liveAI && photoUrl) {
+    if (liveAI) {
       analysis = await liveGeminiAnalyzePhoto(prompt, photoUrl)
     }
     if (!analysis) {
       analysis = analyzeMaterialPhoto(prompt, photoName)
     }
 
-    const matches = searchMarketplace(
-      analysis.matchingKeywords.join(' '),
+    const photoKeywords = [
+      analysis.detectedMaterial,
       analysis.materialCategory,
+      ...analysis.matchingKeywords
+    ].join(' ')
+    const normalizedCategory = resolveCategory(analysis.materialCategory)
+    const matches = searchMarketplace(
+      photoKeywords,
+      normalizedCategory,
       req.locality,
       items
     ).slice(0, 3)
@@ -675,7 +752,7 @@ export async function executeAgentSkill({
     return {
       activeSkill: 'analyze',
       suggestedRequirements: {
-        category: analysis.materialCategory
+        category: normalizedCategory
       },
       responseMessage: {
         id: `msg-${Date.now()}`,
@@ -707,9 +784,14 @@ export async function executeAgentSkill({
 
     // Find materials required from local inventory:
     const primaryMaterial = stepsGuide.materialsNeeded[0]
+    const stepsTerms = [
+      prompt,
+      ...(stepsGuide.materialsNeeded || []).map(m => `${m.name} ${m.searchKeyword || ''} ${m.category}`)
+    ].join(' ')
+    const stepsCategory = resolveCategory(primaryMaterial?.name || primaryMaterial?.category || prompt)
     const matched = searchMarketplace(
-      primaryMaterial?.searchKeyword || primaryMaterial?.category || 'timber',
-      primaryMaterial?.category || 'All materials',
+      stepsTerms,
+      stepsCategory,
       req.locality,
       items
     ).slice(0, 3)
@@ -717,7 +799,7 @@ export async function executeAgentSkill({
     return {
       activeSkill: 'get_steps',
       suggestedRequirements: {
-        category: primaryMaterial?.category || 'Timber'
+        category: stepsCategory
       },
       responseMessage: {
         id: `msg-${Date.now()}`,
@@ -728,7 +810,7 @@ export async function executeAgentSkill({
         stepsGuide,
         matchedListings: matched.length > 0 ? matched : undefined,
         suggestedPrompts: [
-          `Find the required materials in Bengaluru`,
+          `Find the required materials nearby`,
           `Can I build something bigger with this?`,
           `Analyze another photo`
         ]
@@ -746,9 +828,12 @@ export async function executeAgentSkill({
       buildPlan = generateBuildPlan(prompt)
     }
 
-    const primaryCategory = buildPlan.requiredMaterials[0]?.category || 'Timber'
+    const primaryReq = buildPlan.requiredMaterials[0]
+    const materialName = primaryReq?.name || 'Reclaimed Timber'
+    const buildSearch = primaryReq ? `${primaryReq.name} ${primaryReq.category}` : prompt
+    const primaryCategory = resolveCategory(buildSearch)
     const matched = searchMarketplace(
-      primaryCategory,
+      buildSearch,
       primaryCategory,
       req.locality,
       items
@@ -764,12 +849,12 @@ export async function executeAgentSkill({
         role: 'assistant',
         timestamp: Date.now(),
         skill: 'build_plan',
-        content: `I’ve put together a reuse-first build plan for your project: **${buildPlan.projectName}**. You can review the phased instructions below, check the required materials, and confirm your project dimensions:`,
+        content: `I’ve put together a reuse-first build plan for your project: ${buildPlan.projectName}. You can review the phased instructions below, check the required materials, and confirm your project dimensions:`,
         buildPlan,
         showRequirements: true,
         matchedListings: matched.length > 0 ? matched : undefined,
         suggestedPrompts: [
-          `Show me available ${primaryCategory.toLowerCase()} for this`,
+          `Show me available ${materialName.toLowerCase()} for this`,
           `What tools do I need for this build?`,
           `How do I fix joints on this bench?`
         ]
@@ -777,7 +862,7 @@ export async function executeAgentSkill({
     }
   }
 
-  // Skill 4: Autonomous Procurement & Negotiation Agent
+  // Skill 4: clearly labelled future sourcing simulation
   if (skill === 'procure') {
     const order = createProcurementOrder({
       query: prompt,
@@ -796,7 +881,7 @@ export async function executeAgentSkill({
         role: 'assistant',
         timestamp: Date.now(),
         skill: 'procure',
-        content: `I’ve initiated an **autonomous circular salvage workflow** for "${order.materialQuery}". I scouted local demolition networks and commercial remodel yards, cleared the lot for zero-waste community reuse, and secured a **100% Free Salvage & Landfill Diversion (0 ₹)** transfer:`,
+        content: `Simulated future workflow: here is an illustrative sourcing scenario for "${order.materialQuery}". No supplier was contacted, no negotiation occurred, and no material has been reserved:`,
         procurementOrder: order,
         suggestedPrompts: [
           `Confirm and add ${order.materialQuery} to My Project`,
@@ -808,17 +893,15 @@ export async function executeAgentSkill({
   }
 
   // Skill 5: Direct Material Finder / Search (default)
-  const categoryMatch = ['Tiles', 'Timber', 'Pots', 'Pavers', 'Fittings'].find(c =>
-    new RegExp(c, 'i').test(prompt)
-  ) || req.category || 'All materials'
-
-  const matched = searchMarketplace(prompt, categoryMatch, req.locality, items)
+  const inferredCategory = resolveCategory(prompt)
+  const matched = searchMarketplace(prompt, inferredCategory, req.locality, items)
   const notFound = matched.length === 0
+  const visibleMatches = matched.slice(0, 4)
 
   return {
     activeSkill: 'search',
     suggestedRequirements: {
-      category: categoryMatch !== 'All materials' ? categoryMatch : undefined
+      category: inferredCategory || undefined
     },
     responseMessage: {
       id: `msg-${Date.now()}`,
@@ -826,13 +909,13 @@ export async function executeAgentSkill({
       timestamp: Date.now(),
       skill: 'search',
       content: notFound
-        ? `I searched the local inventory for "${prompt}", but no active surplus gifts match right now. You can deploy our **Autonomous Demolition Broker** in the background to scout remodel yards and secure a 100% Free salvage lot (0 ₹) for you:`
-        : `I searched the local inventory and found **${matched.length} leftover listing${matched.length > 1 ? 's' : ''}** that match your request. All materials are 100% Free Community Giveaways (0 ₹):`,
-      matchedListings: (matched.length > 0 ? matched : items).slice(0, 4),
+        ? `I searched the current demo inventory for "${prompt}", but found no exact match. You can preview a clearly labelled future sourcing scenario or adjust the material and locality:`
+        : `I searched the demo inventory and found ${visibleMatches.length} relevant listing${visibleMatches.length > 1 ? 's' : ''} to review. These fictional examples are shown as free community giveaways:`,
+      matchedListings: visibleMatches.length > 0 ? visibleMatches : undefined,
       showProcurementTrigger: notFound
         ? {
             materialName: prompt,
-            category: categoryMatch !== 'All materials' ? categoryMatch : 'Timber',
+            category: inferredCategory || 'Materials',
             suggestedBudget: 0
           }
         : undefined,

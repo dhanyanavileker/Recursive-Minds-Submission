@@ -29,7 +29,7 @@ async function callServerProxy<T>(endpoint: string, body: Record<string, unknown
  */
 export async function liveGeminiAnalyzePhoto(
   prompt: string,
-  photoUrl: string
+  photoUrl?: string
 ): Promise<AnalysisResult | null> {
   // 1. Try secure Cloud Run backend proxy
   const serverResult = await callServerProxy<AnalysisResult>('/api/gemini/analyze', { prompt, photoUrl })

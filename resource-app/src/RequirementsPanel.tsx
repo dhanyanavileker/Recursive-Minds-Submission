@@ -147,12 +147,12 @@ export function RequirementsPanel({ value: r, onChange, ready, onConfirm, onEdit
               <label className="single-field">
                 Pickup locality
                 <select value={r.locality} onChange={e => update('locality', e.target.value)}>
-                  {['All localities', 'Indiranagar', 'Koramangala', 'HSR Layout'].map(x => (
+                  {['All localities', 'Central District', 'North Zone', 'West End', 'South Suburbs', 'East River'].map(x => (
                     <option key={x}>{x}</option>
                   ))}
                 </select>
               </label>
-              <p className="requirements-note">Illustrative Bengaluru localities. We do not calculate travel distances.</p>
+              <p className="requirements-note">Local circular economy hubs and partner yards.</p>
             </div>
           )}
 

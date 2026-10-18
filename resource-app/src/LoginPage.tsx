@@ -52,7 +52,7 @@ export function LoginPage() {
             <div className="login-visual-quote">
               <h3>Every leftover has another beginning.</h3>
               <p>
-                Connecting neighbours with surplus materials, furniture, household items, and gear across Bengaluru.
+                Connecting neighbours with surplus materials, furniture, household items, and gear in your community.
               </p>
             </div>
             <div className="login-visual-pills">
@@ -173,7 +173,7 @@ export function LoginPage() {
           <div className="login-features">
             <div className="login-feature">
               <div className="login-feature-dot" style={{ background: '#2F6B56' }} />
-              <span>Find leftover materials near you (Bengaluru)</span>
+              <span>Find leftover materials near you</span>
             </div>
             <div className="login-feature">
               <div className="login-feature-dot" style={{ background: '#2F6B56' }} />

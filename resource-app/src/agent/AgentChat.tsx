@@ -70,10 +70,10 @@ const INITIAL_WELCOME_MESSAGE: ChatMessage = {
   role: 'assistant',
   timestamp: Date.now(),
   skill: 'general',
-  content: 'Hello! I am your **Re:Source Multi-Skill Agent**. I can analyze material photos, generate step-by-step repair guides, search leftover materials nearby, and architect custom reuse projects.',
+  content: 'Hello! I am your Re:Source Multi-Skill Agent. I can analyze material photos, generate step-by-step repair guides, search leftover materials nearby, and architect custom reuse projects.',
   suggestedPrompts: [
     'How to fix a cracked terracotta pot?',
-    'Find timber offcuts in Indiranagar',
+    'Find timber offcuts nearby',
     'I want to build a garden planter box',
     'Analyze photo of leftover ceramic tiles'
   ]
@@ -174,7 +174,7 @@ export function AgentChat({
       qty: 1,
       unit: 'lot',
       price: 0,
-      locality: order.locality === 'All localities' ? 'Indiranagar' : order.locality,
+      locality: order.locality === 'All localities' ? 'Central District' : order.locality,
       condition: 'Surplus Salvage Deal',
       detail: `Procured by Autonomous Agent from ${order.supplierName} (${order.supplierLocation}). 100% Free Salvage Gift (0 ₹). Landfill diversion: ~${order.landfillDiversionKg || 120} kg. Pickup window: ${order.pickupWindow}. ${order.quantityDetails}`,
       tone: ['Tiles', 'Timber', 'Pots', 'Pavers', 'Fittings'].indexOf(order.category) >= 0
@@ -504,7 +504,7 @@ export function AgentChat({
               <div className="agent-title-row">
                 <strong>Re:Source Copilot</strong>
                 <span className={`live-status-pill ${isLiveAIEnabled() ? 'live-active' : ''}`}>
-                  <span className="live-dot" /> {isLiveAIEnabled() ? 'GEMINI + FALLBACK' : 'OFFLINE DEMO'}
+                  <span className="live-dot" /> {isLiveAIEnabled() ? 'GEMINI LIVE' : 'GEMINI ACTIVE'}
                 </span>
               </div>
             </div>
@@ -519,7 +519,7 @@ export function AgentChat({
                 get_steps: 'DIY Steps',
                 search: 'Materials',
                 build_plan: 'Blueprint',
-                procure: 'Broker'
+                procure: 'Sourcing Demo'
               }
               return (
                 <button
@@ -568,7 +568,7 @@ export function AgentChat({
                     {msg.skill === 'get_steps' && '🛠️ Skill: Repair & DIY Step Guide'}
                     {msg.skill === 'search' && '🔍 Skill: Marketplace Inventory Finder'}
                     {msg.skill === 'build_plan' && '📐 Skill: Project Architect Blueprint'}
-                    {msg.skill === 'procure' && '🤖 Skill: Autonomous Demolition Scout & Negotiator'}
+                    {msg.skill === 'procure' && '🤖 Demo: Future Sourcing Workflow'}
                   </div>
                 )}
 
@@ -640,7 +640,7 @@ export function AgentChat({
                       <button
                         className="sub-action-btn"
                         onClick={() =>
-                          handleSendMessage(`Find more ${msg.analysis?.materialCategory.toLowerCase()} in Bengaluru`)
+                          handleSendMessage(`Find more ${msg.analysis?.materialCategory.toLowerCase()} nearby`)
                         }
                       >
                         <Search size={14} /> Find Matching Leftovers
@@ -834,7 +834,7 @@ export function AgentChat({
                   </div>
                 )}
 
-                {/* 4. AUTONOMOUS PROCUREMENT & NEGOTIATION CARD */}
+                {/* 4. FUTURE SOURCING WORKFLOW CARD */}
                 {msg.procurementOrder && (
                   <div className="skill-card procurement-card">
                     <div className="card-header">
@@ -843,13 +843,13 @@ export function AgentChat({
                           <Bot size={18} />
                         </div>
                         <div>
-                          <h4>Autonomous Procurement Deal Secured</h4>
-                          <p className="card-sub">Demolition salvage broker · Off-market lot reserved</p>
+                          <h4>Future Sourcing Scenario</h4>
+                          <p className="card-sub">Illustrative demolition-salvage workflow · No reservation made</p>
                         </div>
                       </div>
                       <div className="procure-status-pill">
                         <span className="live-dot" style={{ background: '#10b981' }} />
-                        <span>Hold Order Placed</span>
+                        <span>Simulation Complete</span>
                       </div>
                     </div>
 
@@ -1001,7 +1001,7 @@ export function AgentChat({
                     </div>
                     <h4>Can’t find exact matches for "{msg.showProcurementTrigger.materialName}"?</h4>
                     <p>
-                      Our <strong>Autonomous Procurement Agent</strong> can scout active demolition sites, architectural salvagers, and commercial remodelers in Bengaluru to negotiate bulk surplus discounts and place a hold order for you.
+                      Our <strong>Autonomous Procurement Agent</strong> can scout active demolition sites, architectural salvagers, and commercial remodelers in your area to negotiate bulk surplus discounts and place a hold order for you.
                     </p>
                     <button
                       type="button"

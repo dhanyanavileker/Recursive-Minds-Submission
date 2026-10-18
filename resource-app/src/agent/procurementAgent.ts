@@ -33,7 +33,7 @@ export function saveProcuredOrder(order: ProcurementOrder): void {
 export function createProcurementOrder({
   query,
   category = 'Timber',
-  locality = 'Bengaluru'
+  locality = 'Local Area'
 }: {
   query: string
   category?: string
@@ -44,7 +44,7 @@ export function createProcurementOrder({
   const orderId = `proc-${Date.now()}`
 
   let supplierName = 'Metro Demolition & Salvage Works'
-  let supplierLocation = locality === 'All localities' ? 'Indiranagar Depot' : `${locality} Industrial Yard`
+  let supplierLocation = locality === 'All localities' ? 'Central Yard Depot' : `${locality} Industrial Yard`
   let materialName = query.trim() || 'Reclaimed Heavy Timber Offcuts'
   let quantityDetails = '6–8 solid pieces (approx. 1.2–1.8m)'
   let landfillDiversionKg = 140
@@ -53,8 +53,8 @@ export function createProcurementOrder({
 
   if (/tile|mosaic|slate|marble/i.test(q)) {
     category = 'Tiles'
-    supplierName = 'Bangalore Tile Reclaim & Masonry'
-    supplierLocation = 'HSR Layout Sector 2'
+    supplierName = 'City Tile Reclaim & Masonry'
+    supplierLocation = 'East District Yard'
     materialName = q.includes('mosaic') ? 'Surplus Glazed Ceramic Mosaic Tiles' : 'Salvaged Floor Tile Lot'
     quantityDetails = 'Approx. 5.5 m² lot (clean uninstalled surplus)'
     landfillDiversionKg = 95
@@ -62,8 +62,8 @@ export function createProcurementOrder({
     pickupWindow = 'Friday or Saturday, 11:00 AM – 3:00 PM'
   } else if (/pot|planter|terracotta|clay/i.test(q)) {
     category = 'Pots'
-    supplierName = 'Pottery Town Demolition & Nursery Surplus'
-    supplierLocation = 'Benson Town / Cantonment'
+    supplierName = 'Metropolitan Nursery & Clay Surplus'
+    supplierLocation = 'North Side Depot'
     materialName = 'Molded Terracotta Planters & Clay Shards'
     quantityDetails = '4 large garden pots + drainage shards'
     landfillDiversionKg = 60
@@ -71,8 +71,8 @@ export function createProcurementOrder({
     pickupWindow = 'Sunday, 9:00 AM – 12:00 PM'
   } else if (/paver|stone|granite|brick/i.test(q)) {
     category = 'Pavers'
-    supplierName = 'Deccan Stone & Paving Salvage'
-    supplierLocation = 'Koramangala 4th Block'
+    supplierName = 'Civic Stone & Paving Salvage'
+    supplierLocation = 'South Yard Hub'
     materialName = 'Dressed Granite & Sandstone Pavers'
     quantityDetails = '18 pieces (30 × 30 cm dressed pavers)'
     landfillDiversionKg = 210
@@ -81,7 +81,7 @@ export function createProcurementOrder({
   } else if (/brass|handle|fitting|hinge|screw|metal/i.test(q)) {
     category = 'Fittings'
     supplierName = 'Heritage Architectural Hardware'
-    supplierLocation = 'Shivajinagar Depot'
+    supplierLocation = 'Downtown Depot'
     materialName = 'Vintage Solid Brass Cabinet Fittings'
     quantityDetails = 'Matching set of 12 solid brass pulls'
     landfillDiversionKg = 25

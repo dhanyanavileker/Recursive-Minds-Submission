@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import {
   Truck,
   MapPin,
-  Phone,
   CheckCircle2,
   Clock,
   ShieldCheck,
@@ -34,17 +33,17 @@ export interface DeliveryDetails {
 }
 
 export const DEFAULT_DELIVERY: DeliveryDetails = {
-  id: 'ECO-BLR-8924',
+  id: 'ECO-DEL-8924',
   itemName: 'Sea-glass mosaic ceramic tiles (48 pieces)',
   category: 'Materials',
   quantity: '48 pieces · 1 lot',
-  donorLocality: '12th Main, Indiranagar',
-  recipientLocality: '5th Block, Koramangala / HSR Site',
+  donorLocality: '12th Ave, Central District',
+  recipientLocality: 'West End Hub / Maker Site',
   stage: 3, // In Transit
   driverName: 'Ramesh Kumar',
   driverPhone: '+91 98450 23149',
   vehicleModel: 'Eco EV 3-Wheeler Mini-Truck',
-  vehicleNumber: 'KA-04-ME-4821',
+  vehicleNumber: 'EV-ECO-4821',
   rating: 4.9,
   trips: 1840,
   otp: '7419',
@@ -88,25 +87,25 @@ export function DeliveryTracker({
     },
     {
       title: 'Green Logistics Partner Assigned',
-      desc: `${delivery.driverName} accepted hyperlocal pickup with ${delivery.vehicleModel}.`,
+      desc: `The demo assigns ${delivery.driverName} and ${delivery.vehicleModel}.`,
       time: '12:35 PM',
       done: currentStage >= 1
     },
     {
       title: 'Picked up from Donor Site',
-      desc: `Collected from ${delivery.donorLocality}. Zero-waste padded loading verified.`,
+      desc: `Simulated collection from ${delivery.donorLocality}.`,
       time: '12:50 PM',
       done: currentStage >= 2
     },
     {
-      title: 'In Transit across Bengaluru',
-      desc: `On 100ft Inner Ring Road heading to ${delivery.recipientLocality}.`,
+      title: 'In Transit to Destination',
+      desc: `En route heading to ${delivery.recipientLocality}.`,
       time: '01:05 PM',
       done: currentStage >= 3
     },
     {
       title: 'Delivered & Handover Confirmed',
-      desc: `Arrived at project site. Handover verified via OTP. Second life started!`,
+      desc: `Simulated arrival and handover confirmation.`,
       time: currentStage === 4 ? '01:22 PM' : 'Est. 01:25 PM',
       done: currentStage >= 4
     }
@@ -118,7 +117,7 @@ export function DeliveryTracker({
       setCurrentStage(next)
       if (onAdvanceStage) onAdvanceStage(next)
       if (next === 4) {
-        setAlertNotice('🎉 Delivery Completed! Materials handed over. +50 Circular Karma awarded!')
+        setAlertNotice('Simulation complete. No real delivery or reward was created.')
         if (onAddKarma) onAddKarma(50)
       } else if (next === 3) {
         setEta(8)
@@ -145,17 +144,17 @@ export function DeliveryTracker({
         <DialogHeader>
           <div className="porter-header-brand">
             <span className="porter-badge">
-              <Truck size={15} /> GREEN LOGISTICS NETWORK
+              <Truck size={15} /> SIMULATED DELIVERY DEMO
             </span>
             <span className="live-pill">
-              <span className="live-dot" /> LIVE TRACKING
+              <span className="live-dot" /> PROTOTYPE
             </span>
           </div>
           <DialogTitle className="delivery-title">
             Tracking Circular Delivery #{delivery.id}
           </DialogTitle>
           <DialogDescription className="delivery-desc">
-            End-to-end tracked logistics ensuring surplus materials reach makers safely.
+            Illustrative logistics flow. No driver, vehicle, route, or delivery is active.
           </DialogDescription>
         </DialogHeader>
 
@@ -249,11 +248,11 @@ export function DeliveryTracker({
             <circle cx="560" cy="60" r="10" fill="#3b2020" stroke="#f87171" strokeWidth="3" />
           </svg>
           <div className="map-labels">
-            <span>Indiranagar Hub</span>
+            <span>Central Hub</span>
             <span className="live-vehicle-tag">
               {currentStage === 4 ? '📍 Arrived at Destination' : '🚚 Low-emission EV in transit (3.2 km away)'}
             </span>
-            <span>HSR Layout Site</span>
+            <span>West End Site</span>
           </div>
         </div>
 
@@ -274,18 +273,14 @@ export function DeliveryTracker({
               {delivery.vehicleModel} · <span className="plate-pill">{delivery.vehicleNumber}</span>
             </span>
           </div>
-          <div className="driver-actions">
-            <a href={`tel:${delivery.driverPhone}`} className="driver-btn call" title="Call Driver">
-              <Phone size={15} />
-            </a>
-          </div>
+          <div className="driver-actions"><span className="plate-pill">Demo profile</span></div>
         </div>
 
         {/* Handover OTP Box */}
         <div className="otp-container">
           <div className="otp-text">
-            <span>SECURE HANDOVER PIN</span>
-            <p>Share with driver {delivery.driverName} upon physical inspection of items.</p>
+            <span>DEMO HANDOVER PIN</span>
+            <p>Illustrates a future verified handover. This PIN is not active.</p>
           </div>
           <button className="otp-display" onClick={copyPin} title="Click to copy">
             <strong>{delivery.otp}</strong>
@@ -326,12 +321,12 @@ export function DeliveryTracker({
         <div className="logistics-impact-strip">
           <div className="impact-col">
             <span className="impact-val">🌱 {delivery.co2SavedKg} kg</span>
-            <span className="impact-lbl">CO₂ Emissions Saved vs Commercial</span>
+            <span className="impact-lbl">Illustrative CO₂e estimate · unverified</span>
           </div>
           <div className="impact-divider" />
           <div className="impact-col">
             <span className="impact-val">♻️ {delivery.wasteDivertedKg} kg</span>
-            <span className="impact-lbl">Materials Diverted from Landfill</span>
+            <span className="impact-lbl">Illustrative diversion estimate · unverified</span>
           </div>
         </div>
 

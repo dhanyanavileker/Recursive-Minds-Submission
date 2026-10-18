@@ -1,0 +1,19 @@
+Every day, useful resources such as furniture, electronics, equipment, packaging, materials, and surplus supplies go unused, while nearby individuals and organizations struggle to find what they need. Re:Source helps bridge that gap by connecting available resources with real needs before they become waste.
+
+The platform offers two complementary experiences. The Dashboard enables users to share resources, discover available items, track environmental impact, and participate in a circular resource network. The AI Copilot allows users to simply describe what they need or what they have, while AI agents handle resource discovery, matching, planning, and recommendations.
+
+For demonstration purposes, this prototype uses clearly labelled fictional inventory across multiple local communities. This allows the user experience to be evaluated without presenting demo activity as real-world impact.
+
+The Re:Source Copilot is organized around specialized AI capabilities for resource discovery, need analysis, photo assessment, reuse planning, logistics estimation, and sustainability impact calculations. When Gemini is available, the platform generates richer recommendations and contextual guidance while keeping verified resource information separate from AI-generated suggestions.
+
+In this scenario, a user describes a need for resources for a community project. The AI analyzes the request, identifies relevant resource categories, and searches available inventory to find suitable matches nearby. The system recommends the most relevant options based on availability, suitability, location, and potential impact.
+
+Every recommendation remains grounded in recorded information such as quantity, condition, category, location, and availability. Users can review resources, refine requirements, compare alternatives, and save suitable matches directly to their project plans. Key calculations, including availability validation, matching criteria, and impact estimates, are managed through application logic to ensure consistent and transparent results.
+
+Re:Source can also help transform ideas into action. A user can describe a project, event, donation need, or resource requirement, and the system suggests suitable resources, identifies potential providers, highlights alternatives, and estimates environmental benefits. AI-generated recommendations remain clearly distinguishable from verified user-provided information.
+
+Once a match is identified, the platform demonstrates a potential handover and logistics workflow. This simulation illustrates how future implementations could coordinate pickup, delivery, and resource transfers while clearly indicating that no real driver, booking, route, or transaction is active during the demonstration.
+
+The rewards experience follows the same approach. Demo Karma and impact metrics illustrate how the platform could encourage verified resource redistribution and circular economy participation in a production environment, while making it clear that no real rewards or incentive programs are currently being issued.
+
+Re:Source demonstrates how AI-assisted discovery, intelligent matching, and transparent resource sharing can help communities extract more value from existing resources and reduce unnecessary waste. Our vision is to create a scalable circular resource network where useful resources find their next purpose instead of ending up in landfills.

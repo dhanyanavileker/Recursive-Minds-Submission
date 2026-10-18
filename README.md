@@ -21,7 +21,9 @@ Re:Source connects these two sides:
 The repository currently contains a local React prototype with:
 
 - A guided project brief for material type, dimensions, budget, and pickup locality.
-- Twenty labelled fictional listings across Bengaluru localities.
+- Twenty-four labelled fictional listings across illustrative Bengaluru localities.
+- A multi-skill assistant for project plans, repair guidance, photo analysis and inventory discovery.
+- Server-side Gemini integration with a deterministic offline fallback; responses do not expose the API key to the browser.
 - Evidence-based match cards with listing references.
 - Deterministic area, coverage, budget, and locality checks.
 - Clear states for enough material, quantity short, and dimensions unknown.
@@ -74,23 +76,23 @@ The matching tests cover unit conversion, adequate and insufficient area, missin
 - Local browser storage for prototype state
 - Node's built-in test runner for deterministic matching checks
 
-## Planned Google architecture
+## Google architecture
 
-The planned competition version uses Google services while staying within a zero-paid-usage constraint:
+The prototype uses a server-side Gemini endpoint and is designed to stay within a zero-paid-usage constraint:
 
 - Firebase Hosting for the static application.
 - Firebase Authentication for anonymous demo sessions.
 - Cloud Firestore for confirmed listings and saved projects.
-- Firebase AI Logic with Gemini for photo-assisted listing drafts, project requirement extraction, and grounded match explanations.
+- Gemini Developer API for photo analysis, project planning and repair guidance, with local deterministic fallbacks.
 - Firebase App Check and strict validation around user-provided data.
 
 AI output will remain separate from owner-confirmed facts. Inventory filtering and quantity, area, and price calculations will continue to run as deterministic application code. Generated explanations must reference real listing IDs and preserve uncertainty.
 
-This architecture is planned and has not yet been connected in the current prototype. Model availability, free-tier quotas, and Firebase project configuration still need to be verified before deployment.
+Gemini availability depends on the configured project's active free-tier quota. Firebase persistence and production App Check remain future work.
 
 ## Prototype boundaries
 
-- No live Gemini or Firebase connection yet.
+- Gemini calls are routed through the Node server; when Gemini is unavailable the UI falls back to a clearly labelled local demo path.
 - No real owner contact, reservations, payments, delivery, or pickup booking.
 - No structural-use certification or autonomous construction advice.
 - Calculated area assumes the recorded piece dimensions are uniform and excludes cuts and waste.
@@ -114,7 +116,7 @@ This architecture is planned and has not yet been connected in the current proto
 
 ## Status
 
-The local UX and evidence-based matching prototype is working. The next major milestone is connecting a bounded Gemini flow and Firebase persistence, then validating the complete experience with reference scenarios and real user testing.
+The local UX, server-side Gemini path, deterministic fallback, and evidence-based matching prototype are implemented. Public deployment, final link verification and real user testing remain submission tasks.
 
 ## License
 

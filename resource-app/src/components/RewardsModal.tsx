@@ -47,7 +47,7 @@ export function RewardsModal({
     {
       id: 'mindful-giver',
       title: 'Mindful Gifter',
-      desc: 'Donated 3+ leftover lots to fellow Bengaluru makers.',
+      desc: 'Donated 3+ leftover lots to fellow community makers.',
       icon: '🎁',
       unlocked: stats.giveawaysCount >= 3
     },
@@ -85,7 +85,7 @@ export function RewardsModal({
     {
       id: 'hardware-voucher',
       title: '15% Off Upcycling Tools & Sealants',
-      desc: 'Redeemable at participating Bengaluru hardware partner stores.',
+      desc: 'Redeemable at participating hardware partner stores.',
       cost: 500,
       icon: Gift
     }
@@ -99,7 +99,7 @@ export function RewardsModal({
     }
     setRedeemed(prev => ({ ...prev, [perk.id]: true }))
     if (onRedeemPerk) onRedeemPerk(perk.cost, perk.title)
-    setMessage(`🎉 Claimed "${perk.title}"! Voucher code: CIRCULAR-${Math.floor(1000 + Math.random() * 9000)}`)
+    setMessage(`Demo only: "${perk.title}" selected. No real voucher was issued.`)
     setTimeout(() => setMessage(''), 5000)
   }
 
@@ -113,14 +113,14 @@ export function RewardsModal({
         <DialogHeader>
           <div className="rewards-badge-header">
             <span className="trophy-pill">
-              <Award size={15} /> CIRCULAR REWARDS VAULT
+              <Award size={15} /> DEMO REWARDS PREVIEW
             </span>
           </div>
           <DialogTitle className="rewards-title">
             Your Community Karma & Environmental Impact
           </DialogTitle>
           <DialogDescription className="rewards-desc">
-            Earn rewards every time you mindfully give away leftovers or rescue materials before they reach landfills.
+            Illustrative prototype points and perks. No real rewards or partner vouchers are issued.
           </DialogDescription>
         </DialogHeader>
 

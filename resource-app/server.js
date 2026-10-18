@@ -1,7 +1,11 @@
 import express from 'express'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import dotenv from 'dotenv'
 import { GoogleGenAI } from '@google/genai'
+
+dotenv.config()
+dotenv.config({ path: '.env.local' })
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -61,13 +65,9 @@ app.post('/api/gemini/analyze', async (req, res) => {
   }
   try {
     const { prompt, photoUrl } = req.body
-    if (!photoUrl) {
-      return res.status(400).json({ error: 'photoUrl is required' })
-    }
-
-    const { mimeType, base64Data } = parseDataUrl(photoUrl)
+    const contents = []
     const systemPrompt = `You are an expert circular economy & salvage material inspector for 're:source'.
-Analyze the provided image of leftover or salvaged renovation material.
+Analyze the provided image or description of leftover or salvaged renovation material.
 Return a STRICT JSON object with these EXACT keys:
 {
   "detectedMaterial": "string",
@@ -81,17 +81,22 @@ Return a STRICT JSON object with these EXACT keys:
   "matchingKeywords": ["string", "string"]
 }`
 
+    contents.push({ text: `${systemPrompt}\n\nUser Notes: ${prompt || 'Inspect this leftover material.'}` })
+
+    if (photoUrl) {
+      const { mimeType, base64Data } = parseDataUrl(photoUrl)
+      contents.push({
+        inlineData: {
+          mimeType,
+          data: base64Data
+        }
+      })
+    }
+
     const response = await genAI.models.generateContent({
       model: MODEL_NAME,
-      contents: [
-        { text: `${systemPrompt}\n\nUser Notes: ${prompt || 'Inspect this leftover material.'}` },
-        {
-          inlineData: {
-            mimeType,
-            data: base64Data
-          }
-        }
-      ]
+      contents,
+      config: { responseMimeType: 'application/json' }
     })
 
     const text = response.text || ''
@@ -135,7 +140,8 @@ Return a STRICT JSON object with these EXACT keys:
 
     const response = await genAI.models.generateContent({
       model: MODEL_NAME,
-      contents
+      contents,
+      config: { responseMimeType: 'application/json' }
     })
 
     const text = response.text || ''
@@ -167,7 +173,8 @@ Return a STRICT JSON object with these EXACT keys:
 
     const response = await genAI.models.generateContent({
       model: MODEL_NAME,
-      contents: [{ text: `${systemPrompt}\n\nProject request: ${prompt}` }]
+      contents: [{ text: `${systemPrompt}\n\nProject request: ${prompt}` }],
+      config: { responseMimeType: 'application/json' }
     })
 
     const text = response.text || ''

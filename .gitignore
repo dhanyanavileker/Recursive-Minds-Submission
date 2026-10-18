@@ -7,3 +7,11 @@ node_modules/
 dist/
 .codex-finalizer/
 .codex-submission/
+
+# Local demo-video build intermediates
+work/
+outputs/resource-demo-silent.mp4
+outputs/resource-demo-voiceover.aiff
+outputs/video-captures/
+outputs/video-slides/
+outputs/video-contact-sheet.jpg

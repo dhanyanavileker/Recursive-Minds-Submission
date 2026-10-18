@@ -14,6 +14,8 @@ export type Listing = {
   own?: boolean
   widthCm?: number
   lengthCm?: number
+  image?: string
+  keywords?: string[]
 }
 
 export type AgentSkill = 'analyze' | 'search' | 'get_steps' | 'build_plan' | 'procure' | 'general'

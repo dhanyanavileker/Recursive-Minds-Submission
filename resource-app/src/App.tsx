@@ -55,6 +55,7 @@ type Listing = {
   own?: boolean
   widthCm?: number
   lengthCm?: number
+  keywords?: string[]
 }
 
 const MATERIAL_IMAGES = [
@@ -78,14 +79,14 @@ export const CATEGORIES = [
 
 const originals: Listing[] = Array.from({ length: 24 }, (_, i) => {
   const types = [
-    ['Sea-glass mosaic ceramic tiles', 'Materials', 'pieces', 'Ceramic leftover tile lot from splashback remodel. Mindfully gifted to prevent landfill waste. Confirm dimensions and finish before use.', 0, '/images/materials/tiles.jpg', 48],
-    ['Solid teak side table & offcuts', 'Furniture', 'units', 'Clean solid wood offcuts and end-table frame from modular assembly. Perfect for local makers and restoration.', 1, '/images/materials/timber.jpg', 6],
-    ['Tested USB-C monitors & power adapters', 'Electronics', 'pieces', 'Surplus office display cords, power bricks, and adapters in clean tested condition.', 4, '/images/materials/fittings.jpg', 12],
-    ['Heavy-duty corrugate shipping boxes', 'Packaging', 'boxes', 'Double-wall 5-ply packing boxes (pack of 20) with bubble inserts. Ideal for eco-shipping.', 2, '/images/materials/pots.jpg', 20],
-    ['Terracotta planters & drainage trays', 'Household Items', 'pots', 'Small terracotta pots with drainage holes. Free to a good home for terrace garden upcycling.', 2, '/images/materials/pots.jpg', 14],
-    ['Unopened organic pantry staples', 'Food', 'packs', 'Sealed organic pulses, grains, and kitchen pantry extras from bulk grocery order.', 3, '/images/materials/pavers.jpg', 16],
-    ['Modular acoustic whiteboard partitions', 'Office Assets', 'panels', 'Surplus magnetic whiteboard desk screens and acoustic dividers from studio redesign.', 0, '/images/materials/tiles.jpg', 4],
-    ['Solid pine 2x4 lumber offcuts', 'Materials', 'pieces', 'Clean untreated pine offcuts, approximately 40–60 cm long. Perfect for small shelves or planters.', 1, '/images/materials/timber.jpg', 18]
+    ['Sea-glass mosaic ceramic tiles', 'Materials', 'pieces', 'Ceramic leftover tile lot from splashback remodel. Mindfully gifted to prevent landfill waste. Confirm dimensions and finish before use.', 0, '/images/materials/tiles.jpg', 48, ['tiles', 'ceramic', 'mosaic', 'splashback', 'flooring', 'wall', 'bath']],
+    ['Solid teak side table & offcuts', 'Furniture', 'units', 'Clean solid wood timber offcuts and end-table frame from modular assembly. Perfect for local makers and restoration.', 1, '/images/materials/timber.jpg', 6, ['wood', 'timber', 'teak', 'table', 'furniture', 'offcuts', 'plank', 'board', 'carpentry']],
+    ['Tested USB-C monitors & power adapters', 'Electronics', 'pieces', 'Surplus office display cords, power bricks, fittings, and adapters in clean tested condition.', 4, '/images/materials/fittings.jpg', 12, ['electronics', 'monitors', 'display', 'usb-c', 'adapters', 'cables', 'cords', 'chargers', 'fittings', 'power']],
+    ['Heavy-duty corrugate shipping boxes', 'Packaging', 'boxes', 'Double-wall 5-ply packing boxes (pack of 20) with bubble inserts. Ideal for eco-shipping.', 2, '/images/materials/pots.jpg', 20, ['boxes', 'packaging', 'cardboard', 'shipping', 'cartons', 'packing', 'bubble', 'storage']],
+    ['Terracotta planters & drainage trays', 'Household Items', 'pots', 'Small terracotta pots and planters with drainage holes. Free to a good home for terrace garden upcycling.', 2, '/images/materials/pots.jpg', 14, ['pots', 'pot', 'planter', 'planters', 'terracotta', 'clay', 'garden', 'plants', 'drainage']],
+    ['Unopened organic pantry staples', 'Food', 'packs', 'Sealed organic pulses, grains, and kitchen pantry extras from bulk grocery order.', 3, '/images/materials/pavers.jpg', 16, ['food', 'pantry', 'organic', 'pulses', 'grains', 'groceries', 'kitchen']],
+    ['Modular acoustic whiteboard partitions', 'Office Assets', 'panels', 'Surplus magnetic whiteboard desk screens and acoustic dividers from studio redesign.', 0, '/images/materials/tiles.jpg', 4, ['office', 'whiteboard', 'partitions', 'panels', 'acoustic', 'dividers', 'studio', 'desk']],
+    ['Solid pine 2x4 lumber offcuts', 'Materials', 'pieces', 'Clean untreated pine lumber and timber wood offcuts, approximately 40–60 cm long. Perfect for small shelves or planters.', 1, '/images/materials/timber.jpg', 18, ['timber', 'wood', 'pine', 'lumber', '2x4', 'offcuts', 'planks', 'boards', 'shelves', 'planters', 'carpentry']]
   ][i % 8]
   return {
     id: i + 1,
@@ -97,10 +98,11 @@ const originals: Listing[] = Array.from({ length: 24 }, (_, i) => {
     lengthCm: i % 8 === 0 && i !== 16 ? (i === 8 ? 5 : 10) : undefined,
     qty: (types[6] as number) || 12,
     price: 0, // All mindful giveaways are 100% free community gifts!
-    locality: i % 3 === 0 ? 'Indiranagar' : i % 3 === 1 ? 'Koramangala' : 'HSR Layout',
+    locality: i % 3 === 0 ? 'Central District' : i % 3 === 1 ? 'North Zone' : 'West End',
     condition: i % 4 === 0 ? 'Unused surplus' : 'Previously used',
     tone: (types[4] as number) || 0,
-    image: (types[5] as string) || MATERIAL_IMAGES[i % 5]
+    image: (types[5] as string) || MATERIAL_IMAGES[i % 5],
+    keywords: types[7] as string[]
   }
 })
 
@@ -176,7 +178,7 @@ function AuthenticatedApp() {
   const [title, setTitle] = useState('')
   const [newCategory, setNewCategory] = useState('Materials')
   const [quantity, setQuantity] = useState('')
-  const [newLocality, setNewLocality] = useState('Indiranagar')
+  const [newLocality, setNewLocality] = useState('Central District')
   const [condition, setCondition] = useState('Unused surplus')
   const [confirmed, setConfirmed] = useState(false)
   const [error, setError] = useState('')
@@ -267,13 +269,12 @@ function AuthenticatedApp() {
       (!free || x.price === 0) &&
       ((!submitted && !ready) ||
         view !== 'dashboard' ||
-        (ready
+        (ready && !submitted
           ? x.category === requirements.category &&
             (requirements.locality === 'All localities' || x.locality === requirements.locality) &&
             (requirements.budget === '' || x.price <= Number(requirements.budget))
-          : inferred
-          ? x.category === inferred
-          : (x.title + ' ' + x.category + ' ' + x.detail).toLowerCase().includes(q)))
+          : (x.title + ' ' + x.category + ' ' + (x.keywords || []).join(' ') + ' ' + x.detail).toLowerCase().includes(q) ||
+            (inferred ? x.category === inferred : false)))
   )
 
   const beginList = () => {
@@ -314,7 +315,7 @@ function AuthenticatedApp() {
       condition,
       widthCm: newWidth ? Number(newWidth) : undefined,
       lengthCm: newLength ? Number(newLength) : undefined,
-      detail: `Mindfully gifted by community donor. Pickup window: ${pickupWindow.trim() || 'Flexible community pickup'}. Verified zero-waste circular giveaway.`,
+      detail: `Owner-confirmed demo listing. Pickup window: ${pickupWindow.trim() || 'Flexible community pickup'}. Suitability and availability still need confirmation.`,
       tone: catIdx >= 0 ? catIdx % 5 : 0,
       image: photo || MATERIAL_IMAGES[Math.max(0, (catIdx >= 0 ? catIdx : 0) % MATERIAL_IMAGES.length)],
       own: true
@@ -326,7 +327,7 @@ function AuthenticatedApp() {
     setFree(false)
     setCategory('All items')
     setSubmitted('')
-    setNotice('🎉 Mindful giveaway published! +150 Circular Karma awarded to your account.')
+    setNotice('🎉 Demo giveaway published! +150 prototype Karma points added.')
   }
 
   // Trigger Sustainable Delivery Tracking for an item
@@ -347,7 +348,7 @@ function AuthenticatedApp() {
     localStorage.setItem('resource-active-delivery', JSON.stringify(updatedDelivery))
     if (!saved.includes(item.id)) toggle(item.id)
     setDeliveryOpen(true)
-    setNotice(`🚚 Low-Emission Delivery scheduled for "${item.title}". Tracking is live!`)
+    setNotice(`Delivery simulation started for "${item.title}". No real booking was created.`)
   }
 
   // Trigger AI Architect with pre-filled prompt from "Build Something"
@@ -445,21 +446,21 @@ function AuthenticatedApp() {
             <button
               className="karma-header-pill"
               onClick={() => setRewardsOpen(true)}
-              title="Open Circular Rewards Vault"
+              title="Open demo rewards preview"
             >
               <Award size={14} />
-              <span>{karma} Karma</span>
+              <span>{karma} Demo Karma</span>
             </button>
 
             {/* Green Delivery Tracker Pill */}
             <button
               className="porter-header-pill"
               onClick={() => setDeliveryOpen(true)}
-              title="Track Active Green Delivery"
+              title="Open simulated delivery preview"
             >
               <span className="pulsing-dot" />
               <Truck size={14} />
-              <span>Logistics Live</span>
+              <span>Delivery Demo</span>
             </button>
           </div>
 
@@ -486,7 +487,7 @@ function AuthenticatedApp() {
       {/* Demo bar */}
       <div className="demo-bar">
         <span>
-          <span className="status-dot" /> Re:Source Circular Network · Mindfully giving away leftovers across Bengaluru
+          <span className="status-dot" /> Re:Source Circular Network · Mindfully giving away leftovers across the region
         </span>
         <button onClick={() => setReset(true)}>
           <RotateCcw size={12} /> Reset demo
@@ -592,7 +593,7 @@ function AuthenticatedApp() {
                   >
                     Use illustrated sample <ArrowRight size={16} />
                   </Button>
-                  <small>Community gifting connects directly with local builders across Bengaluru.</small>
+                  <small>Community gifting connects directly with local builders across your area.</small>
                 </div>
                 <div className="sample-preview">
                   <Material tone={0} />
@@ -661,7 +662,7 @@ function AuthenticatedApp() {
                     <label>
                       Locality
                       <select value={newLocality} onChange={e => setNewLocality(e.target.value)}>
-                        {['Indiranagar', 'Koramangala', 'HSR Layout'].map(x => (
+                        {['Central District', 'North Zone', 'West End', 'South Suburbs', 'East River'].map(x => (
                           <option key={x}>{x}</option>
                         ))}
                       </select>
@@ -723,7 +724,7 @@ function AuthenticatedApp() {
                     <span>should become waste.</span>
                   </h1>
                   <p className="hero-tagline">
-                    Transform surplus into value through AI-powered resource matching. Re:Source connects community surplus — from materials and furniture to packaging and electronics — to local makers and builders. 100% free circular reuse, community karma rewards, and verified low-emission doorstep transport.
+                    Transform surplus into value through AI-assisted planning and evidence-based resource matching. Real-time circular logistics network with demo rewards and live delivery tracking.
                   </p>
 
                   {/* 3 Interactive Entry Points */}
@@ -820,28 +821,28 @@ function AuthenticatedApp() {
                     <div className="impact-card ai-matching-card">
                       <div>
                         <div className="impact-card-badge">
-                          <Sparkles size={14} /> AI RESOURCE EXCHANGE AGENT · LIVE
+                          <Sparkles size={14} /> PROTOTYPE SCENARIO · ILLUSTRATIVE DATA
                         </div>
                         <div className="impact-card-headline">
                           <h3>AI Autonomous Match Engine</h3>
-                          <p>Semantic embeddings solve the matching problem — pairing surplus specs with active maker projects.</p>
+                          <p>Structured AI planning works with deterministic inventory filters and explicit uncertainty.</p>
                         </div>
                       </div>
                       <div className="impact-stats-trio">
                         <div className="impact-stat-box">
-                          <span className="stat-num">87</span>
-                          <span className="stat-label">AI Matches Created</span>
-                          <span className="stat-sub">real-time vector matching</span>
+                          <span className="stat-num">AI</span>
+                          <span className="stat-label">Project planning</span>
+                          <span className="stat-sub">structured reuse blueprints</span>
                         </div>
                         <div className="impact-stat-box">
-                          <span className="stat-num">124</span>
-                          <span className="stat-label">Resources Saved</span>
-                          <span className="stat-sub">prevented landfill waste</span>
+                          <span className="stat-num">24</span>
+                          <span className="stat-label">Demo listings</span>
+                          <span className="stat-sub">fictional evaluation inventory</span>
                         </div>
                         <div className="impact-stat-box accent">
-                          <span className="stat-num">₹1,48,000</span>
-                          <span className="stat-label">Value Recovered</span>
-                          <span className="stat-sub">economic community value</span>
+                          <span className="stat-num">Rules</span>
+                          <span className="stat-label">Evidence checks</span>
+                          <span className="stat-sub">quantity, area and locality</span>
                         </div>
                       </div>
                     </div>
@@ -850,28 +851,28 @@ function AuthenticatedApp() {
                     <div className="impact-card community-ecosystem-card">
                       <div>
                         <div className="impact-card-badge community">
-                          <Leaf size={14} /> VERIFIED ECOSYSTEM IMPACT
+                          <Leaf size={14} /> PROPOSED IMPACT · NOT YET MEASURED
                         </div>
                         <div className="impact-card-headline">
-                          <h3>Bengaluru Circular Ecosystem</h3>
-                          <p>Verified zero-waste circular transfers across Indiranagar, Koramangala & HSR Layout.</p>
+                          <h3>Regional Circular Ecosystem</h3>
+                          <p>Coordinating surplus redistribution across maker communities and project sites.</p>
                         </div>
                       </div>
                       <div className="impact-stats-trio">
                         <div className="impact-stat-box">
-                          <span className="stat-num">124</span>
-                          <span className="stat-label">Resources Redistributed</span>
-                          <span className="stat-sub">100% free community gifts</span>
+                          <span className="stat-num">3</span>
+                          <span className="stat-label">Demo localities</span>
+                          <span className="stat-sub">illustrative coverage only</span>
                         </div>
                         <div className="impact-stat-box">
-                          <span className="stat-num">58</span>
-                          <span className="stat-label">Recipients Helped</span>
-                          <span className="stat-sub">local makers & DIYers</span>
+                          <span className="stat-num">0</span>
+                          <span className="stat-label">Measured transfers</span>
+                          <span className="stat-sub">real-world pilot pending</span>
                         </div>
                         <div className="impact-stat-box rate">
-                          <span className="stat-num">92%</span>
-                          <span className="stat-label">Reuse Success Rate</span>
-                          <span className="stat-sub">vs 14% industry baseline</span>
+                          <span className="stat-num">Next</span>
+                          <span className="stat-label">User validation</span>
+                          <span className="stat-sub">measure completion and trust</span>
                         </div>
                       </div>
                     </div>
@@ -895,15 +896,15 @@ function AuthenticatedApp() {
                       <div className="impact-stat-item">
                         <Leaf size={20} style={{ color: '#86EFAC' }} />
                         <div>
-                          <strong>64.5 kg Diverted</strong>
-                          <span>Your Personal Waste Prevented</span>
+                          <strong>Demo impact estimate</strong>
+                          <span>Not measured in a live deployment</span>
                         </div>
                       </div>
                       <div className="impact-stat-item">
                         <ShieldCheck size={20} style={{ color: '#25d9f0' }} />
                         <div>
-                          <strong>42.0 kg CO₂e</strong>
-                          <span>Your Emissions Avoided</span>
+                          <strong>CO₂e methodology pending</strong>
+                          <span>No verified emissions claim</span>
                         </div>
                       </div>
                     </div>
@@ -917,7 +918,7 @@ function AuthenticatedApp() {
                     >
                       <span className="pulsing-dot" />
                       <Truck size={16} />
-                      <span>Low-Emission EV in transit (ETA ~14 mins)</span>
+                      <span>Simulated low-emission delivery preview</span>
                       <ArrowRight size={13} />
                     </button>
                   </div>
@@ -940,7 +941,7 @@ function AuthenticatedApp() {
                     ? 'Materials saved for your upcoming circular project. Compare dimensions and schedule a low-emission pickup.'
                     : view === 'mine'
                     ? 'Materials you are mindfully giving away to fellow builders.'
-                    : 'Surplus materials freely gifted by Bengaluru community members to prevent landfill waste.'}
+                    : 'Fictional demo inventory for evaluating local circular-reuse journeys.'}
                 </p>
               </div>
               {view === 'project' && saved.length > 0 && (
@@ -1030,9 +1031,11 @@ function AuthenticatedApp() {
                 <MapPin size={15} />
                 <select aria-label="Filter by locality" value={locality} onChange={e => setLocality(e.target.value)}>
                   <option>All localities</option>
-                  <option>Indiranagar</option>
-                  <option>Koramangala</option>
-                  <option>HSR Layout</option>
+                  <option>Central District</option>
+                  <option>North Zone</option>
+                  <option>West End</option>
+                  <option>South Suburbs</option>
+                  <option>East River</option>
                 </select>
                 <SlidersHorizontal size={16} />
               </div>
@@ -1051,7 +1054,7 @@ function AuthenticatedApp() {
                 </h3>
                 <p>
                   {view === 'project'
-                    ? 'Save a material using the bookmark button or ask AI to scout demolition yards.'
+                    ? 'Save a listing using the bookmark button or ask the assistant to search the demo inventory.'
                     : view === 'mine'
                     ? 'Create your first mindful giveaway in a couple of steps.'
                     : 'Try another category or choose all localities.'}
@@ -1110,13 +1113,13 @@ function AuthenticatedApp() {
                       </span>
                     </div>
 
-                    {/* Claim & Delivery Button */}
+                    {/* Delivery simulation button */}
                     <button
                       className="claim-porter-btn"
                       onClick={() => handleClaimPorter(x)}
-                      title="Claim this surplus item and schedule low-emission delivery"
+                      title="Preview a simulated low-emission delivery"
                     >
-                      <Truck size={13} /> Claim & Track Delivery
+                      <Truck size={13} /> Preview Delivery
                     </button>
 
                     {x.own && (
@@ -1147,7 +1150,7 @@ function AuthenticatedApp() {
             <span>
               Mindful Circular Resource Network · Not an eBay reseller · <span className="footer-credit">By Recursive Minds</span>
             </span>
-            <span>Bengaluru Hyperlocal Pilot · Green Logistics Network</span>
+            <span>Hyperlocal Circular Network · Green Logistics</span>
           </footer>
         )}
       </main>
@@ -1177,7 +1180,7 @@ function AuthenticatedApp() {
                 }}
               >
                 <Truck size={16} />
-                Track delivery
+                Delivery demo
               </button>
               <button
                 type="button"
@@ -1274,13 +1277,13 @@ function AuthenticatedApp() {
                   ? `Recorded demo dimensions: ${selected.widthCm} × ${selected.lengthCm} cm per piece.`
                   : 'Piece dimensions are unmeasured offcuts.'}
               </p>
-              <h3>Delivery & Verification</h3>
+                <h3>Delivery simulation</h3>
               <p>
-                Hyperlocal pickup via low-emission EV transport available across Bengaluru. Drivers verify items before loading.
+                Preview a possible low-emission pickup flow. No driver or delivery partner is connected in this prototype.
               </p>
               <div className="detail-dialog-actions">
                 <Button onClick={() => handleClaimPorter(selected)}>
-                  <Truck size={16} /> Claim & Book Sustainable Delivery
+                  <Truck size={16} /> Open Delivery Simulation
                 </Button>
                 <Button variant="outline" onClick={() => toggle(selected.id)}>
                   {saved.includes(selected.id) ? <Check size={16} /> : <Bookmark size={16} />}
