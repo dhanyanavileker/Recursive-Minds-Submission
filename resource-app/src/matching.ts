@@ -1,6 +1,6 @@
 export type Requirements = { category: string; width: string; length: string; budget: string; locality: string }
 export type MeasuredListing = { category: string; qty: number; price: number; locality: string; widthCm?: number; lengthCm?: number }
-export const blankRequirements: Requirements = { category: 'Tiles', width: '', length: '', budget: '', locality: 'All localities' }
+export const blankRequirements: Requirements = { category: 'Materials', width: '', length: '', budget: '', locality: 'All localities' }
 export function targetArea(r: Requirements): number | null {
  const w=Number(r.width), l=Number(r.length)
  return r.width.trim() && r.length.trim() && Number.isFinite(w) && Number.isFinite(l) && w>0 && l>0 ? w*l/10000 : null

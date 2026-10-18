@@ -31,7 +31,7 @@ export interface SkillMeta {
 
 export interface AnalysisResult {
   detectedMaterial: string
-  materialCategory: 'Tiles' | 'Timber' | 'Pots' | 'Pavers' | 'Fittings'
+  materialCategory: 'Materials' | 'Furniture' | 'Electronics' | 'Packaging' | 'Household Items' | 'Food' | 'Office Assets' | 'Tiles' | 'Timber' | 'Pots' | 'Pavers' | 'Fittings' | string
   conditionRating: string
   conditionStatus: 'good' | 'moderate' | 'worn'
   inspectionNotes: string[]

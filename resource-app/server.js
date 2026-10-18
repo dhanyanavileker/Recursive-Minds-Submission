@@ -15,7 +15,7 @@ app.use(express.json({ limit: '10mb' }))
 // Initialize server-side Gemini client
 const apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY
 const genAI = apiKey ? new GoogleGenAI({ apiKey }) : null
-const MODEL_NAME = process.env.GEMINI_MODEL || 'gemini-2.5-flash'
+const MODEL_NAME = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite'
 
 function parseDataUrl(dataUrl) {
   const match = dataUrl.match(/^data:([^;]+);base64,(.+)$/)

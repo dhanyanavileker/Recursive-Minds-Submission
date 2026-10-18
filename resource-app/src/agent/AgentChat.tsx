@@ -445,7 +445,7 @@ export function AgentChat({
               <div className="agent-title-row">
                 <strong>Re:Source Copilot</strong>
                 <span className={`live-status-pill ${isLiveAIEnabled() ? 'live-active' : ''}`}>
-                  <span className="live-dot" /> {isLiveAIEnabled() ? 'GEMINI LIVE' : 'SKILLS READY'}
+                  <span className="live-dot" /> {isLiveAIEnabled() ? 'GEMINI + FALLBACK' : 'OFFLINE DEMO'}
                 </span>
               </div>
             </div>

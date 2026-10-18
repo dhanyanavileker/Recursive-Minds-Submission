@@ -59,9 +59,9 @@ export function RewardsModal({
       unlocked: stats.buildsCount >= 2
     },
     {
-      id: 'porter-green',
-      title: 'Porter Green Mover',
-      desc: 'Consolidated materials using hyperlocal EV mini-truck routing.',
+      id: 'green-mover',
+      title: 'Green Logistics Champion',
+      desc: 'Consolidated materials using hyperlocal low-emission EV routing.',
       icon: '🚚',
       unlocked: true
     }
@@ -69,9 +69,9 @@ export function RewardsModal({
 
   const perks = [
     {
-      id: 'porter-pass',
-      title: '₹200 Off Porter Mini-Truck Delivery',
-      desc: 'Applies automatically to your next hyperlocal pickup.',
+      id: 'sustainable-delivery-credit',
+      title: '₹200 Sustainable Delivery Credit',
+      desc: 'Applies automatically to your next low-emission resource pickup.',
       cost: 300,
       icon: Truck
     },
@@ -256,7 +256,7 @@ export function RewardsModal({
             </div>
             <div>
               <strong>+50 Karma</strong>
-              <span>Handover via Porter EV fleet</span>
+              <span>Handover via Green Logistics Network</span>
             </div>
           </div>
         </div>

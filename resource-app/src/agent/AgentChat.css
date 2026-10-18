@@ -1972,23 +1972,135 @@
 /* Responsive adjustments */
 @media (max-width: 860px) {
   .agent-sidebar {
-    display:none;
+    display: none !important;
   }
   .agent-chat-container {
-    height:calc(100vh - 100px);
+    height: calc(100vh - 120px);
   }
   .matched-listings-grid {
-    grid-template-columns:1fr;
+    grid-template-columns: 1fr;
   }
   .procure-deal-summary {
-    grid-template-columns:1fr;
+    grid-template-columns: 1fr;
   }
   .procure-progress-track {
-    flex-direction:column;
-    align-items:flex-start;
+    flex-direction: column;
+    align-items: flex-start;
   }
   .progress-line {
-    display:none;
+    display: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .agent-chat-container {
+    height: calc(100dvh - 136px) !important;
+    min-height: 0 !important;
+    margin: 6px 0 12px !important;
+    border-radius: 12px !important;
+  }
+  .agent-top-bar {
+    padding: 8px 12px !important;
+    gap: 8px !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+  }
+  .agent-identity {
+    gap: 8px !important;
+    flex-shrink: 0 !important;
+  }
+  .agent-avatar-glow {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 14px !important;
+  }
+  .agent-title-row strong {
+    font-size: 0.85rem !important;
+  }
+  .skill-pills-bar {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    max-width: 100% !important;
+    padding-bottom: 2px !important;
+  }
+  .skill-pills-bar::-webkit-scrollbar {
+    display: none !important;
+  }
+  .skill-pill-btn {
+    flex-shrink: 0 !important;
+    padding: 3px 8px !important;
+    font-size: 0.7rem !important;
+    white-space: nowrap !important;
+  }
+  .agent-chat-thread {
+    padding: 12px 10px !important;
+    gap: 12px !important;
+  }
+  .agent-message-row {
+    max-width: 98% !important;
+    gap: 8px !important;
+  }
+  .message-text-bubble {
+    font-size: 0.85rem !important;
+    padding: 9px 12px !important;
+  }
+  .agent-composer {
+    padding: 8px 10px !important;
+    gap: 6px !important;
+  }
+  .composer-textarea {
+    font-size: 0.85rem !important;
+    padding: 8px 10px !important;
+    min-height: 36px !important;
+  }
+  .attach-photo-btn,
+  .toggle-samples-btn,
+  .agent-send-btn {
+    width: 36px !important;
+    height: 36px !important;
+  }
+  .sample-prompt-chips {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    padding: 6px 10px !important;
+    gap: 6px !important;
+  }
+  .sample-prompt-chips::-webkit-scrollbar {
+    display: none !important;
+  }
+  .sample-prompt-chip {
+    flex-shrink: 0 !important;
+    font-size: 0.72rem !important;
+    white-space: nowrap !important;
+  }
+  .deal-stat-group {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .agent-chat-container {
+    height: calc(100dvh - 130px) !important;
+    border-radius: 8px !important;
+    margin: 4px 0 8px !important;
+  }
+  .agent-message-row {
+    max-width: 100% !important;
+  }
+  .deal-stat-group {
+    grid-template-columns: 1fr !important;
+  }
+  .skill-card {
+    padding: 12px !important;
+  }
+  .procure-deal-card {
+    padding: 12px !important;
   }
 }
 

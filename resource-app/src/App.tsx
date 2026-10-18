@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   ArrowUpRight,
   ArrowRight,
@@ -62,28 +62,42 @@ const MATERIAL_IMAGES = [
   '/images/materials/fittings.jpg',
 ]
 
-const originals: Listing[] = Array.from({ length: 20 }, (_, i) => {
+export const CATEGORIES = [
+  'All items',
+  'Materials',
+  'Furniture',
+  'Electronics',
+  'Packaging',
+  'Household Items',
+  'Food',
+  'Office Assets'
+]
+
+const originals: Listing[] = Array.from({ length: 24 }, (_, i) => {
   const types = [
-    ['Sea-glass mosaic tiles', 'Tiles', 'pieces', 'Ceramic leftover tile lot from kitchen splashback. Mindfully gifted to prevent landfill waste. Confirm dimensions and finish before use.'],
-    ['Solid pine offcuts', 'Timber', 'pieces', 'Clean untreated pine offcuts, approximately 40–60 cm long. Perfect for small shelves or planters.'],
-    ['Terracotta garden pots', 'Pots', 'pots', 'Small terracotta pots with drainage holes. Free to a good home for terrace garden upcycling.'],
-    ['Warm sandstone pavers', 'Pavers', 'pavers', 'Approximately 30 × 30 cm each. Leftover patio pavers, sturdy and ready for stepping stones.'],
-    ['Brushed brass handles', 'Fittings', 'handles', 'Matching cabinet handles surplus from wardrobe makeover. Clean and ready to install.']
-  ][i % 5]
+    ['Sea-glass mosaic ceramic tiles', 'Materials', 'pieces', 'Ceramic leftover tile lot from splashback remodel. Mindfully gifted to prevent landfill waste. Confirm dimensions and finish before use.', 0, '/images/materials/tiles.jpg', 48],
+    ['Solid teak side table & offcuts', 'Furniture', 'units', 'Clean solid wood offcuts and end-table frame from modular assembly. Perfect for local makers and restoration.', 1, '/images/materials/timber.jpg', 6],
+    ['Tested USB-C monitors & power adapters', 'Electronics', 'pieces', 'Surplus office display cords, power bricks, and adapters in clean tested condition.', 4, '/images/materials/fittings.jpg', 12],
+    ['Heavy-duty corrugate shipping boxes', 'Packaging', 'boxes', 'Double-wall 5-ply packing boxes (pack of 20) with bubble inserts. Ideal for eco-shipping.', 2, '/images/materials/pots.jpg', 20],
+    ['Terracotta planters & drainage trays', 'Household Items', 'pots', 'Small terracotta pots with drainage holes. Free to a good home for terrace garden upcycling.', 2, '/images/materials/pots.jpg', 14],
+    ['Unopened organic pantry staples', 'Food', 'packs', 'Sealed organic pulses, grains, and kitchen pantry extras from bulk grocery order.', 3, '/images/materials/pavers.jpg', 16],
+    ['Modular acoustic whiteboard partitions', 'Office Assets', 'panels', 'Surplus magnetic whiteboard desk screens and acoustic dividers from studio redesign.', 0, '/images/materials/tiles.jpg', 4],
+    ['Solid pine 2x4 lumber offcuts', 'Materials', 'pieces', 'Clean untreated pine offcuts, approximately 40–60 cm long. Perfect for small shelves or planters.', 1, '/images/materials/timber.jpg', 18]
+  ][i % 8]
   return {
     id: i + 1,
-    title: types[0] + (i >= 5 ? ` · batch ${Math.floor(i / 5) + 1}` : ''),
-    category: types[1],
-    unit: types[2],
-    detail: types[3],
-    widthCm: i % 5 === 0 && i !== 15 ? (i === 10 ? 5 : 10) : undefined,
-    lengthCm: i % 5 === 0 && i !== 15 ? (i === 10 ? 5 : 10) : undefined,
-    qty: [48, 12, 6, 18, 8][i % 5],
+    title: (types[0] as string) + (i >= 8 ? ` · batch ${Math.floor(i / 8) + 1}` : ''),
+    category: types[1] as string,
+    unit: types[2] as string,
+    detail: types[3] as string,
+    widthCm: i % 8 === 0 && i !== 16 ? (i === 8 ? 5 : 10) : undefined,
+    lengthCm: i % 8 === 0 && i !== 16 ? (i === 8 ? 5 : 10) : undefined,
+    qty: (types[6] as number) || 12,
     price: 0, // All mindful giveaways are 100% free community gifts!
     locality: i % 3 === 0 ? 'Indiranagar' : i % 3 === 1 ? 'Koramangala' : 'HSR Layout',
     condition: i % 4 === 0 ? 'Unused surplus' : 'Previously used',
-    tone: i % 5,
-    image: MATERIAL_IMAGES[i % 5]
+    tone: (types[4] as number) || 0,
+    image: (types[5] as string) || MATERIAL_IMAGES[i % 5]
   }
 })
 
@@ -115,12 +129,12 @@ function App() {
 
 function AuthenticatedApp() {
   const { user, signOut } = useAuth()
-  const [items, setItems] = useState<Listing[]>(() => load('resource-items-v2', originals))
+  const [items, setItems] = useState<Listing[]>(() => load('resource-items-v4', originals))
   const [saved, setSaved] = useState<number[]>(() => load('resource-saved', []))
 
   // View modes: 'dashboard' | 'chat' | 'project' | 'mine' | 'list'
   const [view, setView] = useState<string>('dashboard')
-  const [category, setCategory] = useState('All materials')
+  const [category, setCategory] = useState('All items')
   const [locality, setLocality] = useState('All localities')
   const [free, setFree] = useState(false)
   const [submitted, setSubmitted] = useState<string>(() => load('resource-request', ''))
@@ -128,12 +142,17 @@ function AuthenticatedApp() {
   const [notice, setNotice] = useState('')
   const [reset, setReset] = useState(false)
 
+  // Ensure scroll is reset smoothly to top on view change to prevent jumping
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+  }, [view])
+
   // Listing creation form state
   const [step, setStep] = useState(0)
   const [sample, setSample] = useState(false)
   const [photo, setPhoto] = useState('')
   const [title, setTitle] = useState('')
-  const [newCategory, setNewCategory] = useState('Tiles')
+  const [newCategory, setNewCategory] = useState('Materials')
   const [quantity, setQuantity] = useState('')
   const [newLocality, setNewLocality] = useState('Indiranagar')
   const [condition, setCondition] = useState('Unused surplus')
@@ -151,9 +170,9 @@ function AuthenticatedApp() {
   const [karma, setKarma] = useState<number>(() => load('resource-karma', 850))
   const [rewardsOpen, setRewardsOpen] = useState(false)
 
-  // Third-Party Logistics (Porter Tracking) state
+  // Low-Emission Logistics Tracking state
   const [deliveryOpen, setDeliveryOpen] = useState(false)
-  const [activeDelivery, setActiveDelivery] = useState<DeliveryDetails>(() => load('resource-active-delivery', DEFAULT_DELIVERY))
+  const [activeDelivery, setActiveDelivery] = useState<DeliveryDetails>(() => load('resource-active-delivery-v2', DEFAULT_DELIVERY))
 
   // AI Chat direct prompt trigger
   const [agentInitialPrompt, setAgentInitialPrompt] = useState<string | null>(null)
@@ -202,22 +221,26 @@ function AuthenticatedApp() {
   }
 
   const q = submitted.toLowerCase()
-  const inferred = /tile|mosaic/.test(q)
-    ? 'Tiles'
-    : /wood|timber|pine|bench|seat|stool|shelf|bookcase|desk|table/.test(q)
-    ? 'Timber'
-    : /pot|plant/.test(q)
-    ? 'Pots'
-    : /paver|paving/.test(q)
-    ? 'Pavers'
-    : /handle|fitting/.test(q)
-    ? 'Fittings'
+  const inferred = /tile|mosaic|timber|wood|pine|paver|stone|gravel|metal|material/.test(q)
+    ? 'Materials'
+    : /chair|table|desk|shelf|furniture|stool|bench|couch/.test(q)
+    ? 'Furniture'
+    : /cable|charger|monitor|display|tech|electron|wire|battery|cord/.test(q)
+    ? 'Electronics'
+    : /box|packag|bubble|carton|wrap|corrugat|mailer/.test(q)
+    ? 'Packaging'
+    : /pot|plant|garden|handle|decor|kitchen|towel|household/.test(q)
+    ? 'Household Items'
+    : /food|grocery|grain|pulse|coffee|tea|snack|pantry/.test(q)
+    ? 'Food'
+    : /office|whiteboard|stationery|easel|divider|partition/.test(q)
+    ? 'Office Assets'
     : ''
 
   const shown = items.filter(
     x =>
       (view === 'project' ? saved.includes(x.id) : view === 'mine' ? x.own : true) &&
-      (category === 'All materials' || x.category === category) &&
+      (category === 'All items' || category === 'All categories' || category === 'All materials' || x.category === category) &&
       (locality === 'All localities' || x.locality === locality) &&
       (!free || x.price === 0) &&
       ((!submitted && !ready) ||
@@ -257,20 +280,21 @@ function AuthenticatedApp() {
       setError('Add a title, a quantity greater than zero, valid dimensions (or leave both blank), and confirm the details.')
       return
     }
+    const catIdx = CATEGORIES.indexOf(newCategory)
     const item: Listing = {
       id: Date.now(),
       title: title.trim(),
       category: newCategory,
       qty: Number(quantity),
-      unit: newCategory === 'Pots' ? 'pots' : 'pieces',
+      unit: newCategory === 'Pots' || newCategory === 'Household Items' ? 'pieces' : 'units',
       price: 0, // Mindful giveaway
       locality: newLocality,
       condition,
       widthCm: newWidth ? Number(newWidth) : undefined,
       lengthCm: newLength ? Number(newLength) : undefined,
       detail: `Mindfully gifted by community donor. Pickup window: ${pickupWindow.trim() || 'Flexible community pickup'}. Verified zero-waste circular giveaway.`,
-      tone: ['Tiles', 'Timber', 'Pots', 'Pavers', 'Fittings'].indexOf(newCategory),
-      image: photo || MATERIAL_IMAGES[Math.max(0, ['Tiles', 'Timber', 'Pots', 'Pavers', 'Fittings'].indexOf(newCategory))],
+      tone: catIdx >= 0 ? catIdx % 5 : 0,
+      image: photo || MATERIAL_IMAGES[Math.max(0, (catIdx >= 0 ? catIdx : 0) % MATERIAL_IMAGES.length)],
       own: true
     }
     persist([item, ...items])
@@ -278,16 +302,16 @@ function AuthenticatedApp() {
     setView('mine')
     setLocality('All localities')
     setFree(false)
-    setCategory('All materials')
+    setCategory('All items')
     setSubmitted('')
     setNotice('🎉 Mindful giveaway published! +150 Circular Karma awarded to your account.')
   }
 
-  // Trigger Porter Delivery Tracking for an item
+  // Trigger Sustainable Delivery Tracking for an item
   const handleClaimPorter = (item: Listing) => {
     const updatedDelivery: DeliveryDetails = {
       ...DEFAULT_DELIVERY,
-      id: `PRTR-BLR-${Math.floor(1000 + Math.random() * 9000)}`,
+      id: `ECO-BLR-${Math.floor(1000 + Math.random() * 9000)}`,
       itemName: `${item.title} (${item.qty} ${item.unit})`,
       category: item.category,
       quantity: `${item.qty} ${item.unit}`,
@@ -301,7 +325,7 @@ function AuthenticatedApp() {
     localStorage.setItem('resource-active-delivery', JSON.stringify(updatedDelivery))
     if (!saved.includes(item.id)) toggle(item.id)
     setDeliveryOpen(true)
-    setNotice(`🚚 Porter Hyperlocal Delivery scheduled for "${item.title}". Tracking is live!`)
+    setNotice(`🚚 Low-Emission Delivery scheduled for "${item.title}". Tracking is live!`)
   }
 
   // Trigger AI Architect with pre-filled prompt from "Build Something"
@@ -405,15 +429,15 @@ function AuthenticatedApp() {
               <span>{karma} Karma</span>
             </button>
 
-            {/* Porter Delivery Tracker Pill */}
+            {/* Green Delivery Tracker Pill */}
             <button
               className="porter-header-pill"
               onClick={() => setDeliveryOpen(true)}
-              title="Track Active Porter Delivery"
+              title="Track Active Green Delivery"
             >
               <span className="pulsing-dot" />
               <Truck size={14} />
-              <span>Porter Live</span>
+              <span>Logistics Live</span>
             </button>
           </div>
 
@@ -510,7 +534,7 @@ function AuthenticatedApp() {
                 <div className="upload">
                   <Package size={36} />
                   <h2>Start with what you have</h2>
-                  <p>Choose an image of your surplus tiles, wood, pots, or fittings, or explore with our illustrated sample.</p>
+                  <p>Choose an image of your surplus items — materials, furniture, electronics, packaging, or household goods — or explore with our illustrated sample.</p>
                   <label className="upload-label">
                     Choose photo
                     <input
@@ -538,9 +562,9 @@ function AuthenticatedApp() {
                     variant="outline"
                     onClick={() => {
                       setSample(true)
-                      setTitle('Sea-glass mosaic tiles')
+                      setTitle('Sea-glass mosaic ceramic tiles')
                       setQuantity('')
-                      setNewCategory('Tiles')
+                      setNewCategory('Materials')
                       setStep(1)
                     }}
                   >
@@ -577,7 +601,7 @@ function AuthenticatedApp() {
                     <p>
                       Materials must be safe to handle and usable for DIY, repairs, or art.
                     </p>
-                    <p>Earn +150 Karma upon publication to redeem for Porter delivery credits.</p>
+                    <p>Earn +150 Karma upon publication to redeem for sustainable delivery credits.</p>
                   </div>
                   <button className="text-link" onClick={() => setStep(0)}>
                     Change image
@@ -599,7 +623,7 @@ function AuthenticatedApp() {
                     <label>
                       Category
                       <select value={newCategory} onChange={e => setNewCategory(e.target.value)}>
-                        {['Tiles', 'Timber', 'Pots', 'Pavers', 'Fittings'].map(x => (
+                        {CATEGORIES.filter(x => x !== 'All items').map(x => (
                           <option key={x}>{x}</option>
                         ))}
                       </select>
@@ -637,7 +661,7 @@ function AuthenticatedApp() {
                       value={pickupWindow}
                       maxLength={100}
                       onChange={e => setPickupWindow(e.target.value)}
-                      placeholder="e.g. Saturday, 10 am–1 pm or Porter doorstep pickup"
+                      placeholder="e.g. Saturday, 10 am–1 pm or low-emission courier pickup"
                     />
                   </label>
                   <label>
@@ -670,14 +694,14 @@ function AuthenticatedApp() {
                 {/* Manifesto & Pitch Hero */}
                 <div className="dashboard-hero">
                   <div className="pitch-badge">
-                    <Leaf size={14} /> NOT RESELLING · MINDFUL CIRCULAR GIVEAWAYS
+                    <Leaf size={14} /> NOT RESELLING · CIRCULAR RESOURCE EXCHANGE
                   </div>
                   <h1>
-                    Mindfully give away<br />
-                    <span>what you no longer use.</span>
+                    Nothing useful<br />
+                    <span>should become waste.</span>
                   </h1>
                   <p className="hero-tagline">
-                    It's not eBay or commercial commerce. Re:Source connects people with leftover renovation materials to local builders, makers, and DIYers — 100% free circular reuse, community rewards, and tracked to your door via Porter.
+                    Transform surplus into value through AI-powered resource matching. Re:Source connects community surplus — from materials and furniture to packaging and electronics — to local makers and builders. 100% free circular reuse, community karma rewards, and verified low-emission doorstep transport.
                   </p>
 
                   {/* 3 Interactive Entry Points */}
@@ -692,7 +716,7 @@ function AuthenticatedApp() {
                       </div>
                       <h3>Give Resource</h3>
                       <p>
-                        Have leftover tiles, timber offcuts, pots, or paint? Post a mindful giveaway in 30 seconds to give them a second life.
+                        Have surplus materials, furniture, electronics, packaging, or household items? Post a mindful giveaway in 30 seconds to give them a second life.
                       </p>
                       <Button onClick={beginList} className="entry-action-btn">
                         Post a Free Giveaway <ArrowRight size={15} />
@@ -709,7 +733,7 @@ function AuthenticatedApp() {
                       </div>
                       <h3>Need Resource</h3>
                       <p>
-                        Searching for materials for a DIY, garden, or repair project? Claim community surplus nearby for free before it reaches landfills.
+                        Searching for materials, appliances, or DIY supplies? Claim community surplus nearby for free before it reaches landfills.
                       </p>
                       <Button
                         variant="outline"
@@ -733,7 +757,7 @@ function AuthenticatedApp() {
                       </div>
                       <h3>Build Something</h3>
                       <p>
-                        Tell AI what you want to build. It auto-generates the blueprint, lists required parts, and matches available leftovers!
+                        Tell AI what you want to build. It auto-generates the blueprint, lists required parts, and matches available community leftovers!
                       </p>
                       <div className="build-chips-list">
                         <button
@@ -753,9 +777,9 @@ function AuthenticatedApp() {
                         <button
                           type="button"
                           className="build-chip-btn"
-                          onClick={() => handleBuildPrompt('I want to build a reclaimed wood coffee table')}
+                          onClick={() => handleBuildPrompt('I want to build a reclaimed wood desk or table')}
                         >
-                          Wood Coffee Table
+                          Upcycled Work Desk
                         </button>
                       </div>
                       <Button
@@ -765,6 +789,69 @@ function AuthenticatedApp() {
                       >
                         Launch AI Copilot <Sparkles size={15} />
                       </Button>
+                    </div>
+                  </div>
+
+                  {/* AI Circular Intelligence & Ecosystem Metrics Cards (Points 3 & 4) */}
+                  <div className="ecosystem-impact-showcase">
+                    {/* Card 1: AI Autonomous Matchmaker (Core Innovation) */}
+                    <div className="impact-card ai-matching-card">
+                      <div>
+                        <div className="impact-card-badge">
+                          <Sparkles size={14} /> AI RESOURCE EXCHANGE AGENT · LIVE
+                        </div>
+                        <div className="impact-card-headline">
+                          <h3>AI Autonomous Match Engine</h3>
+                          <p>Semantic embeddings solve the matching problem — pairing surplus specs with active maker projects.</p>
+                        </div>
+                      </div>
+                      <div className="impact-stats-trio">
+                        <div className="impact-stat-box">
+                          <span className="stat-num">87</span>
+                          <span className="stat-label">AI Matches Created</span>
+                          <span className="stat-sub">real-time vector matching</span>
+                        </div>
+                        <div className="impact-stat-box">
+                          <span className="stat-num">124</span>
+                          <span className="stat-label">Resources Saved</span>
+                          <span className="stat-sub">prevented landfill waste</span>
+                        </div>
+                        <div className="impact-stat-box accent">
+                          <span className="stat-num">₹1,48,000</span>
+                          <span className="stat-label">Value Recovered</span>
+                          <span className="stat-sub">economic community value</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Card 2: Citywide Circular Ecosystem Impact */}
+                    <div className="impact-card community-ecosystem-card">
+                      <div>
+                        <div className="impact-card-badge community">
+                          <Leaf size={14} /> VERIFIED ECOSYSTEM IMPACT
+                        </div>
+                        <div className="impact-card-headline">
+                          <h3>Bengaluru Circular Ecosystem</h3>
+                          <p>Verified zero-waste circular transfers across Indiranagar, Koramangala & HSR Layout.</p>
+                        </div>
+                      </div>
+                      <div className="impact-stats-trio">
+                        <div className="impact-stat-box">
+                          <span className="stat-num">124</span>
+                          <span className="stat-label">Resources Redistributed</span>
+                          <span className="stat-sub">100% free community gifts</span>
+                        </div>
+                        <div className="impact-stat-box">
+                          <span className="stat-num">58</span>
+                          <span className="stat-label">Recipients Helped</span>
+                          <span className="stat-sub">local makers & DIYers</span>
+                        </div>
+                        <div className="impact-stat-box rate">
+                          <span className="stat-num">92%</span>
+                          <span className="stat-label">Reuse Success Rate</span>
+                          <span className="stat-sub">vs 14% industry baseline</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -784,22 +871,22 @@ function AuthenticatedApp() {
                         </div>
                       </div>
                       <div className="impact-stat-item">
-                        <Leaf size={20} style={{ color: '#2F6B56' }} />
+                        <Leaf size={20} style={{ color: '#86EFAC' }} />
                         <div>
                           <strong>64.5 kg Diverted</strong>
-                          <span>Landfill Waste Prevented</span>
+                          <span>Your Personal Waste Prevented</span>
                         </div>
                       </div>
                       <div className="impact-stat-item">
                         <ShieldCheck size={20} style={{ color: '#25d9f0' }} />
                         <div>
                           <strong>42.0 kg CO₂e</strong>
-                          <span>Emissions Avoided</span>
+                          <span>Your Emissions Avoided</span>
                         </div>
                       </div>
                     </div>
 
-                    {/* Active Porter Logistics Banner */}
+                    {/* Active Green Delivery Logistics Banner */}
                     <button
                       type="button"
                       className="active-porter-strip"
@@ -808,7 +895,7 @@ function AuthenticatedApp() {
                     >
                       <span className="pulsing-dot" />
                       <Truck size={16} />
-                      <span>Porter Mini-Truck in transit (ETA ~14 mins)</span>
+                      <span>Low-Emission EV in transit (ETA ~14 mins)</span>
                       <ArrowRight size={13} />
                     </button>
                   </div>
@@ -828,7 +915,7 @@ function AuthenticatedApp() {
                 </h2>
                 <p>
                   {view === 'project'
-                    ? 'Materials saved for your upcoming circular project. Compare dimensions and book a Porter pickup.'
+                    ? 'Materials saved for your upcoming circular project. Compare dimensions and schedule a low-emission pickup.'
                     : view === 'mine'
                     ? 'Materials you are mindfully giving away to fellow builders.'
                     : 'Surplus materials freely gifted by Bengaluru community members to prevent landfill waste.'}
@@ -836,7 +923,7 @@ function AuthenticatedApp() {
               </div>
               {view === 'project' && saved.length > 0 && (
                 <Button onClick={() => setDeliveryOpen(true)}>
-                  Book Porter Hyperlocal Delivery <ArrowUpRight size={16} />
+                  Schedule Low-Emission Delivery <ArrowUpRight size={16} />
                 </Button>
               )}
               <span className="inventory-count">
@@ -906,7 +993,7 @@ function AuthenticatedApp() {
             {/* Filter controls */}
             <div className="filters">
               <div className="categories">
-                {['All materials', 'Tiles', 'Timber', 'Pots', 'Pavers', 'Fittings'].map(x => (
+                {CATEGORIES.map(x => (
                   <button
                     key={x}
                     aria-pressed={category === x}
@@ -1001,13 +1088,13 @@ function AuthenticatedApp() {
                       </span>
                     </div>
 
-                    {/* Claim & Porter Delivery Button */}
+                    {/* Claim & Delivery Button */}
                     <button
                       className="claim-porter-btn"
                       onClick={() => handleClaimPorter(x)}
-                      title="Claim this material and schedule Porter Hyperlocal delivery"
+                      title="Claim this surplus item and schedule low-emission delivery"
                     >
-                      <Truck size={13} /> Claim & Track via Porter
+                      <Truck size={13} /> Claim & Track Delivery
                     </button>
 
                     {x.own && (
@@ -1038,7 +1125,7 @@ function AuthenticatedApp() {
             <span>
               Mindful Circular Resource Network · Not an eBay reseller · <span className="footer-credit">By Recursive Minds</span>
             </span>
-            <span>Bengaluru Hyperlocal Pilot · Logistics by Porter</span>
+            <span>Bengaluru Hyperlocal Pilot · Green Logistics Network</span>
           </footer>
         )}
       </main>
@@ -1049,7 +1136,7 @@ function AuthenticatedApp() {
           className={`mob-nav-btn ${view === 'dashboard' ? 'active' : ''}`}
           onClick={() => {
             setView('dashboard')
-            setCategory('All materials')
+            setCategory('All items')
           }}
         >
           <LayoutDashboard size={18} />
@@ -1059,7 +1146,7 @@ function AuthenticatedApp() {
           className={`mob-nav-btn ${isChat ? 'active' : ''}`}
           onClick={() => {
             setView('chat')
-            setCategory('All materials')
+            setCategory('All items')
           }}
         >
           <MessageSquareCode size={18} />
@@ -1104,11 +1191,11 @@ function AuthenticatedApp() {
               </p>
               <h3>Delivery & Verification</h3>
               <p>
-                Hyperlocal pickup via Porter EV mini-truck available across Bengaluru. Drivers verify items before loading.
+                Hyperlocal pickup via low-emission EV transport available across Bengaluru. Drivers verify items before loading.
               </p>
               <div style={{ display: 'flex', gap: '10px', marginTop: '14px' }}>
                 <Button onClick={() => handleClaimPorter(selected)} style={{ flex: 1 }}>
-                  <Truck size={16} /> Claim & Book Porter Delivery
+                  <Truck size={16} /> Claim & Book Sustainable Delivery
                 </Button>
                 <Button variant="outline" onClick={() => toggle(selected.id)}>
                   {saved.includes(selected.id) ? <Check size={16} /> : <Bookmark size={16} />}

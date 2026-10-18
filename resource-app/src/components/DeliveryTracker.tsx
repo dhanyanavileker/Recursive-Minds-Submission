@@ -34,16 +34,16 @@ export interface DeliveryDetails {
 }
 
 export const DEFAULT_DELIVERY: DeliveryDetails = {
-  id: 'PRTR-BLR-8924',
-  itemName: 'Sea-glass mosaic tiles (48 pieces)',
-  category: 'Tiles',
+  id: 'ECO-BLR-8924',
+  itemName: 'Sea-glass mosaic ceramic tiles (48 pieces)',
+  category: 'Materials',
   quantity: '48 pieces · 1 lot',
   donorLocality: '12th Main, Indiranagar',
   recipientLocality: '5th Block, Koramangala / HSR Site',
   stage: 3, // In Transit
   driverName: 'Ramesh Kumar',
   driverPhone: '+91 98450 23149',
-  vehicleModel: 'Porter EV 3-Wheeler Mini-Truck',
+  vehicleModel: 'Eco EV 3-Wheeler Mini-Truck',
   vehicleNumber: 'KA-04-ME-4821',
   rating: 4.9,
   trips: 1840,
@@ -87,7 +87,7 @@ export function DeliveryTracker({
       done: currentStage >= 0
     },
     {
-      title: 'Porter Partner Assigned',
+      title: 'Green Logistics Partner Assigned',
       desc: `${delivery.driverName} accepted hyperlocal pickup with ${delivery.vehicleModel}.`,
       time: '12:35 PM',
       done: currentStage >= 1
@@ -145,7 +145,7 @@ export function DeliveryTracker({
         <DialogHeader>
           <div className="porter-header-brand">
             <span className="porter-badge">
-              <Truck size={15} /> PORTER HYPERLOCAL
+              <Truck size={15} /> GREEN LOGISTICS NETWORK
             </span>
             <span className="live-pill">
               <span className="live-dot" /> LIVE TRACKING
@@ -251,7 +251,7 @@ export function DeliveryTracker({
           <div className="map-labels">
             <span>Indiranagar Hub</span>
             <span className="live-vehicle-tag">
-              {currentStage === 4 ? '📍 Arrived at Destination' : '🚚 Porter EV in transit (3.2 km away)'}
+              {currentStage === 4 ? '📍 Arrived at Destination' : '🚚 Low-emission EV in transit (3.2 km away)'}
             </span>
             <span>HSR Layout Site</span>
           </div>

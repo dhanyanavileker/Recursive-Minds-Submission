@@ -52,12 +52,12 @@ export function LoginPage() {
             <div className="login-visual-quote">
               <h3>Every leftover has another beginning.</h3>
               <p>
-                Connecting neighbours with surplus tiles, timber offcuts, and stone to local makers across Bengaluru.
+                Connecting neighbours with surplus materials, furniture, household items, and gear across Bengaluru.
               </p>
             </div>
             <div className="login-visual-pills">
               <span className="visual-pill">100% Free Giveaways</span>
-              <span className="visual-pill">Doorstep Porter Logistics</span>
+              <span className="visual-pill">Low-Emission Resource Transport</span>
               <span className="visual-pill">AI Project Copilot</span>
             </div>
           </div>

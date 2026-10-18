@@ -98,7 +98,7 @@ export function RequirementsPanel({ value: r, onChange, ready, onConfirm, onEdit
                 <label>
                   Material
                   <select value={r.category} onChange={e => update('category', e.target.value)}>
-                    {['Tiles', 'Timber', 'Pots', 'Pavers', 'Fittings'].map(x => (
+                    {['Materials', 'Furniture', 'Electronics', 'Packaging', 'Household Items', 'Food', 'Office Assets'].map(x => (
                       <option key={x}>{x}</option>
                     ))}
                   </select>
