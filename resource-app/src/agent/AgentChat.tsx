@@ -1352,7 +1352,7 @@ export function AgentChat({
 
               <div className="gatepass-instructions">
                 <p>
-                  <strong>Yard Collection Protocol:</strong> Show this pass upon gate arrival. Lot has been set aside under the Re:Source Circular Exchange agreement. 100% Free Community Transfer (0 ₹).
+                  <strong>Future collection scenario:</strong> This inactive demo pass illustrates a possible handover. No lot has been reserved and it cannot be used for collection.
                 </p>
               </div>
 

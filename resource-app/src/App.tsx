@@ -724,7 +724,7 @@ function AuthenticatedApp() {
                     <span>should become waste.</span>
                   </h1>
                   <p className="hero-tagline">
-                    Transform surplus into value through AI-assisted planning and evidence-based resource matching. Real-time circular logistics network with demo rewards and live delivery tracking.
+                    Transform surplus into value through Gemini-assisted planning and evidence-based resource matching, with clearly labelled previews of future rewards and logistics.
                   </p>
 
                   {/* 3 Interactive Entry Points */}
@@ -914,7 +914,7 @@ function AuthenticatedApp() {
                       type="button"
                       className="active-porter-strip"
                       onClick={() => setDeliveryOpen(true)}
-                      title="Click to track live delivery"
+                      title="Open the simulated delivery preview"
                     >
                       <span className="pulsing-dot" />
                       <Truck size={16} />

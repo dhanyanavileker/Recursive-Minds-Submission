@@ -1,39 +1,57 @@
-# Re:Source UX prototype
+# Re:Source application
 
-Local React + TypeScript + shadcn/ui prototype based on ../RESOURCE_PLAN.md.
+React and TypeScript frontend with an Express server, packaged together for Google Cloud Run.
 
-## Run
+## Run the complete application
 
 ```sh
 npm install
-npm run dev
+npm run build
+npm start
 ```
 
-`npm run build` checks TypeScript and produces static files in `dist/`.
+The Node server serves `dist/` and the `/api` endpoints. For frontend-only development, `npm run dev` proxies `/api` to a server running on port 8080.
 
 ## Environment setup
 
-Copy `.env.example` to `.env.local` and add the Firebase web-app configuration from Firebase Console. Do not put a Gemini API key in this client-side application; the planned integration uses Firebase AI Logic with App Check. Keep `VITE_ENABLE_LIVE_AI=false` until the live integration and quota failure states are implemented.
+Copy `.env.example` to `.env.local` for local development. Firebase web configuration uses `VITE_FIREBASE_*` values because that configuration is designed to be public. Gemini uses the server-only variables below:
 
-## Walkthrough
+```text
+GEMINI_API_KEY=...
+GEMINI_MODEL=gemini-3.5-flash-lite
+```
 
-1. Try the mosaic tabletop example, filter by locality, open a material, and save it.
-2. Open My project and try a clearly labelled simulated pickup.
-3. List leftovers, use the illustrated sample or a local image, confirm fields, and publish a demo listing.
-4. Delete your listing or reset the demo to restore the 20 original fictional listings.
+Never prefix the Gemini credential with `VITE_`; Vite exposes such variables to browser code. In Cloud Run, inject `GEMINI_API_KEY` as a runtime environment variable or secret reference.
 
-## Boundaries
+## Implemented journeys
 
-No live Gemini, Firebase, owner contact, payments, or reservations. Search uses explicit local keyword matching. No suitability or coverage calculations are claimed. Seed inventory and material illustrations are fictional. Bengaluru is an illustrative pilot locality. Listings and saves persist in this browser; user images stay in the tab and are not uploaded or retained in published listings. Google Fonts is used for the brand typography. No paid services are enabled. Future deployment must follow the Google-only, no-billing constraints in RESOURCE_PLAN.md.
+1. Sign in with Google through Firebase Authentication or use the browser-local demo guest.
+2. Search and filter the labelled sample inventory.
+3. Ask the Copilot to discover resources or create a reuse plan.
+4. Use the guided requirements flow and review grounded matches.
+5. Save resources to a project.
+6. Create and manage a browser-local giveaway listing.
+7. Preview the clearly labelled rewards and delivery simulations.
 
-## AI-ready UX update
+Gemini powers photo assessment, repair guidance and build-plan generation through the server API. Marketplace retrieval and category, area, quantity, budget and locality checks run as deterministic application code.
 
-Project requests open an editable three-step brief: size/material, budget, locality. This is a guided local demo, not generated AI. Match cards calculate area from recorded uniform piece dimensions, show sufficient/short/unknown coverage, and cite listing IDs. Three fictional tile reference lots have measured dimensions; the fourth remains unknown. Existing demo inventory uses a new storage version (`resource-items-v2`); earlier local listings are retained under the old key but are not shown in this version.
+## Data and boundaries
 
-Saved projects show full-lot quantities, total lot price, known matching area and outstanding area. Calculated area excludes cutting waste and does not certify finish, compatibility or structural use. Listing review separates sample suggestions from fields awaiting owner confirmation; user photos still receive no live analysis. The availability control reports the known unconnected state, without making an AI call.
+- The 24 seeded listings and their localities are fictional evaluation data.
+- User-created listings, projects and chat history remain in the current browser.
+- Firebase Authentication is implemented; Cloud Firestore persistence is future work.
+- No owner contact, payment, reservation or delivery is created.
+- Rewards, logistics and impact values are illustrative.
+- The application does not certify material safety or structural suitability.
 
-Run arithmetic and constraint checks with `node --experimental-strip-types --test tests/matching.test.ts`.
+See `GROUNDING_AND_GUARDRAILS.md` and `AGENT_ARCHITECTURE.md` for evidence and authority boundaries.
 
-## Verification status
+## Verification
 
-Verified October 14, 2026: production build passes, all six matching tests pass, and the core project, simulated pickup, and sample-assisted listing journeys work in the browser. Desktop and 390 px mobile layouts were visually checked. The linter reports only two non-blocking Fast Refresh warnings in generated-style UI component files.
+```sh
+npm run build
+npm run lint
+node --experimental-strip-types --test tests/matching.test.ts
+```
+
+The matching tests cover unit conversion, enough/short coverage, missing dimensions, budget, locality and incompatible categories.

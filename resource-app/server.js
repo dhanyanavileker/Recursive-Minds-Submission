@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 8080
 app.use(express.json({ limit: '10mb' }))
 
 // Initialize server-side Gemini client
-const apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY
+const apiKey = process.env.GEMINI_API_KEY
 const genAI = apiKey ? new GoogleGenAI({ apiKey }) : null
 const MODEL_NAME = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite'
 
@@ -200,16 +200,3 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`Re:Source Cloud Run server listening on port ${PORT}`)
   console.log(`Live Gemini AI: ${genAI ? 'ENABLED (Server Key)' : 'OFFLINE (Demo Mode)'}`)
 })
-
-// Fail-safe dual listener on port 80 if PORT was not 80 (handles Cloud Run port 80 health checks)
-if (PORT !== 80) {
-  try {
-    app.listen(80, '0.0.0.0', () => {
-      console.log('Re:Source Cloud Run server also listening on port 80')
-    }).on('error', (err) => {
-      console.log('Dual port 80 listener note:', err.message)
-    })
-  } catch (e) {
-    // Ignore if unprivileged
-  }
-}

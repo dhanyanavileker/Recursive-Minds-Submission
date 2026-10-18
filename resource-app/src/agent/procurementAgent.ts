@@ -92,28 +92,28 @@ export function createProcurementOrder({
   const negotiationTranscript = [
     {
       sender: 'agent' as const,
-      text: `Connecting to ${supplierName} circular salvage desk. Inquiring regarding surplus material lot matching "${materialName}" from demolition/remodel.`,
+      text: `Simulation: a future sourcing agent could contact ${supplierName} about a surplus lot matching "${materialName}".`,
       timestamp: '10:00:12 AM'
     },
     {
       sender: 'supplier' as const,
-      text: `Surplus lot identified from active project. Material is intact and structurally sound. Scheduled for debris dump haul this week.`,
+      text: `Illustrative supplier response: a suitable surplus lot may be available, subject to inspection and owner confirmation.`,
       timestamp: '10:00:24 AM'
     },
     {
       sender: 'agent' as const,
-      text: `Re:Source verified community reuser will collect and repurpose 100% of the lot. Requesting zero-cost circular release to divert from landfill and eliminate debris hauling cost.`,
+      text: `Illustrative request: ask whether the owner would consider a zero-cost community transfer instead of disposal. No reuse outcome is verified.`,
       timestamp: '10:00:39 AM',
       highlight: true
     },
     {
       sender: 'supplier' as const,
-      text: `Landfill diversion confirmed. Site tipping fee waived. Releasing entire lot for 0 ₹ (100% Free Community Salvage) during transfer window (${pickupWindow}).`,
+      text: `Illustrative supplier response: the owner could offer the lot for 0 ₹ during a proposed transfer window (${pickupWindow}), subject to confirmation.`,
       timestamp: '10:00:58 AM'
     },
     {
       sender: 'agent' as const,
-      text: `Terms accepted: 100% Free Salvage (0 ₹). Temporary lot hold placed for user pickup. Official Demolition Gate Pass & Yard Hold Voucher generated.`,
+      text: `Simulation complete: show the proposed handover terms for user review. No hold, voucher, reservation, or supplier contact was created.`,
       timestamp: '10:01:10 AM',
       highlight: true
     }
