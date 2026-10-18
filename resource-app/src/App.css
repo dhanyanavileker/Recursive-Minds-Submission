@@ -33,6 +33,7 @@
 /* ── User menu (header) ── */
 .user-menu{display:flex;align-items:center;gap:8px;margin-left:8px}
 .user-avatar{width:34px;height:34px;border-radius:50%;border:2px solid #B8CBBF;object-fit:cover;transition:border-color .2s}
+.user-avatar-fallback{display:grid;place-items:center;background:#DDEDE5;color:#18332F;font-size:12px;font-weight:700}
 .user-avatar:hover{border-color:#B8CBBF}
 .sign-out-btn{display:grid;place-items:center;width:34px;height:34px;border-radius:8px;color:#52665D;transition:all .2s}
 .sign-out-btn:hover{background:#DDEDE5;color:#72551F}

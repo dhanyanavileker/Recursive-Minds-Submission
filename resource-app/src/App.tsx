@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore'
 import { createPortal } from 'react-dom'
 import { useMobileViewport } from './useMobileViewport'
 import {
@@ -33,6 +34,7 @@ import './App.css'
 import { blankRequirements, listingArea, targetArea, areaText } from './matching'
 import type { Requirements } from './matching'
 import { useAuth } from './AuthContext'
+import { db } from './firebase'
 import { LoginPage } from './LoginPage'
 import { AgentChat } from './agent/AgentChat'
 import { DeliveryTracker, DEFAULT_DELIVERY } from './components/DeliveryTracker'
@@ -197,9 +199,63 @@ function AuthenticatedApp() {
   // Low-Emission Logistics Tracking state
   const [deliveryOpen, setDeliveryOpen] = useState(false)
   const [activeDelivery, setActiveDelivery] = useState<DeliveryDetails>(() => load('resource-active-delivery-v2', DEFAULT_DELIVERY))
+  const [cloudStateReady, setCloudStateReady] = useState(false)
 
   // AI Chat direct prompt trigger
   const [agentInitialPrompt, setAgentInitialPrompt] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!user || user.isGuest || !db) {
+      setCloudStateReady(true)
+      return
+    }
+
+    const firestore = db
+    let cancelled = false
+    const loadCloudState = async () => {
+      try {
+        const stateRef = doc(firestore, 'users', user.uid, 'appState', 'current')
+        const snapshot = await getDoc(stateRef)
+        if (cancelled) return
+        if (snapshot.exists()) {
+          const data = snapshot.data()
+          if (Array.isArray(data.items)) setItems(data.items as Listing[])
+          if (Array.isArray(data.saved)) setSaved(data.saved as number[])
+          if (typeof data.submitted === 'string') setSubmitted(data.submitted)
+          if (data.requirements) setRequirements(data.requirements as Requirements)
+          if (typeof data.ready === 'boolean') setReady(data.ready)
+          if (typeof data.karma === 'number') setKarma(data.karma)
+          if (data.activeDelivery) setActiveDelivery(data.activeDelivery as DeliveryDetails)
+        }
+      } catch (error) {
+        console.warn('Firestore state could not be loaded; continuing with local data.', error)
+      } finally {
+        if (!cancelled) setCloudStateReady(true)
+      }
+    }
+    void loadCloudState()
+    return () => { cancelled = true }
+  }, [user])
+
+  useEffect(() => {
+    if (!cloudStateReady || !user || user.isGuest || !db) return
+    const timer = window.setTimeout(() => {
+      const state = JSON.parse(JSON.stringify({ items, saved, submitted, requirements, ready, karma, activeDelivery }))
+      void Promise.all([
+        setDoc(doc(db!, 'users', user.uid), {
+          displayName: user.displayName,
+          email: user.email,
+          photoURL: user.photoURL,
+          updatedAt: serverTimestamp()
+        }, { merge: true }),
+        setDoc(doc(db!, 'users', user.uid, 'appState', 'current'), {
+          ...state,
+          updatedAt: serverTimestamp()
+        }, { merge: true })
+      ]).catch(error => console.warn('Firestore sync failed; local data is still available.', error))
+    }, 500)
+    return () => window.clearTimeout(timer)
+  }, [activeDelivery, cloudStateReady, items, karma, ready, requirements, saved, submitted, user])
 
   const selectedItems = items.filter(x => saved.includes(x.id))
   const compatibleItems = selectedItems.filter(x => x.category === requirements.category)
@@ -229,7 +285,7 @@ function AuthenticatedApp() {
 
   const persist = (next: Listing[]) => {
     setItems(next)
-    localStorage.setItem('resource-items-v2', JSON.stringify(next))
+    localStorage.setItem('resource-items-v4', JSON.stringify(next))
   }
 
   const toggle = (id: number) => {
@@ -470,12 +526,18 @@ function AuthenticatedApp() {
 
           {user && (
             <div className="user-menu">
-              <img
-                className="user-avatar"
-                src={user.photoURL || ''}
-                alt={user.displayName || 'User'}
-                referrerPolicy="no-referrer"
-              />
+              {user.photoURL ? (
+                <img
+                  className="user-avatar"
+                  src={user.photoURL}
+                  alt={user.displayName || 'User'}
+                  referrerPolicy="no-referrer"
+                />
+              ) : (
+                <span className="user-avatar user-avatar-fallback" aria-label={user.displayName || 'User'}>
+                  {(user.displayName || user.email || 'U').slice(0, 1).toUpperCase()}
+                </span>
+              )}
               <button className="sign-out-btn" onClick={signOut} aria-label="Sign out" title="Sign out">
                 <LogOut size={16} />
               </button>

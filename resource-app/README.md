@@ -29,8 +29,8 @@ Never prefix the Gemini credential with `VITE_`; Vite exposes such variables to 
 2. Search and filter the labelled sample inventory.
 3. Ask the Copilot to discover resources or create a reuse plan.
 4. Use the guided requirements flow and review grounded matches.
-5. Save resources to a project.
-6. Create and manage a browser-local giveaway listing.
+5. Save resources to a project; signed-in users sync their state to Firestore.
+6. Create and manage a giveaway listing with local fallback persistence.
 7. Preview the clearly labelled rewards and delivery simulations.
 
 Gemini powers photo assessment, repair guidance and build-plan generation through the server API. Marketplace retrieval and category, area, quantity, budget and locality checks run as deterministic application code.
@@ -38,13 +38,23 @@ Gemini powers photo assessment, repair guidance and build-plan generation throug
 ## Data and boundaries
 
 - The 24 seeded listings and their localities are fictional evaluation data.
-- User-created listings, projects and chat history remain in the current browser.
-- Firebase Authentication is implemented; Cloud Firestore persistence is future work.
+- Signed-in users sync listings, saved resources, project requirements, demo Karma and delivery-preview state to their private Firestore path. Guest sessions and chat history remain browser-local.
+- Google sign-in supplies the account name, email and profile photo shown in the app header; the profile record is stored under the signed-in user's Firestore document.
 - No owner contact, payment, reservation or delivery is created.
 - Rewards, logistics and impact values are illustrative.
 - The application does not certify material safety or structural suitability.
 
 See `GROUNDING_AND_GUARDRAILS.md` and `AGENT_ARCHITECTURE.md` for evidence and authority boundaries.
+
+## Firestore rules
+
+Deploy `firestore.rules` before relying on cloud sync. The rules restrict each user to `/users/{theirUid}` and its subcollections:
+
+```sh
+firebase deploy --only firestore:rules
+```
+
+If Firestore is unavailable or the rules have not been deployed, the interface continues using browser-local data and logs a warning.
 
 ## Verification
 

@@ -34,7 +34,7 @@ Photo, repair or build-plan request
 ## Sources of truth
 
 - **Marketplace inventory:** the structured `Listing` objects loaded by the application. The seeded set contains 24 fictional evaluation listings across three illustrative localities. It is deliberately bounded and labelled in the UI.
-- **User-created listings:** facts entered and confirmed by the current user. They remain in browser storage in this prototype.
+- **User-created listings:** facts entered and confirmed by the current user. Signed-in state syncs to that user's private Firestore path and keeps browser storage as a fallback.
 - **Project constraints:** category, dimensions, budget and locality entered through the guided requirements flow.
 - **Gemini output:** suggestions for photo assessment, repair steps and reuse build plans. It is guidance, not marketplace inventory or proof of availability.
 
@@ -91,7 +91,7 @@ The seeded listings, Bengaluru localities, Karma, impact values, delivery detail
 
 ## Known production extensions
 
-- Cloud Firestore persistence and ownership rules for listings, projects and conversations;
+- Firestore-backed chat history and production validation beyond the current per-user state sync;
 - Firebase App Check and server-side request throttling;
 - verified impact methodology and audited measurements;
 - real partner onboarding, consent and logistics integrations; and
