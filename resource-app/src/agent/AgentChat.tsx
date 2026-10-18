@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import {
   Sparkles,
   Camera,
@@ -25,7 +26,8 @@ import {
   ReceiptText,
   MapPin,
   Package,
-  FileText
+  FileText,
+  PanelLeft
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
@@ -133,6 +135,7 @@ export function AgentChat({
   const [expandedSteps, setExpandedSteps] = useState<Record<string, boolean>>({})
   const [expandedMatches, setExpandedMatches] = useState<Record<string, boolean>>({})
   const [showSamplesMenu, setShowSamplesMenu] = useState(false)
+  const [mobileChatsOpen, setMobileChatsOpen] = useState(false)
 
   const toggleStepsExpanded = (msgId: string) => {
     setExpandedSteps(prev => ({
@@ -369,74 +372,130 @@ export function AgentChat({
     }
   }, [initialPrompt])
 
+  const selectSession = (sessionId: string) => {
+    setActiveSessionId(sessionId)
+    localStorage.setItem('resource-agent-active-id', JSON.stringify(sessionId))
+    setMobileChatsOpen(false)
+  }
+
+  const startNewChat = () => {
+    handleNewChat()
+    setMobileChatsOpen(false)
+  }
+
+  const chatsPanel = (
+    <>
+      <div className="sidebar-header">
+        <Button className="new-agent-chat-btn" onClick={startNewChat}>
+          <Plus size={16} /> New Chat
+        </Button>
+      </div>
+
+      <div className="sidebar-section-title">
+        <span>Active Agents & Chats</span>
+      </div>
+
+      <div className="agent-conversation-list">
+        {conversations.map(session => {
+          const isActive = session.id === currentSession.id
+          const skillMeta = AVAILABLE_SKILLS.find(s => s.id === session.activeSkill)
+          return (
+            <div
+              key={session.id}
+              className={`agent-conversation-item ${isActive ? 'active' : ''}`}
+              onClick={() => selectSession(session.id)}
+            >
+              <div className="conv-icon-col">
+                {session.activeSkill === 'analyze' ? (
+                  <Camera size={15} style={{ color: '#a78bfa' }} />
+                ) : session.activeSkill === 'get_steps' ? (
+                  <Wrench size={15} style={{ color: '#fbbf24' }} />
+                ) : session.activeSkill === 'build_plan' ? (
+                  <Hammer size={15} style={{ color: '#60a5fa' }} />
+                ) : (
+                  <MessageCircle size={15} style={{ color: '#34d399' }} />
+                )}
+              </div>
+              <div className="conv-title-col">
+                <div className="conv-title">{session.title}</div>
+                <div className="conv-skill-badge">{skillMeta ? skillMeta.name : 'Multi-Skill'}</div>
+              </div>
+              <button
+                className="conv-delete-btn"
+                onClick={e => handleDeleteChat(session.id, e)}
+                aria-label="Delete chat"
+                title="Delete chat"
+              >
+                <Trash2 size={13} />
+              </button>
+            </div>
+          )
+        })}
+      </div>
+
+      <div className="sidebar-footer-stats">
+        <div
+          className="saved-counter-pill"
+          onClick={() => {
+            setMobileChatsOpen(false)
+            onViewProject()
+          }}
+        >
+          <Bookmark size={13} />
+          <span>My Project: <strong>{saved.length}</strong> saved</span>
+          <ArrowUpRight size={13} />
+        </div>
+      </div>
+    </>
+  )
+
   return (
     <div className="agent-chat-container">
-      {/* Sidebar: Conversation History */}
-      <aside className="agent-sidebar">
-        <div className="sidebar-header">
-          <Button className="new-agent-chat-btn" onClick={handleNewChat}>
-            <Plus size={16} /> New Chat
-          </Button>
-        </div>
+      <aside className="agent-sidebar" aria-label="Chat history">
+        {chatsPanel}
+      </aside>
 
-        <div className="sidebar-section-title">
-          <span>Active Agents & Chats</span>
-        </div>
-
-        <div className="agent-conversation-list">
-          {conversations.map(session => {
-            const isActive = session.id === currentSession.id
-            const skillMeta = AVAILABLE_SKILLS.find(s => s.id === session.activeSkill)
-            return (
-              <div
-                key={session.id}
-                className={`agent-conversation-item ${isActive ? 'active' : ''}`}
-                onClick={() => {
-                  setActiveSessionId(session.id)
-                  localStorage.setItem('resource-agent-active-id', JSON.stringify(session.id))
-                }}
-              >
-                <div className="conv-icon-col">
-                  {session.activeSkill === 'analyze' ? (
-                    <Camera size={15} style={{ color: '#a78bfa' }} />
-                  ) : session.activeSkill === 'get_steps' ? (
-                    <Wrench size={15} style={{ color: '#fbbf24' }} />
-                  ) : session.activeSkill === 'build_plan' ? (
-                    <Hammer size={15} style={{ color: '#60a5fa' }} />
-                  ) : (
-                    <MessageCircle size={15} style={{ color: '#34d399' }} />
-                  )}
-                </div>
-                <div className="conv-title-col">
-                  <div className="conv-title">{session.title}</div>
-                  <div className="conv-skill-badge">{skillMeta ? skillMeta.name : 'Multi-Skill'}</div>
-                </div>
-                <button
-                  className="conv-delete-btn"
-                  onClick={e => handleDeleteChat(session.id, e)}
-                  aria-label="Delete chat"
-                  title="Delete chat"
-                >
-                  <Trash2 size={13} />
+      {mobileChatsOpen &&
+        createPortal(
+          <div className="agent-mobile-chats-layer" role="presentation">
+            <aside className="agent-mobile-chats-drawer" role="dialog" aria-label="Chats">
+              <div className="agent-mobile-drawer-head">
+                <strong>Chats</strong>
+                <button type="button" className="agent-mobile-drawer-close" onClick={() => setMobileChatsOpen(false)} aria-label="Close">
+                  <X size={18} />
                 </button>
               </div>
-            )
-          })}
-        </div>
-
-        <div className="sidebar-footer-stats">
-          <div className="saved-counter-pill" onClick={onViewProject}>
-            <Bookmark size={13} />
-            <span>My Project: <strong>{saved.length}</strong> saved</span>
-            <ArrowUpRight size={13} />
-          </div>
-        </div>
-      </aside>
+              <div className="agent-mobile-drawer-body">{chatsPanel}</div>
+            </aside>
+            <button
+              type="button"
+              className="agent-mobile-chats-backdrop"
+              aria-label="Close chats"
+              onClick={() => setMobileChatsOpen(false)}
+            />
+          </div>,
+          document.body
+        )}
 
       {/* Main Chat Workspace */}
       <section className="agent-chat-main">
         {/* Agent Skill Switcher Header */}
         <div className="agent-top-bar">
+          <div className="agent-top-bar-primary">
+            <button
+              type="button"
+              className="agent-mobile-chats-btn"
+              onClick={() => setMobileChatsOpen(true)}
+              aria-label="Open chats"
+            >
+              <PanelLeft size={18} />
+              <span>Chats</span>
+            </button>
+            <p className="agent-mobile-session-title" title={currentSession.title}>{currentSession.title}</p>
+            <button type="button" className="agent-mobile-new-btn" onClick={startNewChat} aria-label="New chat">
+              <Plus size={18} />
+            </button>
+          </div>
           <div className="agent-identity">
             <div className="agent-avatar-glow">
               <Sparkles size={17} />
@@ -1086,6 +1145,7 @@ export function AgentChat({
           <div ref={messagesEndRef} />
         </div>
 
+        <div className="agent-composer-dock">
         {/* Selected Photo Preview Bar in Composer */}
         {selectedPhoto && (
           <div className="composer-photo-preview-bar">
@@ -1238,6 +1298,7 @@ export function AgentChat({
             <Send size={16} />
           </Button>
         </form>
+        </div>
       </section>
 
       {/* Demolition Gate Pass / Voucher Dialog */}

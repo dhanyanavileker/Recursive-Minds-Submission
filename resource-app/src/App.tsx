@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
+import { useMobileViewport } from './useMobileViewport'
 import {
   ArrowUpRight,
   ArrowRight,
@@ -21,7 +23,8 @@ import {
   Gift,
   LayoutDashboard,
   MessageSquareCode,
-  ShieldCheck
+  ShieldCheck,
+  Ellipsis
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -110,6 +113,7 @@ const load = <T,>(key: string, fallback: T): T => {
 }
 
 function App() {
+  useMobileViewport()
   const { user, loading: authLoading } = useAuth()
 
   // Auth loading state
@@ -141,11 +145,29 @@ function AuthenticatedApp() {
   const [selected, setSelected] = useState<Listing | null>(null)
   const [notice, setNotice] = useState('')
   const [reset, setReset] = useState(false)
+  const [mobileMoreOpen, setMobileMoreOpen] = useState(false)
+
+  const goInventoryView = (next: 'dashboard' | 'project' | 'mine') => {
+    setMobileMoreOpen(false)
+    setView(next)
+    setCategory('All materials')
+    setLocality('All localities')
+    setFree(false)
+  }
 
   // Ensure scroll is reset smoothly to top on view change to prevent jumping
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
   }, [view])
+
+  useEffect(() => {
+    if (selected) setMobileMoreOpen(false)
+  }, [selected])
+
+  useEffect(() => {
+    document.body.classList.add('mobile-app-shell')
+    return () => document.body.classList.remove('mobile-app-shell')
+  }, [])
 
   // Listing creation form state
   const [step, setStep] = useState(0)
@@ -441,8 +463,8 @@ function AuthenticatedApp() {
             </button>
           </div>
 
-          <Button onClick={beginList} className="list-button">
-            <Plus size={16} /> Give Leftovers
+          <Button onClick={beginList} className="list-button" aria-label="Give leftovers">
+            <Plus size={16} /> <span className="list-button-label">Give Leftovers</span>
           </Button>
 
           {user && (
@@ -1130,41 +1152,104 @@ function AuthenticatedApp() {
         )}
       </main>
 
-      {/* Mobile-First Sticky Bottom Navigation Bar */}
-      <nav className="mobile-bottom-nav" aria-label="Mobile Navigation">
-        <button
-          className={`mob-nav-btn ${view === 'dashboard' ? 'active' : ''}`}
-          onClick={() => {
-            setView('dashboard')
-            setCategory('All items')
-          }}
-        >
-          <LayoutDashboard size={18} />
-          <span>Dashboard</span>
-        </button>
-        <button
-          className={`mob-nav-btn ${isChat ? 'active' : ''}`}
-          onClick={() => {
-            setView('chat')
-            setCategory('All items')
-          }}
-        >
-          <MessageSquareCode size={18} />
-          <span>AI Chat</span>
-        </button>
-        <button className="mob-nav-btn" onClick={beginList}>
-          <Plus size={18} />
-          <span>Give</span>
-        </button>
-        <button className="mob-nav-btn" onClick={() => setDeliveryOpen(true)}>
-          <Truck size={18} />
-          <span>Track</span>
-        </button>
-        <button className="mob-nav-btn" onClick={() => setRewardsOpen(true)}>
-          <Award size={18} />
-          <span>Rewards</span>
-        </button>
-      </nav>
+      {createPortal(
+        <>
+          {mobileMoreOpen && (
+            <button
+              type="button"
+              className="mobile-more-backdrop"
+              aria-label="Close menu"
+              onClick={() => setMobileMoreOpen(false)}
+            />
+          )}
+          {mobileMoreOpen && (
+            <div className="mobile-more-menu" role="menu" aria-label="More actions">
+              <button type="button" role="menuitem" className={view === 'mine' ? 'active' : ''} onClick={() => goInventoryView('mine')}>
+                <Gift size={16} />
+                My gifts
+              </button>
+              <button
+                type="button"
+                role="menuitem"
+                onClick={() => {
+                  setMobileMoreOpen(false)
+                  setDeliveryOpen(true)
+                }}
+              >
+                <Truck size={16} />
+                Track delivery
+              </button>
+              <button
+                type="button"
+                role="menuitem"
+                onClick={() => {
+                  setMobileMoreOpen(false)
+                  setRewardsOpen(true)
+                }}
+              >
+                <Award size={16} />
+                Rewards vault
+              </button>
+            </div>
+          )}
+          <nav className="mobile-bottom-nav" aria-label="Mobile Navigation">
+            <button
+              type="button"
+              className={`mob-nav-btn ${view === 'dashboard' ? 'active' : ''}`}
+              onClick={() => {
+                setMobileMoreOpen(false)
+                setView('dashboard')
+                setCategory('All items')
+              }}
+            >
+              <LayoutDashboard size={18} />
+              <span>Home</span>
+            </button>
+            <button
+              type="button"
+              className={`mob-nav-btn ${isChat ? 'active' : ''}`}
+              onClick={() => {
+                setMobileMoreOpen(false)
+                setView('chat')
+                setCategory('All items')
+              }}
+            >
+              <MessageSquareCode size={18} />
+              <span>Chat</span>
+            </button>
+            <button
+              type="button"
+              className="mob-nav-btn mob-nav-btn-give"
+              onClick={() => {
+                setMobileMoreOpen(false)
+                beginList()
+              }}
+            >
+              <Plus size={18} />
+              <span>Give</span>
+            </button>
+            <button
+              type="button"
+              className={`mob-nav-btn ${view === 'project' ? 'active' : ''}`}
+              onClick={() => goInventoryView('project')}
+            >
+              <Bookmark size={18} />
+              <span>Project{saved.length > 0 ? ` · ${saved.length}` : ''}</span>
+            </button>
+            <button
+              type="button"
+              className={`mob-nav-btn ${mobileMoreOpen || view === 'mine' ? 'active' : ''}`}
+              aria-expanded={mobileMoreOpen}
+              aria-haspopup="menu"
+              onClick={() => setMobileMoreOpen(open => !open)}
+            >
+              <Ellipsis size={18} />
+              <span>More</span>
+            </button>
+          </nav>
+        </>,
+        document.body
+      )}
 
       {/* Item Detail Dialog */}
       <Dialog open={!!selected} onOpenChange={open => !open && setSelected(null)}>
@@ -1193,8 +1278,8 @@ function AuthenticatedApp() {
               <p>
                 Hyperlocal pickup via low-emission EV transport available across Bengaluru. Drivers verify items before loading.
               </p>
-              <div style={{ display: 'flex', gap: '10px', marginTop: '14px' }}>
-                <Button onClick={() => handleClaimPorter(selected)} style={{ flex: 1 }}>
+              <div className="detail-dialog-actions">
+                <Button onClick={() => handleClaimPorter(selected)}>
                   <Truck size={16} /> Claim & Book Sustainable Delivery
                 </Button>
                 <Button variant="outline" onClick={() => toggle(selected.id)}>
