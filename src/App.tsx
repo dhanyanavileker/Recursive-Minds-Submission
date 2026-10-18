@@ -1188,13 +1188,10 @@ const MATERIAL_LABELS = [
   'Brushed brass cabinet handles'
 ]
 
-const MATERIAL_TAGS = ['CERAMIC', 'PINE', 'TERRACOTTA', 'SANDSTONE', 'BRASS']
-
 function Material({ tone, image }: { tone: number; image?: string }) {
   const safeTone = ((tone % 5) + 5) % 5
   const imgSrc = image || MATERIAL_IMAGES[safeTone]
   const label = MATERIAL_LABELS[safeTone]
-  const tag = MATERIAL_TAGS[safeTone]
 
   return (
     <div
@@ -1212,9 +1209,6 @@ function Material({ tone, image }: { tone: number; image?: string }) {
         }}
       />
       <div className="material-overlay-gradient" />
-      <span className="art-caption">
-        MINDFUL GIVEAWAY / {tag}
-      </span>
     </div>
   )
 }

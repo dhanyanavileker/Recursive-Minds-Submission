@@ -41,13 +41,29 @@ export function subscribeToListings(
       snapshot => {
         if (!snapshot.empty) {
           const items: Listing[] = []
+          let staleCount = 0
           snapshot.forEach(docSnap => {
             const data = docSnap.data() as Listing
-            items.push(data)
+            const title = data.title || ''
+            if (
+              title.includes('Scout and negotiate') ||
+              title.includes('Demolition Lot') ||
+              title.includes('batch') ||
+              !title
+            ) {
+              staleCount++
+              deleteDoc(doc(db, 'listings', docSnap.id)).catch(() => {})
+            } else {
+              items.push(data)
+            }
           })
-          // Sort items by id descending so newest appear first
-          items.sort((a, b) => (b.id || 0) - (a.id || 0))
-          onUpdate(items)
+          if (items.length < 18) {
+            // Insufficient or cleaned catalog, notify with empty array so auto-seed repopulates the 24 curated originals
+            onUpdate([])
+          } else {
+            items.sort((a, b) => (a.id || 0) - (b.id || 0))
+            onUpdate(items)
+          }
         } else {
           // Collection is empty, notify with empty array so auto-seed can kick in
           onUpdate([])
@@ -66,7 +82,7 @@ export function subscribeToListings(
 }
 
 /**
- * Seeds initial catalog listings to Firestore if the collection is currently empty.
+ * Seeds initial catalog listings to Firestore if the collection is currently empty or has old mock batches.
  */
 export async function seedListingsIfEmpty(seedItems: Listing[]): Promise<boolean> {
   if (!db) return false
@@ -74,16 +90,35 @@ export async function seedListingsIfEmpty(seedItems: Listing[]): Promise<boolean
   try {
     const listingsRef = collection(db, 'listings')
     const existing = await getDocs(listingsRef)
-    if (!existing.empty) {
-      return false // Already has data
+    const hasStale = !existing.empty && existing.docs.some(d => {
+      const data = d.data()
+      const title = (data?.title || '')
+      const isOldDup = d.id === '2' && data?.image === '/images/materials/furniture.jpg'
+      return title.includes('batch') || title.includes('Scout') || title.includes('Demolition Lot') || isOldDup
+    })
+
+    if (!existing.empty && !hasStale && existing.size >= 20) {
+      return false // Already has full valid data
     }
 
-    console.info(`Migrating ${seedItems.length} baseline listings to Firestore...`)
+    console.info(`Cleaning and migrating ${seedItems.length} curated baseline listings to Firestore...`)
     const batch = writeBatch(db)
+
+    // Delete any stale docs
+    existing.docs.forEach(docSnap => {
+      const data = docSnap.data()
+      const title = (data?.title || '')
+      const isOldDup = docSnap.id === '2' && data?.image === '/images/materials/furniture.jpg'
+      if (title.includes('batch') || title.includes('Scout') || title.includes('Demolition Lot') || isOldDup) {
+        batch.delete(docSnap.ref)
+      }
+    })
+
     for (const item of seedItems) {
       const docRef = doc(db, 'listings', String(item.id))
       batch.set(docRef, {
         ...item,
+        seed: true,
         migratedAt: serverTimestamp()
       })
     }
@@ -107,6 +142,7 @@ export async function reseedAllListings(seedItems: Listing[]): Promise<void> {
     const docRef = doc(db, 'listings', String(item.id))
     batch.set(docRef, {
       ...item,
+      seed: true,
       updatedAt: serverTimestamp()
     }, { merge: true })
   }

@@ -91,34 +91,361 @@ export const CATEGORIES = [
   'Office Assets'
 ]
 
-const originals: Listing[] = Array.from({ length: 24 }, (_, i) => {
-  const types = [
-    ['Sea-glass mosaic ceramic tiles', 'Construction Materials', 'pieces', 'Ceramic leftover tile lot from splashback remodel. Mindfully gifted to prevent landfill waste. Confirm dimensions and finish before use.', 0, '/images/materials/tiles.jpg', 48, ['tiles', 'ceramic', 'mosaic', 'splashback', 'flooring', 'wall', 'bath', 'construction']],
-    ['Solid teak side table & offcuts', 'Furniture', 'units', 'Clean solid wood timber offcuts and end-table frame from modular assembly. Perfect for local makers and restoration.', 1, '/images/materials/furniture.jpg', 6, ['wood', 'timber', 'teak', 'table', 'furniture', 'offcuts', 'plank', 'board', 'carpentry']],
-    ['Tested USB-C monitors & power adapters', 'Electronic Items', 'pieces', 'Surplus office display cords, power bricks, fittings, and adapters in clean tested condition.', 4, '/images/materials/electronics.jpg', 12, ['electronics', 'monitors', 'display', 'usb-c', 'adapters', 'cables', 'cords', 'chargers', 'fittings', 'power']],
-    ['Heavy-duty corrugate shipping boxes', 'Packaging', 'boxes', 'Double-wall 5-ply packing boxes (pack of 20) with bubble inserts. Ideal for eco-shipping.', 2, '/images/materials/pots.jpg', 20, ['boxes', 'packaging', 'cardboard', 'shipping', 'cartons', 'packing', 'bubble', 'storage']],
-    ['Terracotta planters & drainage trays', 'Household Items', 'pots', 'Small terracotta pots and planters with drainage holes. Free to a good home for terrace garden upcycling.', 2, '/images/materials/pots.jpg', 14, ['pots', 'pot', 'planter', 'planters', 'terracotta', 'clay', 'garden', 'plants', 'drainage']],
-    ['Unopened organic pantry staples', 'Food', 'packs', 'Sealed organic pulses, grains, and kitchen pantry extras from bulk grocery order.', 3, '/images/materials/pavers.jpg', 16, ['food', 'pantry', 'organic', 'pulses', 'grains', 'groceries', 'kitchen']],
-    ['Modular acoustic whiteboard partitions', 'Office Assets', 'panels', 'Surplus magnetic whiteboard desk screens and acoustic dividers from studio redesign.', 0, '/images/materials/tiles.jpg', 4, ['office', 'whiteboard', 'partitions', 'panels', 'acoustic', 'dividers', 'studio', 'desk']],
-    ['Solid pine 2x4 lumber offcuts', 'Construction Materials', 'pieces', 'Clean untreated pine lumber and construction wood offcuts, approximately 40–60 cm long. Perfect for small shelves or planters.', 1, '/images/materials/construction.jpg', 18, ['timber', 'wood', 'pine', 'lumber', '2x4', 'offcuts', 'planks', 'boards', 'shelves', 'planters', 'carpentry', 'construction']]
-  ][i % 8]
-  return {
-    id: i + 1,
-    title: (types[0] as string) + (i >= 8 ? ` · batch ${Math.floor(i / 8) + 1}` : ''),
-    category: types[1] as string,
-    unit: types[2] as string,
-    detail: types[3] as string,
-    widthCm: i % 8 === 0 && i !== 16 ? (i === 8 ? 5 : 10) : undefined,
-    lengthCm: i % 8 === 0 && i !== 16 ? (i === 8 ? 5 : 10) : undefined,
-    qty: (types[6] as number) || 12,
-    price: 0, // All mindful giveaways are 100% free community gifts!
-    locality: i % 3 === 0 ? 'Central District' : i % 3 === 1 ? 'North Zone' : 'West End',
-    condition: i % 4 === 0 ? 'Unused surplus' : 'Previously used',
-    tone: (types[4] as number) || 0,
-    image: (types[5] as string) || MATERIAL_IMAGES[i % 5],
-    keywords: types[7] as string[]
+const originals: Listing[] = [
+  // 1. FURNITURE (6 curated items)
+  {
+    id: 1,
+    title: 'Solid teak side table & matching offcuts',
+    category: 'Furniture',
+    unit: 'units',
+    detail: 'Clean solid teak side table frame and kiln-dried wood offcuts from studio modular build. Smooth sanded finish.',
+    qty: 4,
+    price: 0,
+    locality: 'Central District',
+    condition: 'Unused surplus',
+    tone: 1,
+    image: '/images/materials/furniture.jpg',
+    keywords: ['furniture', 'teak', 'table', 'wood', 'timber', 'side table', 'desk']
+  },
+  {
+    id: 2,
+    title: 'Ergonomic mesh desk chair with adjustable arms',
+    category: 'Furniture',
+    unit: 'units',
+    detail: 'Lightly used ergonomic studio office chair in clean working condition. Gas-lift cylinder and tilt lock tested.',
+    qty: 2,
+    price: 0,
+    locality: 'North Zone',
+    condition: 'Previously used',
+    tone: 1,
+    image: '/images/materials/desk_chair.jpg',
+    keywords: ['furniture', 'chair', 'desk', 'office', 'ergonomic', 'mesh', 'seating']
+  },
+  {
+    id: 3,
+    title: 'Birch plywood modular shelving boards',
+    category: 'Furniture',
+    unit: 'panels',
+    detail: '18mm Baltic birch plywood shelf planks (90 × 30 cm) with edge-banding. Surplus from a custom retail fitout.',
+    qty: 8,
+    price: 0,
+    locality: 'West End',
+    condition: 'Unused surplus',
+    tone: 1,
+    image: '/images/materials/plywood_shelves.jpg',
+    keywords: ['furniture', 'plywood', 'shelf', 'shelving', 'birch', 'boards', 'planks']
+  },
+  {
+    id: 4,
+    title: 'Mid-century solid oak coffee table frame',
+    category: 'Furniture',
+    unit: 'units',
+    detail: 'Sturdy tapered-leg oak frame needing a top surface. Perfect for mosaic tile or glass top upcycling.',
+    qty: 1,
+    price: 0,
+    locality: 'Central District',
+    condition: 'Previously used',
+    tone: 1,
+    image: '/images/materials/coffee_table.jpg',
+    keywords: ['furniture', 'table', 'oak', 'coffee table', 'frame', 'wood', 'upcycle']
+  },
+  {
+    id: 5,
+    title: 'Solid pine modular workshop bench',
+    category: 'Furniture',
+    unit: 'units',
+    detail: 'Heavy-duty workbench with lower storage shelf. Surface has cosmetic marks but structure is rock solid.',
+    qty: 2,
+    price: 0,
+    locality: 'North Zone',
+    condition: 'Previously used',
+    tone: 1,
+    image: '/images/materials/workbench.jpg',
+    keywords: ['furniture', 'bench', 'workbench', 'pine', 'wood', 'workshop', 'table']
+  },
+  {
+    id: 6,
+    title: 'Compact two-drawer bedside hardwood cabinet',
+    category: 'Furniture',
+    unit: 'units',
+    detail: 'Clean dark walnut finish side cabinet with smooth drawer slides and brass pull handles.',
+    qty: 1,
+    price: 0,
+    locality: 'West End',
+    condition: 'Unused surplus',
+    tone: 1,
+    image: '/images/materials/bedside_cabinet.jpg',
+    keywords: ['furniture', 'cabinet', 'drawers', 'nightstand', 'walnut', 'storage']
+  },
+
+  // 2. ELECTRONIC ITEMS (6 curated items)
+  {
+    id: 7,
+    title: 'Tested USB-C monitors & power adapters',
+    category: 'Electronic Items',
+    unit: 'pieces',
+    detail: 'Surplus 24" office displays with clean power bricks, HDMI/DisplayPort cords, and USB-C adapters in tested condition.',
+    qty: 6,
+    price: 0,
+    locality: 'Central District',
+    condition: 'Previously used',
+    tone: 4,
+    image: '/images/materials/electronics.jpg',
+    keywords: ['electronics', 'monitors', 'display', 'screen', 'usb-c', 'adapters', 'cables', 'chargers', 'power']
+  },
+  {
+    id: 8,
+    title: 'Gigabit dual-band Wi-Fi routers & patch cords',
+    category: 'Electronic Items',
+    unit: 'units',
+    detail: 'Surplus office networking routers with antennas, 12V DC power supplies, and Cat6 patch cables.',
+    qty: 5,
+    price: 0,
+    locality: 'North Zone',
+    condition: 'Previously used',
+    tone: 4,
+    image: '/images/materials/wifi_routers.jpg',
+    keywords: ['electronics', 'router', 'wifi', 'networking', 'ethernet', 'cat6', 'cables']
+  },
+  {
+    id: 9,
+    title: 'Mechanical keyboards & optical mouse combo',
+    category: 'Electronic Items',
+    unit: 'sets',
+    detail: 'Clean tactile switch USB keyboards and ambidextrous mice. Cleaned, tested, and sanitized for immediate reuse.',
+    qty: 8,
+    price: 0,
+    locality: 'West End',
+    condition: 'Unused surplus',
+    tone: 4,
+    image: '/images/materials/keyboards_mice.jpg',
+    keywords: ['electronics', 'keyboard', 'mouse', 'peripherals', 'usb', 'computer']
+  },
+  {
+    id: 10,
+    title: 'Compact desktop audio speakers & aux cords',
+    category: 'Electronic Items',
+    unit: 'pairs',
+    detail: 'Powered desktop reference speakers with RCA and 3.5mm input cords. Crisp, balanced sound.',
+    qty: 3,
+    price: 0,
+    locality: 'Central District',
+    condition: 'Previously used',
+    tone: 4,
+    image: '/images/materials/desktop_speakers.jpg',
+    keywords: ['electronics', 'speakers', 'audio', 'sound', 'cables', 'monitors']
+  },
+  {
+    id: 11,
+    title: 'Multi-port USB-C GaN fast-charging hubs',
+    category: 'Electronic Items',
+    unit: 'units',
+    detail: '65W compact GaN wall chargers with braided USB-C power delivery cables. Ideal for laptop and phone setups.',
+    qty: 10,
+    price: 0,
+    locality: 'North Zone',
+    condition: 'Unused surplus',
+    tone: 4,
+    image: '/images/materials/charging_hubs.jpg',
+    keywords: ['electronics', 'chargers', 'usb-c', 'gan', 'power', 'cables', 'hub']
+  },
+  {
+    id: 12,
+    title: 'Braided DisplayPort & 4K HDMI cords bundle',
+    category: 'Electronic Items',
+    unit: 'packs',
+    detail: 'Pack of 5 heavy-duty braided video cables (2m length) with gold-plated connectors.',
+    qty: 12,
+    price: 0,
+    locality: 'West End',
+    condition: 'Unused surplus',
+    tone: 4,
+    image: '/images/materials/hdmi_cables.jpg',
+    keywords: ['electronics', 'cables', 'hdmi', 'displayport', 'cords', 'video', 'adapters']
+  },
+
+  // 3. CONSTRUCTION MATERIALS (6 curated items)
+  {
+    id: 13,
+    title: 'Sea-glass mosaic ceramic tiles',
+    category: 'Construction Materials',
+    unit: 'pieces',
+    detail: 'Ceramic leftover tile lot (10 × 10 cm, 6mm thickness) from splashback remodel. Gloss finish, clean unmortared backs.',
+    widthCm: 10,
+    lengthCm: 10,
+    qty: 48,
+    price: 0,
+    locality: 'Central District',
+    condition: 'Unused surplus',
+    tone: 0,
+    image: '/images/materials/tiles.jpg',
+    keywords: ['tiles', 'ceramic', 'mosaic', 'splashback', 'flooring', 'wall', 'bath', 'construction']
+  },
+  {
+    id: 14,
+    title: 'Solid pine 2x4 framing lumber offcuts',
+    category: 'Construction Materials',
+    unit: 'pieces',
+    detail: 'Clean untreated pine lumber offcuts, approximately 50–70 cm long. Squared cut ends, dry and straight.',
+    widthCm: 9,
+    lengthCm: 60,
+    qty: 18,
+    price: 0,
+    locality: 'North Zone',
+    condition: 'Unused surplus',
+    tone: 1,
+    image: '/images/materials/construction.jpg',
+    keywords: ['timber', 'wood', 'pine', 'lumber', '2x4', 'offcuts', 'planks', 'boards', 'construction']
+  },
+  {
+    id: 15,
+    title: 'Architectural dressed sandstone & granite pavers',
+    category: 'Construction Materials',
+    unit: 'slabs',
+    detail: 'Heavy-duty 30 × 30 cm textured stone pavers, 3.5cm thickness. Non-slip surface suitable for pathways or garden patios.',
+    widthCm: 30,
+    lengthCm: 30,
+    qty: 24,
+    price: 0,
+    locality: 'West End',
+    condition: 'Unused surplus',
+    tone: 3,
+    image: '/images/materials/pavers.jpg',
+    keywords: ['pavers', 'stone', 'sandstone', 'granite', 'slabs', 'pathway', 'patio', 'construction']
+  },
+  {
+    id: 16,
+    title: 'Clean reclaimed red cedar plank boards',
+    category: 'Construction Materials',
+    unit: 'pieces',
+    detail: 'Naturally weather-resistant cedar slats (approx. 80 cm long, 10 cm wide). Ideal for planters, screens, or outdoor accents.',
+    widthCm: 10,
+    lengthCm: 80,
+    qty: 14,
+    price: 0,
+    locality: 'Central District',
+    condition: 'Unused surplus',
+    tone: 1,
+    image: '/images/materials/timber.jpg',
+    keywords: ['timber', 'cedar', 'wood', 'planks', 'boards', 'slats', 'outdoor', 'construction']
+  },
+  {
+    id: 17,
+    title: 'Solid brushed brass handles & cabinet hinges',
+    category: 'Construction Materials',
+    unit: 'sets',
+    detail: 'Surplus architectural cabinet hardware lot with mounting screws (standard 96mm and 128mm hole spacing).',
+    qty: 16,
+    price: 0,
+    locality: 'North Zone',
+    condition: 'Unused surplus',
+    tone: 4,
+    image: '/images/materials/fittings.jpg',
+    keywords: ['fittings', 'hardware', 'brass', 'handles', 'hinges', 'cabinet', 'screws', 'construction']
+  },
+  {
+    id: 18,
+    title: 'Terracotta garden wall & step capping tiles',
+    category: 'Construction Materials',
+    unit: 'pieces',
+    detail: 'Warm terracotta tiles with bullnose edging (15 × 15 cm). Perfect for step risers, planters, or garden wall caps.',
+    widthCm: 15,
+    lengthCm: 15,
+    qty: 32,
+    price: 0,
+    locality: 'West End',
+    condition: 'Unused surplus',
+    tone: 2,
+    image: '/images/materials/capping_tiles.jpg',
+    keywords: ['tiles', 'terracotta', 'capping', 'garden', 'wall', 'steps', 'ceramic', 'construction']
+  },
+
+  // 4. PACKAGING, HOUSEHOLD & COMMUNITY ASSETS (6 curated items)
+  {
+    id: 19,
+    title: 'Heavy-duty 5-ply shipping boxes with inserts',
+    category: 'Packaging',
+    unit: 'boxes',
+    detail: 'Double-wall clean cardboard shipping boxes (pack of 20) with padded bubble inserts. Flat-packed and dry.',
+    qty: 20,
+    price: 0,
+    locality: 'Central District',
+    condition: 'Unused surplus',
+    tone: 2,
+    image: '/images/materials/shipping_boxes.jpg',
+    keywords: ['boxes', 'packaging', 'cardboard', 'shipping', 'cartons', 'packing', 'bubble', 'storage']
+  },
+  {
+    id: 20,
+    title: 'Terracotta flower pots & drainage saucers',
+    category: 'Household Items',
+    unit: 'pots',
+    detail: 'Traditional porous clay pots (18–25 cm diameter) with saucers. Clean and ready for balcony or terrace planting.',
+    qty: 14,
+    price: 0,
+    locality: 'North Zone',
+    condition: 'Previously used',
+    tone: 2,
+    image: '/images/materials/pots.jpg',
+    keywords: ['pots', 'pot', 'planter', 'planters', 'terracotta', 'clay', 'garden', 'plants', 'drainage']
+  },
+  {
+    id: 21,
+    title: 'Modular acoustic desk divider screens & clamps',
+    category: 'Office Assets',
+    unit: 'panels',
+    detail: 'Fabric-wrapped sound-absorbing desk partition screens (120 × 40 cm) with universal edge-mounting desk brackets.',
+    qty: 6,
+    price: 0,
+    locality: 'West End',
+    condition: 'Unused surplus',
+    tone: 0,
+    image: '/images/materials/acoustic_dividers.jpg',
+    keywords: ['office', 'partitions', 'panels', 'acoustic', 'dividers', 'studio', 'desk']
+  },
+  {
+    id: 22,
+    title: 'Biodegradable honeycomb kraft paper wrap roll',
+    category: 'Packaging',
+    unit: 'rolls',
+    detail: 'Eco-friendly protective honeycomb paper packing roll (50m length). Great alternative to plastic bubble wrap.',
+    qty: 3,
+    price: 0,
+    locality: 'Central District',
+    condition: 'Unused surplus',
+    tone: 2,
+    image: '/images/materials/kraft_paper.jpg',
+    keywords: ['packaging', 'kraft', 'paper', 'honeycomb', 'wrap', 'shipping', 'eco']
+  },
+  {
+    id: 23,
+    title: 'Glazed ceramic indoor planters with saucers',
+    category: 'Household Items',
+    unit: 'pots',
+    detail: 'White and sage green glazed indoor plant pots with drainage holes (15cm and 20cm diameters).',
+    qty: 8,
+    price: 0,
+    locality: 'North Zone',
+    condition: 'Unused surplus',
+    tone: 2,
+    image: '/images/materials/glazed_pots.jpg',
+    keywords: ['pots', 'planter', 'ceramic', 'glazed', 'indoor', 'plants', 'decor']
+  },
+  {
+    id: 24,
+    title: 'Studio magnetic rolling whiteboard easel',
+    category: 'Office Assets',
+    unit: 'units',
+    detail: 'Double-sided rolling magnetic whiteboard with aluminum frame and accessory tray. Collapsible for easy transport.',
+    qty: 2,
+    price: 0,
+    locality: 'West End',
+    condition: 'Previously used',
+    tone: 0,
+    image: '/images/materials/whiteboard_easel.jpg',
+    keywords: ['office', 'whiteboard', 'easel', 'magnetic', 'studio', 'presentation']
   }
-})
+]
 
 const load = <T,>(key: string, fallback: T): T => {
   try {
@@ -149,7 +476,19 @@ function App() {
 
 function AuthenticatedApp() {
   const { user, signOut } = useAuth()
-  const [items, setItems] = useState<Listing[]>(() => load('resource-items-v4', originals))
+  const [items, setItems] = useState<Listing[]>(() => {
+    const loaded = load('resource-items-v4', originals)
+    if (
+      !Array.isArray(loaded) ||
+      loaded.length < 18 ||
+      loaded.some(x => x.title?.includes('batch') || x.title?.includes('Scout') || x.title?.includes('Demolition Lot')) ||
+      loaded[1]?.image === '/images/materials/furniture.jpg'
+    ) {
+      localStorage.setItem('resource-items-v4', JSON.stringify(originals))
+      return originals
+    }
+    return loaded
+  })
   const [saved, setSaved] = useState<number[]>(() => load('resource-saved', []))
 
   // View modes: 'dashboard' | 'chat' | 'project' | 'mine' | 'list'
@@ -166,7 +505,7 @@ function AuthenticatedApp() {
   const goInventoryView = (next: 'dashboard' | 'project' | 'mine') => {
     setMobileMoreOpen(false)
     setView(next)
-    setCategory('All materials')
+    setCategory('All items')
     setLocality('All localities')
     setFree(false)
   }
@@ -220,12 +559,19 @@ function AuthenticatedApp() {
 
   // 1. Subscribe to shared marketplace listings in Firestore
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      ;(window as any).__reseedFirestore = () => reseedAllListings(originals)
+      ;(window as any).__seedListings = () => seedListingsIfEmpty(originals)
+    }
+
     const unsub = subscribeToListings(
       async (cloudItems) => {
         setFirestoreLive(true)
         setFirestoreError(null)
         if (cloudItems.length === 0) {
-          // If Firestore collection is empty, auto-seed with the baseline catalog
+          // If Firestore collection is empty or being sanitized, set to originals and auto-seed
+          setItems(originals)
+          localStorage.setItem('resource-items-v4', JSON.stringify(originals))
           await seedListingsIfEmpty(originals)
         } else {
           setItems(cloudItems)
@@ -356,14 +702,9 @@ function AuthenticatedApp() {
       (category === 'All items' || category === 'All categories' || category === 'All materials' || x.category === category) &&
       (locality === 'All localities' || x.locality === locality) &&
       (!free || x.price === 0) &&
-      ((!submitted && !ready) ||
-        view !== 'dashboard' ||
-        (ready && !submitted
-          ? x.category === requirements.category &&
-            (requirements.locality === 'All localities' || x.locality === requirements.locality) &&
-            (requirements.budget === '' || x.price <= Number(requirements.budget))
-          : (x.title + ' ' + x.category + ' ' + (x.keywords || []).join(' ') + ' ' + x.detail).toLowerCase().includes(q) ||
-            (inferred ? x.category === inferred : false)))
+      (!submitted ||
+        (x.title + ' ' + x.category + ' ' + (x.keywords || []).join(' ') + ' ' + x.detail).toLowerCase().includes(q) ||
+        (inferred ? x.category === inferred : false))
   )
 
   const beginList = () => {
@@ -1496,13 +1837,10 @@ const MATERIAL_LABELS = [
   'Brushed brass cabinet handles'
 ]
 
-const MATERIAL_TAGS = ['CERAMIC', 'PINE', 'TERRACOTTA', 'SANDSTONE', 'BRASS']
-
 function Material({ tone, image }: { tone: number; image?: string }) {
   const safeTone = ((tone % 5) + 5) % 5
   const imgSrc = image || MATERIAL_IMAGES[safeTone]
   const label = MATERIAL_LABELS[safeTone]
-  const tag = MATERIAL_TAGS[safeTone]
 
   return (
     <div
@@ -1520,9 +1858,6 @@ function Material({ tone, image }: { tone: number; image?: string }) {
         }}
       />
       <div className="material-overlay-gradient" />
-      <span className="art-caption">
-        MINDFUL GIVEAWAY / {tag}
-      </span>
     </div>
   )
 }
