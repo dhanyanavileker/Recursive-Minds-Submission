@@ -9,32 +9,6 @@
   </head>
   <body>
     <div id="root"></div>
-    <script>
-      (function () {
-        function sync() {
-          var vv = window.visualViewport
-          var h = Math.round(vv ? vv.height : window.innerHeight)
-          var t = Math.round(vv ? vv.offsetTop : 0)
-          var w = Math.round(document.documentElement.clientWidth)
-          var root = document.documentElement
-          root.style.setProperty('--app-vh', h + 'px')
-          root.style.setProperty('--app-vv-top', t + 'px')
-          root.style.setProperty('--app-vw', w + 'px')
-          var touch =
-            window.matchMedia('(hover: none) and (pointer: coarse)').matches ||
-            window.matchMedia('(max-width: 1024px)').matches
-          root.classList.toggle('mobile-shell', touch)
-        }
-        sync()
-        if (window.visualViewport) {
-          window.visualViewport.addEventListener('resize', sync)
-          window.visualViewport.addEventListener('scroll', sync)
-        }
-        window.addEventListener('resize', sync)
-        window.addEventListener('orientationchange', sync)
-        window.addEventListener('pageshow', sync)
-      })()
-    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

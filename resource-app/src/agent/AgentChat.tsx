@@ -196,7 +196,7 @@ export function AgentChat({
   // Auto-scroll
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [currentSession?.messages, isTyping])
+  }, [currentSession?.messages?.length, isTyping])
 
   // Save conversations to localStorage
   const persistSessions = (updated: ConversationSession[], newActiveId?: string) => {

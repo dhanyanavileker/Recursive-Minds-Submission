@@ -1522,12 +1522,12 @@ html.mobile-shell body.mobile-app-shell {
 html.mobile-shell body.mobile-app-shell #root {
   height: 100%;
   width: 100%;
-  max-width: var(--app-vw, 100%);
+  max-width: 100%;
   overflow: hidden;
 }
 
 html.mobile-shell body.mobile-app-shell {
-  max-width: var(--app-vw, 100%);
+  max-width: 100%;
   min-width: 0;
 }
 
@@ -1639,8 +1639,8 @@ html.mobile-shell body.mobile-app-shell .app:not(.chat-mode) main {
 html.mobile-shell .mobile-bottom-nav {
   display: flex !important;
   position: fixed !important;
-  top: calc(var(--app-vv-top, 0px) + var(--app-vh, 100svh) - var(--mob-nav-h)) !important;
-  bottom: auto !important;
+  bottom: 0 !important;
+  top: auto !important;
   left: 0 !important;
   right: 0 !important;
   z-index: 500 !important;

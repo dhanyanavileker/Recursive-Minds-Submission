@@ -28,7 +28,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (e) {}
     return null
   })
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(() => {
+    try {
+      if (localStorage.getItem('resource-guest-user')) return false
+    } catch {}
+    return false
+  })
 
   useEffect(() => {
     let unsubscribe: (() => void) | undefined
