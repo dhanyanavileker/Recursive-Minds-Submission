@@ -169,7 +169,7 @@ export function AgentChat({
 
     const newItem: Listing = {
       id: Date.now(),
-      title: `${order.materialQuery} · Demolition Lot`,
+      title: `${order.materialQuery} · Surplus Community Lot`,
       category: order.category,
       qty: 1,
       unit: 'lot',
@@ -844,7 +844,7 @@ export function AgentChat({
                         </div>
                         <div>
                           <h4>Future Sourcing Scenario</h4>
-                          <p className="card-sub">Illustrative demolition-salvage workflow · No reservation made</p>
+                          <p className="card-sub">Illustrative circular sourcing workflow · No reservation made</p>
                         </div>
                       </div>
                       <div className="procure-status-pill">
@@ -858,7 +858,7 @@ export function AgentChat({
                       <div className="progress-step complete">
                         <span className="step-circle"><Check size={11} /></span>
                         <div className="step-text">
-                          <strong>1. Demolition Scouting</strong>
+                          <strong>1. Resource Scouting</strong>
                           <small>{msg.procurementOrder.supplierName}</small>
                         </div>
                       </div>
@@ -986,7 +986,7 @@ export function AgentChat({
                         className="procure-voucher-btn"
                         onClick={() => setViewingGatePass(msg.procurementOrder!)}
                       >
-                        <ReceiptText size={14} /> Demolition Gate Pass
+                        <ReceiptText size={14} /> Circular Collection Voucher
                       </button>
                     </div>
                   </div>
@@ -997,11 +997,11 @@ export function AgentChat({
                   <div className="procurement-trigger-box">
                     <div className="trigger-badge">
                       <Bot size={15} />
-                      <span>Demolition Broker Agent Available</span>
+                      <span>Autonomous Sourcing Agent Available</span>
                     </div>
                     <h4>Can’t find exact matches for "{msg.showProcurementTrigger.materialName}"?</h4>
                     <p>
-                      Our <strong>Autonomous Procurement Agent</strong> can scout active demolition sites, architectural salvagers, and commercial remodelers in your area to negotiate bulk surplus discounts and place a hold order for you.
+                      Our <strong>Autonomous Sourcing Agent</strong> can scout local circular hubs, maker spaces, and community surplus donors in your area to locate zero-cost usable items and organize handoffs.
                     </p>
                     <button
                       type="button"
@@ -1301,13 +1301,13 @@ export function AgentChat({
         </div>
       </section>
 
-      {/* Demolition Gate Pass / Voucher Dialog */}
+      {/* Circular Voucher Dialog */}
       <Dialog open={!!viewingGatePass} onOpenChange={open => !open && setViewingGatePass(null)}>
         <DialogContent className="gatepass-dialog">
           <DialogHeader>
-            <DialogTitle>Circular Demolition Gate Pass & Hold Receipt</DialogTitle>
+            <DialogTitle>Circular Resource Transfer Voucher</DialogTitle>
             <DialogDescription>
-              Autonomous Agent Broker Authorization · Official Yard Hold Voucher
+              Autonomous Agent Sourcing Authorization · Official Community Hold Voucher
             </DialogDescription>
           </DialogHeader>
 

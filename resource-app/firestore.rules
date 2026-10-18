@@ -9,5 +9,12 @@ service cloud.firestore {
         allow read, create, update, delete: if request.auth != null && request.auth.uid == userId;
       }
     }
+
+    match /listings/{listingId} {
+      // Marketplace inventory is public for viewing
+      allow read: if true;
+      // Allow authenticated users to create, modify, or delete listings
+      allow create, update, delete: if request.auth != null;
+    }
   }
 }

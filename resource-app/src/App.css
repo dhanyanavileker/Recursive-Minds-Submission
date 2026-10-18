@@ -51,6 +51,9 @@
 .karma-header-pill:hover{transform:translateY(-1px);border-color:#B8CBBF}
 .porter-header-pill{display:flex;align-items:center;gap:6px;background:#DDEDE5;border:1px solid #B8CBBF;color:#2F6B56;padding:6px 12px;border-radius:9999px;font-size:12px;font-weight:500;cursor:pointer;transition:transform .15s,border-color .2s}
 .porter-header-pill:hover{transform:translateY(-1px);border-color:#B8CBBF}
+.firestore-status-pill{display:flex;align-items:center;gap:6px;background:#DDEDE5;border:1px solid #B8CBBF;color:#2F6B56;padding:6px 12px;border-radius:9999px;font-size:12px;font-weight:600;white-space:nowrap;user-select:none;transition:all .2s ease}
+.firestore-status-pill.warning{background:#fef3c7;border-color:#fde68a;color:#92400e}
+.firestore-status-pill.connecting{background:#F7F3E8;border-color:#B8CBBF;color:#786E65}
 .pulsing-dot{width:7px;height:7px;border-radius:50%;background:#2F6B56;box-shadow:0 0 8px rgba(24,51,47,0.12);animation:pulse-dot 1.5s infinite}
 @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(0.85)}}
 

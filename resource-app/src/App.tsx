@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore'
 import { createPortal } from 'react-dom'
 import { useMobileViewport } from './useMobileViewport'
 import {
@@ -25,8 +24,18 @@ import {
   LayoutDashboard,
   MessageSquareCode,
   ShieldCheck,
-  Ellipsis
+  Ellipsis,
+  Database
 } from 'lucide-react'
+import {
+  subscribeToListings,
+  seedListingsIfEmpty,
+  reseedAllListings,
+  saveListingToFirestore,
+  deleteListingFromFirestore,
+  loadUserState,
+  saveUserState
+} from './services/firestoreService'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
@@ -61,6 +70,9 @@ type Listing = {
 }
 
 const MATERIAL_IMAGES = [
+  '/images/materials/furniture.jpg',
+  '/images/materials/electronics.jpg',
+  '/images/materials/construction.jpg',
   '/images/materials/tiles.jpg',
   '/images/materials/timber.jpg',
   '/images/materials/pots.jpg',
@@ -70,9 +82,9 @@ const MATERIAL_IMAGES = [
 
 export const CATEGORIES = [
   'All items',
-  'Materials',
   'Furniture',
-  'Electronics',
+  'Electronic Items',
+  'Construction Materials',
   'Packaging',
   'Household Items',
   'Food',
@@ -81,14 +93,14 @@ export const CATEGORIES = [
 
 const originals: Listing[] = Array.from({ length: 24 }, (_, i) => {
   const types = [
-    ['Sea-glass mosaic ceramic tiles', 'Materials', 'pieces', 'Ceramic leftover tile lot from splashback remodel. Mindfully gifted to prevent landfill waste. Confirm dimensions and finish before use.', 0, '/images/materials/tiles.jpg', 48, ['tiles', 'ceramic', 'mosaic', 'splashback', 'flooring', 'wall', 'bath']],
-    ['Solid teak side table & offcuts', 'Furniture', 'units', 'Clean solid wood timber offcuts and end-table frame from modular assembly. Perfect for local makers and restoration.', 1, '/images/materials/timber.jpg', 6, ['wood', 'timber', 'teak', 'table', 'furniture', 'offcuts', 'plank', 'board', 'carpentry']],
-    ['Tested USB-C monitors & power adapters', 'Electronics', 'pieces', 'Surplus office display cords, power bricks, fittings, and adapters in clean tested condition.', 4, '/images/materials/fittings.jpg', 12, ['electronics', 'monitors', 'display', 'usb-c', 'adapters', 'cables', 'cords', 'chargers', 'fittings', 'power']],
+    ['Sea-glass mosaic ceramic tiles', 'Construction Materials', 'pieces', 'Ceramic leftover tile lot from splashback remodel. Mindfully gifted to prevent landfill waste. Confirm dimensions and finish before use.', 0, '/images/materials/tiles.jpg', 48, ['tiles', 'ceramic', 'mosaic', 'splashback', 'flooring', 'wall', 'bath', 'construction']],
+    ['Solid teak side table & offcuts', 'Furniture', 'units', 'Clean solid wood timber offcuts and end-table frame from modular assembly. Perfect for local makers and restoration.', 1, '/images/materials/furniture.jpg', 6, ['wood', 'timber', 'teak', 'table', 'furniture', 'offcuts', 'plank', 'board', 'carpentry']],
+    ['Tested USB-C monitors & power adapters', 'Electronic Items', 'pieces', 'Surplus office display cords, power bricks, fittings, and adapters in clean tested condition.', 4, '/images/materials/electronics.jpg', 12, ['electronics', 'monitors', 'display', 'usb-c', 'adapters', 'cables', 'cords', 'chargers', 'fittings', 'power']],
     ['Heavy-duty corrugate shipping boxes', 'Packaging', 'boxes', 'Double-wall 5-ply packing boxes (pack of 20) with bubble inserts. Ideal for eco-shipping.', 2, '/images/materials/pots.jpg', 20, ['boxes', 'packaging', 'cardboard', 'shipping', 'cartons', 'packing', 'bubble', 'storage']],
     ['Terracotta planters & drainage trays', 'Household Items', 'pots', 'Small terracotta pots and planters with drainage holes. Free to a good home for terrace garden upcycling.', 2, '/images/materials/pots.jpg', 14, ['pots', 'pot', 'planter', 'planters', 'terracotta', 'clay', 'garden', 'plants', 'drainage']],
     ['Unopened organic pantry staples', 'Food', 'packs', 'Sealed organic pulses, grains, and kitchen pantry extras from bulk grocery order.', 3, '/images/materials/pavers.jpg', 16, ['food', 'pantry', 'organic', 'pulses', 'grains', 'groceries', 'kitchen']],
     ['Modular acoustic whiteboard partitions', 'Office Assets', 'panels', 'Surplus magnetic whiteboard desk screens and acoustic dividers from studio redesign.', 0, '/images/materials/tiles.jpg', 4, ['office', 'whiteboard', 'partitions', 'panels', 'acoustic', 'dividers', 'studio', 'desk']],
-    ['Solid pine 2x4 lumber offcuts', 'Materials', 'pieces', 'Clean untreated pine lumber and timber wood offcuts, approximately 40–60 cm long. Perfect for small shelves or planters.', 1, '/images/materials/timber.jpg', 18, ['timber', 'wood', 'pine', 'lumber', '2x4', 'offcuts', 'planks', 'boards', 'shelves', 'planters', 'carpentry']]
+    ['Solid pine 2x4 lumber offcuts', 'Construction Materials', 'pieces', 'Clean untreated pine lumber and construction wood offcuts, approximately 40–60 cm long. Perfect for small shelves or planters.', 1, '/images/materials/construction.jpg', 18, ['timber', 'wood', 'pine', 'lumber', '2x4', 'offcuts', 'planks', 'boards', 'shelves', 'planters', 'carpentry', 'construction']]
   ][i % 8]
   return {
     id: i + 1,
@@ -200,62 +212,83 @@ function AuthenticatedApp() {
   const [deliveryOpen, setDeliveryOpen] = useState(false)
   const [activeDelivery, setActiveDelivery] = useState<DeliveryDetails>(() => load('resource-active-delivery-v2', DEFAULT_DELIVERY))
   const [cloudStateReady, setCloudStateReady] = useState(false)
+  const [firestoreLive, setFirestoreLive] = useState(false)
+  const [firestoreError, setFirestoreError] = useState<string | null>(null)
 
   // AI Chat direct prompt trigger
   const [agentInitialPrompt, setAgentInitialPrompt] = useState<string | null>(null)
 
+  // 1. Subscribe to shared marketplace listings in Firestore
+  useEffect(() => {
+    const unsub = subscribeToListings(
+      async (cloudItems) => {
+        setFirestoreLive(true)
+        setFirestoreError(null)
+        if (cloudItems.length === 0) {
+          // If Firestore collection is empty, auto-seed with the baseline catalog
+          await seedListingsIfEmpty(originals)
+        } else {
+          setItems(cloudItems)
+          localStorage.setItem('resource-items-v4', JSON.stringify(cloudItems))
+        }
+      },
+      (error: any) => {
+        console.warn('Firestore listings subscription error, using local fallback:', error)
+        if (error?.code === 'permission-denied' || String(error).includes('permission')) {
+          setFirestoreError('Publish firestore.rules in Firebase Console')
+        } else {
+          setFirestoreError(error?.message || 'Connection error')
+        }
+      }
+    )
+    return () => {
+      unsub?.()
+    }
+  }, [])
+
+  // 2. Load user personal app state from Firestore
   useEffect(() => {
     if (!user || user.isGuest || !db) {
       setCloudStateReady(true)
       return
     }
 
-    const firestore = db
     let cancelled = false
-    const loadCloudState = async () => {
+    const loadState = async () => {
       try {
-        const stateRef = doc(firestore, 'users', user.uid, 'appState', 'current')
-        const snapshot = await getDoc(stateRef)
+        const cloudState = await loadUserState(user.uid)
         if (cancelled) return
-        if (snapshot.exists()) {
-          const data = snapshot.data()
-          if (Array.isArray(data.items)) setItems(data.items as Listing[])
-          if (Array.isArray(data.saved)) setSaved(data.saved as number[])
-          if (typeof data.submitted === 'string') setSubmitted(data.submitted)
-          if (data.requirements) setRequirements(data.requirements as Requirements)
-          if (typeof data.ready === 'boolean') setReady(data.ready)
-          if (typeof data.karma === 'number') setKarma(data.karma)
-          if (data.activeDelivery) setActiveDelivery(data.activeDelivery as DeliveryDetails)
+        if (cloudState) {
+          if (Array.isArray(cloudState.saved)) setSaved(cloudState.saved)
+          if (typeof cloudState.submitted === 'string') setSubmitted(cloudState.submitted)
+          if (cloudState.requirements) setRequirements(cloudState.requirements)
+          if (typeof cloudState.ready === 'boolean') setReady(cloudState.ready)
+          if (typeof cloudState.karma === 'number') setKarma(cloudState.karma)
+          if (cloudState.activeDelivery) setActiveDelivery(cloudState.activeDelivery)
         }
       } catch (error) {
-        console.warn('Firestore state could not be loaded; continuing with local data.', error)
+        console.warn('Firestore user state could not be loaded; continuing with local data.', error)
       } finally {
         if (!cancelled) setCloudStateReady(true)
       }
     }
-    void loadCloudState()
+    void loadState()
     return () => { cancelled = true }
   }, [user])
 
+  // 3. Continuously sync user personal app state to Firestore
   useEffect(() => {
     if (!cloudStateReady || !user || user.isGuest || !db) return
     const timer = window.setTimeout(() => {
-      const state = JSON.parse(JSON.stringify({ items, saved, submitted, requirements, ready, karma, activeDelivery }))
-      void Promise.all([
-        setDoc(doc(db!, 'users', user.uid), {
-          displayName: user.displayName,
-          email: user.email,
-          photoURL: user.photoURL,
-          updatedAt: serverTimestamp()
-        }, { merge: true }),
-        setDoc(doc(db!, 'users', user.uid, 'appState', 'current'), {
-          ...state,
-          updatedAt: serverTimestamp()
-        }, { merge: true })
-      ]).catch(error => console.warn('Firestore sync failed; local data is still available.', error))
+      const state = { saved, submitted, requirements, ready, karma, activeDelivery }
+      void saveUserState(
+        user.uid,
+        { displayName: user.displayName, email: user.email, photoURL: user.photoURL },
+        state
+      ).catch(error => console.warn('Firestore sync failed; local data is still available.', error))
     }, 500)
     return () => window.clearTimeout(timer)
-  }, [activeDelivery, cloudStateReady, items, karma, ready, requirements, saved, submitted, user])
+  }, [activeDelivery, cloudStateReady, karma, ready, requirements, saved, submitted, user])
 
   const selectedItems = items.filter(x => saved.includes(x.id))
   const compatibleItems = selectedItems.filter(x => x.category === requirements.category)
@@ -301,12 +334,12 @@ function AuthenticatedApp() {
   }
 
   const q = submitted.toLowerCase()
-  const inferred = /tile|mosaic|timber|wood|pine|paver|stone|gravel|metal|material/.test(q)
-    ? 'Materials'
+  const inferred = /construct|tile|mosaic|timber|wood|pine|paver|stone|gravel|metal|material|masonry/.test(q)
+    ? 'Construction Materials'
     : /chair|table|desk|shelf|furniture|stool|bench|couch/.test(q)
     ? 'Furniture'
-    : /cable|charger|monitor|display|tech|electron|wire|battery|cord/.test(q)
-    ? 'Electronics'
+    : /cable|charger|monitor|display|tech|electron|wire|battery|cord|usb/.test(q)
+    ? 'Electronic Items'
     : /box|packag|bubble|carton|wrap|corrugat|mailer/.test(q)
     ? 'Packaging'
     : /pot|plant|garden|handle|decor|kitchen|towel|household/.test(q)
@@ -377,6 +410,9 @@ function AuthenticatedApp() {
       own: true
     }
     persist([item, ...items])
+    void saveListingToFirestore(item, user?.uid).catch(err => {
+      console.warn('Could not sync listing to Firestore:', err)
+    })
     addKarmaPoints(150)
     setView('mine')
     setLocality('All localities')
@@ -518,6 +554,32 @@ function AuthenticatedApp() {
               <Truck size={14} />
               <span>Delivery Demo</span>
             </button>
+
+            {/* Firestore Cloud Sync Status */}
+            <div
+              className={`firestore-status-pill ${firestoreLive ? 'live' : firestoreError ? 'warning' : 'connecting'}`}
+              title={
+                firestoreLive
+                  ? "Firestore connected: All materials, project briefs, and giveaways sync live to Google Cloud Firestore"
+                  : firestoreError
+                  ? `Firestore connected to project 'resource-exchange-dashboard', but rules are needed: ${firestoreError}`
+                  : "Connecting to Firestore..."
+              }
+            >
+              <Database
+                size={13}
+                style={{
+                  color: firestoreLive ? '#2F6B56' : firestoreError ? '#b45309' : '#d97706'
+                }}
+              />
+              <span>
+                {firestoreLive
+                  ? 'Firestore Live'
+                  : firestoreError
+                  ? 'Rules Needed'
+                  : 'Connecting...'}
+              </span>
+            </div>
           </div>
 
           <Button onClick={beginList} className="list-button" aria-label="Give leftovers">
@@ -577,6 +639,9 @@ function AuthenticatedApp() {
               persist([newItem, ...items])
               if (!saved.includes(newItem.id)) toggle(newItem.id)
               setNotice(`Order confirmed! Added "${newItem.title}" to My Project.`)
+              void saveListingToFirestore(newItem, user?.uid).catch(err => {
+                console.warn('Could not sync agent item to Firestore:', err)
+              })
             }}
             onSelectItem={setSelected}
             onViewProject={() => {
@@ -606,8 +671,8 @@ function AuthenticatedApp() {
               <ArrowLeft size={16} /> Back to dashboard
             </button>
             <h1>
-              Make room for<br />
-              <span>someone else's idea.</span>
+              Share what's useful.<br />
+              <span>Save what matters.</span>
             </h1>
             <p>Mindfully give your leftover materials a useful next chapter. No reselling fees — 100% free community reuse.</p>
             <div className="steps">
@@ -619,7 +684,7 @@ function AuthenticatedApp() {
                 <div className="upload">
                   <Package size={36} />
                   <h2>Start with what you have</h2>
-                  <p>Choose an image of your surplus items — materials, furniture, electronics, packaging, or household goods — or explore with our illustrated sample.</p>
+                  <p>Choose an image of your surplus items — furniture, electronic items, construction materials, or other goods — or explore with our illustrated sample.</p>
                   <label className="upload-label">
                     Choose photo
                     <input
@@ -649,13 +714,13 @@ function AuthenticatedApp() {
                       setSample(true)
                       setTitle('Sea-glass mosaic ceramic tiles')
                       setQuantity('')
-                      setNewCategory('Materials')
+                      setNewCategory('Construction Materials')
                       setStep(1)
                     }}
                   >
                     Use illustrated sample <ArrowRight size={16} />
                   </Button>
-                  <small>Community gifting connects directly with local builders across your area.</small>
+                  <small>Community sharing connects useful resources with nearby individuals, organizations, and community projects.</small>
                 </div>
                 <div className="sample-preview">
                   <Material tone={0} />
@@ -801,7 +866,7 @@ function AuthenticatedApp() {
                       </div>
                       <h3>Give Resource</h3>
                       <p>
-                        Have surplus materials, furniture, electronics, packaging, or household items? Post a mindful giveaway in 30 seconds to give them a second life.
+                        Have surplus furniture, electronic items, or construction materials? Post a mindful giveaway in 30 seconds to give them a second life.
                       </p>
                       <Button onClick={beginList} className="entry-action-btn">
                         Post a Free Giveaway <ArrowRight size={15} />
@@ -818,7 +883,7 @@ function AuthenticatedApp() {
                       </div>
                       <h3>Need Resource</h3>
                       <p>
-                        Searching for materials, appliances, or DIY supplies? Claim community surplus nearby for free before it reaches landfills.
+                        Searching for furniture, electronic items, or construction materials? Claim community surplus nearby for free before it reaches landfills.
                       </p>
                       <Button
                         variant="outline"
@@ -842,29 +907,29 @@ function AuthenticatedApp() {
                       </div>
                       <h3>Build Something</h3>
                       <p>
-                        Tell AI what you want to build. It auto-generates the blueprint, lists required parts, and matches available community leftovers!
+                        Tell AI what you want to build with furniture, electronic items, or construction materials. It auto-generates blueprints and matches inventory!
                       </p>
                       <div className="build-chips-list">
                         <button
                           type="button"
                           className="build-chip-btn"
-                          onClick={() => handleBuildPrompt('I want to build a garden planter box using surplus materials')}
+                          onClick={() => handleBuildPrompt('I want to build a garden planter box using surplus construction materials')}
                         >
-                          Balcony Planter
+                          Planter · Construction
                         </button>
                         <button
                           type="button"
                           className="build-chip-btn"
-                          onClick={() => handleBuildPrompt('How can I make mosaic stepping stones with leftover tiles?')}
+                          onClick={() => handleBuildPrompt('I want to build a reclaimed wood desk or restore modular furniture')}
                         >
-                          Mosaic Stepping Stones
+                          Work Desk · Furniture
                         </button>
                         <button
                           type="button"
                           className="build-chip-btn"
-                          onClick={() => handleBuildPrompt('I want to build a reclaimed wood desk or table')}
+                          onClick={() => handleBuildPrompt('How can I reuse surplus USB-C monitors and power adapters for an eco tech station?')}
                         >
-                          Upcycled Work Desk
+                          Tech Setup · Electronics
                         </button>
                       </div>
                       <Button
@@ -1191,6 +1256,9 @@ function AuthenticatedApp() {
                           persist(items.filter(i => i.id !== x.id))
                           if (saved.includes(x.id)) toggle(x.id)
                           setNotice('Giveaway listing removed.')
+                          void deleteListingFromFirestore(x.id).catch(err => {
+                            console.warn('Could not delete listing from Firestore:', err)
+                          })
                         }}
                       >
                         Remove my giveaway
@@ -1406,7 +1474,10 @@ function AuthenticatedApp() {
               setSubmitted('')
               setCategory('All materials')
               setLocality('All localities')
-              setNotice('Demo workspace has been reset.')
+              setNotice('Demo workspace and Firestore catalog have been reset.')
+              void reseedAllListings(originals).catch(err => {
+                console.warn('Could not reseed Firestore listings:', err)
+              })
             }}
           >
             Reset demo

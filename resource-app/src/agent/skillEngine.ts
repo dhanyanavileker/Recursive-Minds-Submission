@@ -73,10 +73,9 @@ export const AVAILABLE_SKILLS: SkillMeta[] = [
 export function resolveCategory(term?: string): string | undefined {
   if (!term) return undefined
   const t = term.toLowerCase()
-  if (/(tile|mosaic|slate|paver|stone|gravel|masonry)/i.test(t)) return 'Materials'
-  if (/(timber|wood|lumber|pine|plank|beam|rafter)/i.test(t)) return 'Materials'
-  if (/(furniture|table|chair|desk|shelf|bench|stool)/i.test(t)) return 'Furniture'
-  if (/(electronic|monitor|cable|cord|adapter|charger|plug|fitting|hardware|usb)/i.test(t)) return 'Electronics'
+  if (/(construct|tile|mosaic|slate|paver|stone|gravel|masonry|timber|wood|lumber|pine|plank|beam|rafter|cement|brick|material)/i.test(t)) return 'Construction Materials'
+  if (/(furniture|table|chair|desk|shelf|bench|stool|cabinet|sofa|couch)/i.test(t)) return 'Furniture'
+  if (/(electronic|monitor|cable|cord|adapter|charger|plug|fitting|hardware|usb|laptop|display|power)/i.test(t)) return 'Electronic Items'
   if (/(box|packag|corrugat|carton|shipping|bubble|mailer)/i.test(t)) return 'Packaging'
   if (/(pot|planter|terracotta|clay|garden|plant|household)/i.test(t)) return 'Household Items'
   if (/(food|pantry|grain|pulse|grocery)/i.test(t)) return 'Food'
@@ -86,10 +85,14 @@ export function resolveCategory(term?: string): string | undefined {
 
 export const marketplaceCategory = (category?: string) => {
   if (!category) return undefined
-  const directMatch = ['Materials', 'Furniture', 'Electronics', 'Packaging', 'Household Items', 'Food', 'Office Assets'].find(
+  const directMatch = ['Construction Materials', 'Materials', 'Furniture', 'Electronic Items', 'Electronics', 'Packaging', 'Household Items', 'Food', 'Office Assets'].find(
     c => c.toLowerCase() === category.toLowerCase()
   )
-  if (directMatch) return directMatch
+  if (directMatch) {
+    if (directMatch === 'Materials') return 'Construction Materials'
+    if (directMatch === 'Electronics') return 'Electronic Items'
+    return directMatch
+  }
   return resolveCategory(category) || category
 }
 
@@ -885,8 +888,8 @@ export async function executeAgentSkill({
         procurementOrder: order,
         suggestedPrompts: [
           `Confirm and add ${order.materialQuery} to My Project`,
-          `Show me another salvage yard deal`,
-          `Plan a project using this material`
+          `Show me another community surplus item`,
+          `Plan a project using this resource`
         ]
       }
     }
@@ -909,7 +912,7 @@ export async function executeAgentSkill({
       timestamp: Date.now(),
       skill: 'search',
       content: notFound
-        ? `I searched the current demo inventory for "${prompt}", but found no exact match. You can preview a clearly labelled future sourcing scenario or adjust the material and locality:`
+        ? `I searched the current demo inventory for "${prompt}", but found no exact match. You can preview a clearly labelled future sourcing scenario or adjust the category and locality:`
         : `I searched the demo inventory and found ${visibleMatches.length} relevant listing${visibleMatches.length > 1 ? 's' : ''} to review. These fictional examples are shown as free community giveaways:`,
       matchedListings: visibleMatches.length > 0 ? visibleMatches : undefined,
       showProcurementTrigger: notFound
@@ -922,13 +925,13 @@ export async function executeAgentSkill({
       showRequirements: true,
       suggestedPrompts: notFound
         ? [
-            `Scout and secure free ${prompt} from demolition yard`,
-            'How to fix wobbly furniture with timber?',
-            'Analyze a photo of my leftover materials'
+            `Scout and secure free ${prompt} from nearby community surplus`,
+            'How to fix wobbly furniture?',
+            'Analyze a photo of my surplus items'
           ]
         : [
-            'How to fix wobbly furniture with timber?',
-            'Analyze a photo of my leftover materials',
+            'How to fix wobbly furniture?',
+            'Analyze a photo of my surplus items',
             'I want to build a garden planter box'
           ]
     }

@@ -43,50 +43,68 @@ export function createProcurementOrder({
   const q = query.toLowerCase()
   const orderId = `proc-${Date.now()}`
 
-  let supplierName = 'Metro Demolition & Salvage Works'
-  let supplierLocation = locality === 'All localities' ? 'Central Yard Depot' : `${locality} Industrial Yard`
-  let materialName = query.trim() || 'Reclaimed Heavy Timber Offcuts'
-  let quantityDetails = '6–8 solid pieces (approx. 1.2–1.8m)'
-  let landfillDiversionKg = 140
-  let carbonSavedKg = 95
-  let pickupWindow = 'Saturday, 10:00 AM – 1:00 PM'
+  let supplierName = 'Community Circular Resource Exchange'
+  let supplierLocation = locality === 'All localities' ? 'Central Resource Depot' : `${locality} Community Hub`
+  let materialName = query.trim() || 'Surplus Usable Resources'
+  let quantityDetails = 'Clean, usable surplus community items'
+  let landfillDiversionKg = 75
+  let carbonSavedKg = 50
+  let pickupWindow = 'Saturday, 10:00 AM – 2:00 PM'
 
-  if (/tile|mosaic|slate|marble/i.test(q)) {
-    category = 'Tiles'
-    supplierName = 'City Tile Reclaim & Masonry'
-    supplierLocation = 'East District Yard'
-    materialName = q.includes('mosaic') ? 'Surplus Glazed Ceramic Mosaic Tiles' : 'Salvaged Floor Tile Lot'
+  if (/chair|table|desk|shelf|furniture|bench|stool|sofa|wood/i.test(q)) {
+    category = 'Furniture'
+    supplierName = 'Civic Furniture Rescue & Upcycling Hub'
+    supplierLocation = locality === 'All localities' ? 'Central Maker Depot' : `${locality} Maker Hub`
+    materialName = q.includes('table') ? 'Solid Wood Side Table & Clean Offcuts' : 'Modular Office / Home Furniture'
+    quantityDetails = 'Clean, sturdy pre-loved furniture lot'
+    landfillDiversionKg = 110
+    carbonSavedKg = 75
+    pickupWindow = 'Saturday, 11:00 AM – 3:00 PM'
+  } else if (/monitor|screen|display|cable|laptop|phone|tech|electron|cord|charger|fitting|power/i.test(q)) {
+    category = 'Electronic Items'
+    supplierName = 'City Tech Reclaim & E-Waste Collective'
+    supplierLocation = locality === 'All localities' ? 'Innovation District Hub' : `${locality} Tech Depot`
+    materialName = q.includes('monitor') ? 'Tested USB-C Display & Power Adapter' : 'Surplus Working Electronics Lot'
+    quantityDetails = 'Clean, tested electronics with accessories'
+    landfillDiversionKg = 45
+    carbonSavedKg = 90
+    pickupWindow = 'Thursday or Friday, 10:00 AM – 4:00 PM'
+  } else if (/tile|mosaic|slate|marble/i.test(q)) {
+    category = 'Construction Materials'
+    supplierName = 'City Tile Reclaim & Material Exchange'
+    supplierLocation = 'East District Hub'
+    materialName = q.includes('mosaic') ? 'Surplus Glazed Ceramic Mosaic Tiles' : 'Remodel Surplus Floor Tile Lot'
     quantityDetails = 'Approx. 5.5 m² lot (clean uninstalled surplus)'
     landfillDiversionKg = 95
     carbonSavedKg = 60
     pickupWindow = 'Friday or Saturday, 11:00 AM – 3:00 PM'
+  } else if (/lumber|timber|pine|plank|beam|construct/i.test(q)) {
+    category = 'Construction Materials'
+    supplierName = 'Architectural Timber & Wood Reclaim'
+    supplierLocation = 'Central Reclamation Depot'
+    materialName = 'Clean Untreated Lumber & Wood Offcuts'
+    quantityDetails = '8 solid lumber offcuts (approx. 40–80 cm)'
+    landfillDiversionKg = 130
+    carbonSavedKg = 85
+    pickupWindow = 'Saturday, 9:00 AM – 1:00 PM'
   } else if (/pot|planter|terracotta|clay/i.test(q)) {
-    category = 'Pots'
-    supplierName = 'Metropolitan Nursery & Clay Surplus'
+    category = 'Household Items'
+    supplierName = 'Metropolitan Community Garden Surplus'
     supplierLocation = 'North Side Depot'
-    materialName = 'Molded Terracotta Planters & Clay Shards'
-    quantityDetails = '4 large garden pots + drainage shards'
+    materialName = 'Terracotta Planters & Clay Drainage Trays'
+    quantityDetails = '4 large garden pots + drainage trays'
     landfillDiversionKg = 60
     carbonSavedKg = 35
     pickupWindow = 'Sunday, 9:00 AM – 12:00 PM'
   } else if (/paver|stone|granite|brick/i.test(q)) {
-    category = 'Pavers'
-    supplierName = 'Civic Stone & Paving Salvage'
+    category = 'Construction Materials'
+    supplierName = 'Civic Stone & Paving Exchange'
     supplierLocation = 'South Yard Hub'
     materialName = 'Dressed Granite & Sandstone Pavers'
     quantityDetails = '18 pieces (30 × 30 cm dressed pavers)'
     landfillDiversionKg = 210
     carbonSavedKg = 130
     pickupWindow = 'Saturday, 2:00 PM – 5:00 PM'
-  } else if (/brass|handle|fitting|hinge|screw|metal/i.test(q)) {
-    category = 'Fittings'
-    supplierName = 'Heritage Architectural Hardware'
-    supplierLocation = 'Downtown Depot'
-    materialName = 'Vintage Solid Brass Cabinet Fittings'
-    quantityDetails = 'Matching set of 12 solid brass pulls'
-    landfillDiversionKg = 25
-    carbonSavedKg = 40
-    pickupWindow = 'Any weekday, 10:00 AM – 6:00 PM'
   }
 
   const negotiationTranscript = [

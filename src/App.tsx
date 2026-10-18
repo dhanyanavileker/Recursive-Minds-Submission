@@ -497,8 +497,8 @@ function AuthenticatedApp() {
               <ArrowLeft size={16} /> Back to dashboard
             </button>
             <h1>
-              Make room for<br />
-              <span>someone else's idea.</span>
+              Share what's useful.<br />
+              <span>Save what matters.</span>
             </h1>
             <p>Mindfully give your leftover materials a useful next chapter. No reselling fees — 100% free community reuse.</p>
             <div className="steps">
@@ -510,7 +510,7 @@ function AuthenticatedApp() {
                 <div className="upload">
                   <Package size={36} />
                   <h2>Start with what you have</h2>
-                  <p>Choose an image of your surplus tiles, wood, pots, or fittings, or explore with our illustrated sample.</p>
+                  <p>Choose an image of your surplus items — furniture, electronic items, construction materials, or other goods — or explore with our illustrated sample.</p>
                   <label className="upload-label">
                     Choose photo
                     <input
@@ -540,13 +540,13 @@ function AuthenticatedApp() {
                       setSample(true)
                       setTitle('Sea-glass mosaic tiles')
                       setQuantity('')
-                      setNewCategory('Tiles')
+                      setNewCategory('Construction Materials')
                       setStep(1)
                     }}
                   >
                     Use illustrated sample <ArrowRight size={16} />
                   </Button>
-                  <small>Community gifting connects directly with local builders across Bengaluru.</small>
+                  <small>Community sharing connects useful resources with nearby individuals, organizations, and community projects.</small>
                 </div>
                 <div className="sample-preview">
                   <Material tone={0} />

@@ -10,7 +10,9 @@ export function listingArea(x: MeasuredListing): number | null {
 }
 export function matchEvidence(x: MeasuredListing, r: Requirements) {
  const area=listingArea(x), target=targetArea(r)
- const categoryFits=x.category===r.category
+ const categoryFits=x.category===r.category ||
+   ((r.category==='Construction Materials'||r.category==='Materials') && (x.category==='Construction Materials'||x.category==='Materials')) ||
+   ((r.category==='Electronic Items'||r.category==='Electronics') && (x.category==='Electronic Items'||x.category==='Electronics'))
  const overBudget=r.budget.trim()!=='' && x.price>Number(r.budget)
  const locationFits=r.locality==='All localities'||x.locality===r.locality
  const coverage=categoryFits&&area!==null&&target!==null ? area/target : null

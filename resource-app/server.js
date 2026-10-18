@@ -66,15 +66,16 @@ app.post('/api/gemini/analyze', async (req, res) => {
   try {
     const { prompt, photoUrl } = req.body
     const contents = []
-    const systemPrompt = `You are an expert circular economy & salvage material inspector for 're:source'.
-Analyze the provided image or description of leftover or salvaged renovation material.
+    const systemPrompt = `You are an expert circular economy & community resource specialist for 're:source'.
+Analyze the provided image or description of surplus, pre-loved, leftover, or repairable items (spanning Furniture, Electronic Items, Construction Materials, Packaging, or Household Goods).
+Do NOT assume items originate from a demolition or construction site unless the user explicitly mentions demolition. Treat items as regular household, office, studio, or community surplus.
 Return a STRICT JSON object with these EXACT keys:
 {
-  "detectedMaterial": "string",
-  "materialCategory": "Tiles" | "Timber" | "Pots" | "Pavers" | "Fittings",
-  "conditionRating": "string (e.g. 85% Salvageable · Good Sound Condition)",
+  "detectedMaterial": "string (clear name of the item or material)",
+  "materialCategory": "Furniture" | "Electronic Items" | "Construction Materials" | "Packaging" | "Household Items" | "Office Assets",
+  "conditionRating": "string (e.g. 90% Usable · Clean Sound Condition)",
   "conditionStatus": "good" | "moderate" | "worn",
-  "estimatedDimensions": "string (estimated length, width, or thickness)",
+  "estimatedDimensions": "string (estimated dimensions, count, or capacity)",
   "inspectionNotes": ["string", "string", "string"],
   "recommendedPrep": ["string", "string", "string"],
   "recommendedMaterials": [{"name": "string", "category": "string", "reason": "string"}],
@@ -116,8 +117,8 @@ app.post('/api/gemini/steps', async (req, res) => {
   try {
     const { prompt, photoUrl } = req.body
     const systemPrompt = `You are a master craftsman & repair specialist for 're:source'.
-Generate a step-by-step DIY repair and restoration guide based on the user's inquiry.
-Prioritize reuse, salvage, and circular techniques.
+Generate a step-by-step DIY repair, upcycling, or restoration guide based on the user's inquiry (covering furniture restoration, electronics care, or construction material reuse).
+Do NOT assume materials come from a demolition site. Focus on practical community reuse and DIY repair.
 Return a STRICT JSON object with these EXACT keys:
 {
   "title": "string",
@@ -161,7 +162,8 @@ app.post('/api/gemini/build_plan', async (req, res) => {
   try {
     const { prompt } = req.body
     const systemPrompt = `You are a circular architect and sustainable product designer for 're:source'.
-Architect a complete reuse-first build plan using leftover and salvaged building materials.
+Architect a complete reuse-first build or restoration plan using community surplus items, pre-loved furniture, electronic items, or construction materials.
+Do NOT assume materials come from a demolition site unless explicitly stated. Prioritize domestic, community, and office upcycling.
 Return a STRICT JSON object with these EXACT keys:
 {
   "projectName": "string",
