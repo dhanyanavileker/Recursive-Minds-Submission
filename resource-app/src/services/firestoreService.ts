@@ -52,7 +52,7 @@ export function subscribeToListings(
               !title
             ) {
               staleCount++
-              deleteDoc(doc(db, 'listings', docSnap.id)).catch(() => {})
+              deleteDoc(doc(db!, 'listings', docSnap.id)).catch(() => {})
             } else {
               items.push(data)
             }
